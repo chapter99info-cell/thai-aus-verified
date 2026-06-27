@@ -6,7 +6,16 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div>
-            <p className="text-xl font-bold">Thai-Aus Verified</p>
+            <div className="mb-3 flex items-center gap-3">
+              <img
+                src="https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png"
+                alt="Thai-Aus Verified Logo"
+                width={48}
+                height={48}
+                className="rounded-full border-2 border-white object-cover"
+              />
+              <span className="text-xl font-bold text-white">Thai-Aus Verified</span>
+            </div>
             <p className="mt-2 text-sm text-white/80">
               ชุมชนบริการสีขาว คนไทยในออสเตรเลีย
             </p>
