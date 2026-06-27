@@ -17,7 +17,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Thai-Aus Verified Community | ชุมชนบริการสีขาว คนไทยในออสเตรเลีย',
   description:
-    'ค้นหาบริการไทยที่เชื่อถือได้ในออสเตรเลีย — ตรวจสอบ ABN · ยืนยันตัวตน · เชื่อมชุมชนไทยทั่วออสเตรเลีย',
+    'ค้นหาธุรกิจไทยที่ผ่านการยืนยัน ABN ในออสเตรเลีย ปลอดภัย ไม่มีโกง',
+  keywords: ['Thai business Australia', 'ABN verified', 'Thai community Sydney'],
+  openGraph: {
+    title: 'Thai-Aus Verified Community',
+    description: 'ชุมชนบริการสีขาว คนไทยในออสเตรเลีย',
+    url: 'https://thai-aus-verified.vercel.app',
+    siteName: 'Thai-Aus Verified',
+    locale: 'th_TH',
+    type: 'website',
+  },
 }
 
 export default function RootLayout({

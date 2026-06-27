@@ -1,15 +1,14 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { CATEGORY_LABELS } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
+import { formatDateDDMMYYYY } from '@/lib/utils'
 import type { ScamAlert, ServiceProvider } from '@/types'
 
 type Tab = 'pending' | 'verified' | 'alerts'
 
 export function AdminDashboard() {
-  const router = useRouter()
   const [tab, setTab] = useState<Tab>('pending')
   const [pending, setPending] = useState<ServiceProvider[]>([])
   const [verified, setVerified] = useState<ServiceProvider[]>([])
@@ -19,25 +18,6 @@ export function AdminDashboard() {
 
   const loadData = useCallback(async () => {
     const supabase = createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.role !== 'admin') {
-      router.push('/')
-      return
-    }
 
     const [pendingRes, verifiedRes, alertsRes] = await Promise.all([
       supabase
@@ -57,7 +37,7 @@ export function AdminDashboard() {
     setVerified((verifiedRes.data ?? []) as ServiceProvider[])
     setAlerts((alertsRes.data ?? []) as ScamAlert[])
     setLoading(false)
-  }, [router])
+  }, [])
 
   useEffect(() => {
     loadData()
@@ -100,8 +80,8 @@ export function AdminDashboard() {
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'pending', label: `รอการอนุมัติ (${pending.length})` },
-    { id: 'verified', label: `ธุรกิจที่อนุมัติแล้ว (${verified.length})` },
-    { id: 'alerts', label: 'Scam Alerts' },
+    { id: 'verified', label: `ธุรกิจที่ยืนยันแล้ว (${verified.length})` },
+    { id: 'alerts', label: 'จัดการ Scam Alerts' },
   ]
 
   return (
@@ -136,10 +116,10 @@ export function AdminDashboard() {
                 >
                   <h3 className="font-semibold text-slate-900">{p.business_name}</h3>
                   <p className="mt-1 text-sm text-slate-600">
-                    {CATEGORY_LABELS[p.category]?.th} · ABN: {p.abn_number}
+                    {CATEGORY_LABELS[p.category]?.th} · ABN: {p.abn_number} · {p.state}
                   </p>
-                  <p className="mt-1 text-sm text-slate-500">
-                    {p.suburb}, {p.state}
+                  <p className="mt-1 text-xs text-slate-500">
+                    ลงทะเบียน: {formatDateDDMMYYYY(p.created_at)}
                   </p>
                   <div className="mt-4 flex gap-2">
                     <button
@@ -165,20 +145,27 @@ export function AdminDashboard() {
 
         {tab === 'verified' && (
           <div className="space-y-3">
-            {verified.map((p) => (
-              <div
-                key={p.id}
-                className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3"
-              >
-                <div>
-                  <p className="font-medium text-slate-900">{p.business_name}</p>
-                  <p className="text-xs text-slate-500">
-                    {CATEGORY_LABELS[p.category]?.th} · ⭐ {Number(p.rating).toFixed(1)}
-                  </p>
+            {verified.length === 0 ? (
+              <p className="text-slate-500">ยังไม่มีธุรกิจที่ยืนยันแล้ว</p>
+            ) : (
+              verified.map((p) => (
+                <div
+                  key={p.id}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3"
+                >
+                  <div>
+                    <p className="font-medium text-slate-900">{p.business_name}</p>
+                    <p className="text-xs text-slate-500">
+                      {CATEGORY_LABELS[p.category]?.th} · ⭐ {Number(p.rating).toFixed(1)} (
+                      {p.review_count} รีวิว)
+                    </p>
+                  </div>
+                  <span className="text-xs text-slate-500">
+                    {formatDateDDMMYYYY(p.created_at)}
+                  </span>
                 </div>
-                <span className="text-xs text-green-700">✅ Verified</span>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         )}
 
@@ -188,7 +175,7 @@ export function AdminDashboard() {
               <h3 className="font-semibold text-slate-900">สร้างแจ้งเตือนภัยใหม่</h3>
               <input
                 type="text"
-                placeholder="หัวข้อ"
+                placeholder="หัวข้อ (Title)"
                 value={newAlert.title}
                 onChange={(e) => setNewAlert({ ...newAlert, title: e.target.value })}
                 required
@@ -196,13 +183,13 @@ export function AdminDashboard() {
               />
               <input
                 type="text"
-                placeholder="หมวดหมู่"
+                placeholder="หมวดหมู่ (Category)"
                 value={newAlert.category}
                 onChange={(e) => setNewAlert({ ...newAlert, category: e.target.value })}
                 className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
               />
               <textarea
-                placeholder="รายละเอียด"
+                placeholder="รายละเอียด (Description)"
                 value={newAlert.description}
                 onChange={(e) => setNewAlert({ ...newAlert, description: e.target.value })}
                 required
@@ -211,9 +198,9 @@ export function AdminDashboard() {
               />
               <button
                 type="submit"
-                className="mt-3 rounded-lg bg-[#1e3a5f] px-4 py-2 text-sm font-medium text-white"
+                className="mt-3 rounded-lg bg-[#1e3a5f] px-4 py-2 text-sm font-medium text-white hover:bg-[#2d5282]"
               >
-                สร้าง (draft)
+                สร้างแจ้งเตือน
               </button>
             </form>
 

@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Star, Phone, Globe, Share2 } from 'lucide-react'
 import { ReviewForm } from '@/components/reviews/ReviewForm'
 import { ReviewList } from '@/components/reviews/ReviewList'
+import { StarRating } from '@/components/reviews/StarRating'
 import { CATEGORY_LABELS } from '@/lib/constants'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
 import type { ServiceProvider } from '@/types'
@@ -50,70 +50,52 @@ export default async function BusinessDetailPage({ params }: Props) {
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[#1e3a5f]">{business.business_name}</h1>
-            <p className="mt-2 text-slate-600">
-              {category.emoji} {category.th} · {business.suburb}, {business.state}
-            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-3xl font-bold text-[#1e3a5f]">{business.business_name}</h1>
+              {business.is_verified && (
+                <span className="rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
+                  ✅ Verified
+                </span>
+              )}
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-[#1e3a5f]/10 px-2.5 py-0.5 text-xs font-medium text-[#1e3a5f]">
+                {category.emoji} {category.th}
+              </span>
+              <span className="text-sm text-slate-600">
+                {business.state} · {business.suburb}
+              </span>
+            </div>
           </div>
-          {business.is_verified ? (
-            <span className="rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
-              ✅ ยืนยันแล้ว - Verified
-            </span>
-          ) : (
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-600">
-              ⏳ รอการยืนยัน
-            </span>
-          )}
         </div>
 
-        <div className="mt-4 flex items-center gap-1 text-slate-600">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Star
-              key={i}
-              size={18}
-              className={
-                i < Math.round(Number(business.rating))
-                  ? 'fill-amber-400 text-amber-400'
-                  : 'text-slate-300'
-              }
-            />
-          ))}
-          <span className="ml-2">
-            {Number(business.rating).toFixed(1)} ({business.review_count} รีวิว)
-          </span>
-        </div>
+        <StarRating
+          rating={Number(business.rating)}
+          showAverage
+          reviewCount={business.review_count}
+          className="mt-4"
+        />
 
         {business.description && (
           <p className="mt-8 leading-relaxed text-slate-700">{business.description}</p>
         )}
 
-        <dl className="mt-8 space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-6 text-sm">
-          {business.address && (
-            <div>
-              <dt className="text-slate-500">ที่อยู่</dt>
-              <dd className="font-medium text-slate-900">{business.address}</dd>
-            </div>
-          )}
-          <div>
-            <dt className="text-slate-500">ABN</dt>
-            <dd className="font-medium text-slate-900">{business.abn_number}</dd>
-          </div>
-          {business.phone && (
-            <div className="flex items-center gap-2">
-              <Phone size={16} className="text-[#1e3a5f]" />
-              <dd className="font-medium text-slate-900">{business.phone}</dd>
-            </div>
-          )}
-          {business.line_id && (
-            <div>
-              <dt className="text-slate-500">Line ID</dt>
-              <dd className="font-medium text-slate-900">{business.line_id}</dd>
-            </div>
-          )}
-          {business.website && (
-            <div className="flex items-center gap-2">
-              <Globe size={16} className="text-[#1e3a5f]" />
-              <dd>
+        <section className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-6">
+          <h2 className="font-semibold text-slate-900">ติดต่อ</h2>
+          <ul className="mt-4 space-y-3 text-sm">
+            {business.phone && (
+              <li className="text-slate-700">
+                📞 <span className="font-medium">{business.phone}</span>
+              </li>
+            )}
+            {business.line_id && (
+              <li className="text-slate-700">
+                💬 Line ID: <span className="font-medium">{business.line_id}</span>
+              </li>
+            )}
+            {business.website && (
+              <li>
+                🌐{' '}
                 <a
                   href={business.website}
                   target="_blank"
@@ -122,13 +104,11 @@ export default async function BusinessDetailPage({ params }: Props) {
                 >
                   {business.website}
                 </a>
-              </dd>
-            </div>
-          )}
-          {business.facebook_url && (
-            <div className="flex items-center gap-2">
-              <Share2 size={16} className="text-[#1e3a5f]" />
-              <dd>
+              </li>
+            )}
+            {business.facebook_url && (
+              <li>
+                👥{' '}
                 <a
                   href={business.facebook_url}
                   target="_blank"
@@ -137,18 +117,31 @@ export default async function BusinessDetailPage({ params }: Props) {
                 >
                   Facebook
                 </a>
-              </dd>
-            </div>
-          )}
-        </dl>
+              </li>
+            )}
+            {!business.phone && !business.line_id && !business.website && !business.facebook_url && (
+              <li className="text-slate-500">ยังไม่มีข้อมูลติดต่อ</li>
+            )}
+          </ul>
+        </section>
 
-        <section className="mt-12 border-t border-slate-200 pt-10">
+        <hr className="my-10 border-slate-200" />
+
+        <section>
           <h2 className="text-xl font-semibold text-slate-900">รีวิวจากลูกค้า</h2>
           <div className="mt-6">
             <ReviewList reviews={reviewsData ?? []} />
           </div>
           <div className="mt-8">
-            <ReviewForm providerId={id} isLoggedIn={!!user} />
+            {user ? (
+              <ReviewForm providerId={id} />
+            ) : (
+              <p className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                <Link href="/login" className="font-medium text-[#1e3a5f] hover:underline">
+                  เข้าสู่ระบบเพื่อรีวิว
+                </Link>
+              </p>
+            )}
           </div>
         </section>
       </div>

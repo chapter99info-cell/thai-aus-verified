@@ -14,6 +14,7 @@ interface PageProps {
     state?: string
     suburb?: string
     verified?: string
+    sort?: string
   }>
 }
 
@@ -24,11 +25,7 @@ async function fetchBusinesses(params: Awaited<PageProps['searchParams']>) {
 
   try {
     const supabase = await createClient()
-    const { data, error } = await supabase
-      .from('service_providers')
-      .select('*')
-      .order('is_verified', { ascending: false })
-      .order('rating', { ascending: false })
+    const { data, error } = await supabase.from('service_providers').select('*')
 
     if (error) throw error
 
@@ -56,6 +53,14 @@ async function fetchBusinesses(params: Awaited<PageProps['searchParams']>) {
       businesses = businesses.filter((b) => b.is_verified)
     }
 
+    if (params.sort === 'rating') {
+      businesses.sort((a, b) => Number(b.rating) - Number(a.rating))
+    } else {
+      businesses.sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+    }
+
     return { businesses, suburbs }
   } catch {
     return { businesses: [] as ServiceProvider[], suburbs: [] as string[] }
@@ -73,9 +78,7 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
           ← กลับหน้าแรก
         </Link>
         <h1 className="mt-4 text-3xl font-bold text-slate-900">ค้นหาธุรกิจ</h1>
-        <p className="mt-2 text-slate-600">
-          {businesses.length} ธุรกิจ{params.verified === 'true' ? ' (Verified)' : ''}
-        </p>
+        <p className="mt-2 text-slate-600">พบ {businesses.length} ธุรกิจ</p>
 
         <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
           <Suspense fallback={<p className="text-sm text-slate-500">กำลังโหลดตัวกรอง...</p>}>

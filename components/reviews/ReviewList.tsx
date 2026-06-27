@@ -1,4 +1,5 @@
-import { Star } from 'lucide-react'
+import { StarRating } from '@/components/reviews/StarRating'
+import { formatDateDDMMYYYY } from '@/lib/utils'
 
 interface ReviewItem {
   id: string
@@ -37,22 +38,10 @@ export function ReviewList({ reviews }: ReviewListProps) {
               {getReviewerName(review.profiles)}
             </p>
             <time className="text-xs text-slate-500">
-              {new Date(review.created_at).toLocaleDateString('th-TH')}
+              {formatDateDDMMYYYY(review.created_at)}
             </time>
           </div>
-          <div className="mt-2 flex gap-0.5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                size={14}
-                className={
-                  i < review.rating
-                    ? 'fill-amber-400 text-amber-400'
-                    : 'text-slate-300'
-                }
-              />
-            ))}
-          </div>
+          <StarRating rating={review.rating} size={14} className="mt-2" />
           {review.comment && (
             <p className="mt-3 text-sm leading-relaxed text-slate-700">{review.comment}</p>
           )}

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -76,6 +77,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
+          <Image src="/logo.png" alt="Thai-Aus Verified" width={40} height={40} className="h-10 w-10" />
           <span className="text-lg font-bold text-[#1e3a5f] sm:text-xl">Thai-Aus Verified</span>
           {isVerifiedBusiness && (
             <span className="flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs text-green-700">

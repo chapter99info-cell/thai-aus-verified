@@ -27,10 +27,15 @@ export function SearchFilter({ suburbs }: SearchFilterProps) {
   const category = searchParams.get('category') ?? ''
   const state = searchParams.get('state') ?? ''
   const suburb = searchParams.get('suburb') ?? ''
-  const verified = searchParams.get('verified') ?? ''
+  const verifiedOnly = searchParams.get('verified') === 'true'
+  const sort = searchParams.get('sort') ?? 'newest'
 
   const selectClass =
     'w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-[#1e3a5f] focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]'
+
+  function toggleVerified() {
+    update('verified', verifiedOnly ? '' : 'true')
+  }
 
   return (
     <div className="space-y-4">
@@ -109,18 +114,28 @@ export function SearchFilter({ suburbs }: SearchFilterProps) {
 
         <div>
           <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-500">
-            Verified
+            เรียงตาม
           </label>
           <select
-            value={verified}
-            onChange={(e) => update('verified', e.target.value)}
+            value={sort}
+            onChange={(e) => update('sort', e.target.value)}
             className={selectClass}
           >
-            <option value="">ทั้งหมด</option>
-            <option value="true">เฉพาะ Verified</option>
+            <option value="newest">ล่าสุด</option>
+            <option value="rating">Rating สูงสุด</option>
           </select>
         </div>
       </div>
+
+      <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3">
+        <input
+          type="checkbox"
+          checked={verifiedOnly}
+          onChange={toggleVerified}
+          className="h-4 w-4 rounded border-slate-300 text-[#1e3a5f]"
+        />
+        <span className="text-sm font-medium text-slate-700">เฉพาะ Verified</span>
+      </label>
     </div>
   )
 }

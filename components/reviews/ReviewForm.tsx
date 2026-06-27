@@ -2,33 +2,19 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Star } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { StarRating } from '@/components/reviews/StarRating'
 
 interface ReviewFormProps {
   providerId: string
-  isLoggedIn: boolean
 }
 
-export function ReviewForm({ providerId, isLoggedIn }: ReviewFormProps) {
+export function ReviewForm({ providerId }: ReviewFormProps) {
   const router = useRouter()
   const [rating, setRating] = useState(0)
-  const [hover, setHover] = useState(0)
   const [comment, setComment] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
-
-  if (!isLoggedIn) {
-    return (
-      <p className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-        <a href="/login" className="font-medium text-[#1e3a5f] hover:underline">
-          เข้าสู่ระบบ
-        </a>{' '}
-        เพื่อเขียนรีวิว
-      </p>
-    )
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -58,7 +44,7 @@ export function ReviewForm({ providerId, isLoggedIn }: ReviewFormProps) {
   if (success) {
     return (
       <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-        ขอบคุณสำหรับรีวิว!
+        ขอบคุณสำหรับรีวิวครับ! ✅
       </div>
     )
   }
@@ -71,31 +57,13 @@ export function ReviewForm({ providerId, isLoggedIn }: ReviewFormProps) {
         <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
       )}
 
-      <div className="mt-4 flex gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            type="button"
-            onClick={() => setRating(star)}
-            onMouseEnter={() => setHover(star)}
-            onMouseLeave={() => setHover(0)}
-            className="p-0.5"
-          >
-            <Star
-              size={28}
-              className={cn(
-                (hover || rating) >= star
-                  ? 'fill-amber-400 text-amber-400'
-                  : 'text-slate-300'
-              )}
-            />
-          </button>
-        ))}
+      <div className="mt-4">
+        <StarRating value={rating} onChange={setRating} size={28} />
       </div>
 
       <div className="mt-4">
         <label htmlFor="comment" className="mb-1.5 block text-sm font-medium text-slate-700">
-          ความคิดเห็น (อย่างน้อย 20 ตัวอักษร)
+          ความคิดเห็น
         </label>
         <textarea
           id="comment"
@@ -105,7 +73,7 @@ export function ReviewForm({ providerId, isLoggedIn }: ReviewFormProps) {
           required
           minLength={20}
           className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-[#1e3a5f] focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]"
-          placeholder="แบ่งปันประสบการณ์ของคุณ..."
+          placeholder="แบ่งปันประสบการณ์ของคุณ... (อย่างน้อย 20 ตัวอักษร)"
         />
       </div>
 
