@@ -42,6 +42,9 @@ CREATE TABLE service_providers (
   subscription_status TEXT DEFAULT 'free' CHECK (subscription_status IN ('free', 'premium')),
   stripe_customer_id TEXT,
   stripe_subscription_id TEXT,
+  subscription_grace_until TIMESTAMPTZ,
+  terms_accepted BOOLEAN DEFAULT FALSE,
+  terms_accepted_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

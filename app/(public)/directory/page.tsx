@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { BusinessCard } from '@/components/directory/BusinessCard'
 import { SearchFilter } from '@/components/directory/SearchFilter'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
+import { isPremiumProvider } from '@/lib/subscription'
 import type { ServiceProvider } from '@/types'
 
 export const dynamic = 'force-dynamic'
@@ -54,11 +55,19 @@ async function fetchBusinesses(params: Awaited<PageProps['searchParams']>) {
     }
 
     if (params.sort === 'rating') {
-      businesses.sort((a, b) => Number(b.rating) - Number(a.rating))
+      businesses.sort((a, b) => {
+        const aP = isPremiumProvider(a) ? 1 : 0
+        const bP = isPremiumProvider(b) ? 1 : 0
+        if (bP !== aP) return bP - aP
+        return Number(b.rating) - Number(a.rating)
+      })
     } else {
-      businesses.sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
+      businesses.sort((a, b) => {
+        const aP = isPremiumProvider(a) ? 1 : 0
+        const bP = isPremiumProvider(b) ? 1 : 0
+        if (bP !== aP) return bP - aP
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      })
     }
 
     return { businesses, suburbs }

@@ -90,7 +90,7 @@ export default function PricingPage() {
             <h2 className="text-xl font-bold text-[#1e3a5f]">PREMIUM</h2>
           </div>
           <p className="mt-2 text-3xl font-bold text-slate-900">
-            A$10<span className="text-base font-normal text-slate-500">/เดือน</span>
+            A$9<span className="text-base font-normal text-slate-500">/เดือน</span>
           </p>
 
           <ul className="mt-6 space-y-3">
@@ -101,6 +101,14 @@ export default function PricingPage() {
             <li className="flex items-start gap-2 text-sm text-slate-700">
               <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
               โพสต์โฆษณาใน Facebook Group ได้
+            </li>
+            <li className="flex items-start gap-2 text-sm text-slate-700">
+              <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
+              แสดงลำดับต้นใน Directory
+            </li>
+            <li className="flex items-start gap-2 text-sm text-slate-700">
+              <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
+              ⭐ Premium Verified badge
             </li>
             <li className="flex items-start gap-2 text-sm text-slate-700">
               <Check size={18} className="mt-0.5 shrink-0 text-green-600" />

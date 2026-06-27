@@ -15,6 +15,7 @@ type AbnResult = {
   abn?: string
   state?: string
   error?: string
+  apiDown?: boolean
 }
 
 const STEPS = ['ตรวจสอบ ABN', 'ข้อมูลธุรกิจ', 'สร้างบัญชี']
@@ -43,6 +44,7 @@ export function RegisterForm() {
   const [portfolioUrl, setPortfolioUrl] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [verifying, setVerifying] = useState(false)
@@ -65,12 +67,18 @@ export function RegisterForm() {
       const data: AbnResult = await res.json()
       setAbnResult(data)
 
+      if (data.apiDown || data.error) {
+        setError(data.error ?? '')
+      }
+
       if (data.valid && data.businessName) {
         setBusinessName(data.businessName)
         setState(mapState(data.state))
       }
     } catch {
-      setError('ไม่สามารถตรวจสอบ ABN ได้ กรุณาลองใหม่อีกครั้ง')
+      setError(
+        'ระบบตรวจสอบ ABN ของรัฐบาลกำลังปรับปรุงชั่วคราว กรุณาลองใหม่ในอีก 15 นาที ABN ของคุณไม่มีปัญหาใดๆ ครับ'
+      )
     } finally {
       setVerifying(false)
     }
@@ -107,6 +115,10 @@ export function RegisterForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!termsAccepted) {
+      setError('กรุณายอมรับข้อกำหนดและเงื่อนไขก่อนลงทะเบียน')
+      return
+    }
     setError('')
     setLoading(true)
 
@@ -162,6 +174,8 @@ export function RegisterForm() {
         verification_status: 'approved',
         verified_at: new Date().toISOString(),
         subscription_status: 'free',
+        terms_accepted: true,
+        terms_accepted_at: new Date().toISOString(),
       })
 
       if (bizError) {
@@ -272,8 +286,15 @@ export function RegisterForm() {
           )}
 
           {abnResult && !abnResult.valid && (
-            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-              ❌ {abnResult.error}
+            <div
+              className={`rounded-xl border p-4 text-sm ${
+                abnResult.apiDown
+                  ? 'border-amber-200 bg-amber-50 text-amber-900'
+                  : 'border-red-200 bg-red-50 text-red-700'
+              }`}
+            >
+              {abnResult.apiDown ? '⚠️ ' : '❌ '}
+              {abnResult.error}
             </div>
           )}
         </div>
@@ -430,6 +451,32 @@ export function RegisterForm() {
             autoComplete="new-password"
           />
 
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <input
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-[#1e3a5f]"
+              required
+            />
+            <span className="text-sm text-slate-700">
+              ฉันยอมรับ{' '}
+              <Link href="/terms" className="font-medium text-[#1e3a5f] hover:underline" target="_blank">
+                ข้อกำหนดและเงื่อนไข
+              </Link>{' '}
+              และ{' '}
+              <Link
+                href="/privacy-policy"
+                className="font-medium text-[#1e3a5f] hover:underline"
+                target="_blank"
+              >
+                นโยบายความเป็นส่วนตัว
+              </Link>{' '}
+              ของ Thai-Aus Verified Community รวมถึงยินยอมให้แสดงข้อมูลธุรกิจและช่องทางติดต่อในหน้า Directory
+              สาธารณะ
+            </span>
+          </label>
+
           <div className="flex gap-3">
             <button
               type="button"
@@ -440,7 +487,7 @@ export function RegisterForm() {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !termsAccepted}
               className="flex-1 rounded-lg bg-[#1e3a5f] py-2.5 text-sm font-semibold text-white hover:bg-[#2d5282] disabled:opacity-50"
             >
               {loading ? 'กำลังลงทะเบียน...' : 'ลงทะเบียนธุรกิจ'}

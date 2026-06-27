@@ -46,6 +46,9 @@ export interface ServiceProvider {
   verified_at?: string
   verification_status: 'pending' | 'approved' | 'rejected'
   subscription_status: 'free' | 'premium'
+  subscription_grace_until?: string
+  terms_accepted?: boolean
+  terms_accepted_at?: string
   stripe_customer_id?: string
   stripe_subscription_id?: string
   rating: number

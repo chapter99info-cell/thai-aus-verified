@@ -1,6 +1,15 @@
 export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
+import { ABN_DOWNTIME_MESSAGE, ABN_FETCH_TIMEOUT_MS } from '@/lib/abn'
+
+function downtimeResponse() {
+  return NextResponse.json({
+    valid: false,
+    apiDown: true,
+    error: ABN_DOWNTIME_MESSAGE,
+  })
+}
 
 export async function POST(req: Request) {
   const { abn } = await req.json()
@@ -9,26 +18,35 @@ export async function POST(req: Request) {
   if (!/^\d{11}$/.test(cleanABN)) {
     return NextResponse.json({
       valid: false,
-      error: 'ABN ต้องมี 11 หลักครับ',
+      error: 'ABN ต้องมี 11 หลักครับ — ห้ามกรอก TFN (Tax File Number)',
     })
   }
 
+  const guid = process.env.ABN_LOOKUP_GUID
+  if (!guid || guid === 'PENDING_FROM_EMAIL') {
+    return downtimeResponse()
+  }
+
   try {
-    const guid = process.env.ABN_LOOKUP_GUID
-    if (!guid || guid === 'PENDING_FROM_EMAIL') {
-      return NextResponse.json({
-        valid: false,
-        error: 'ระบบตรวจสอบ ABN ยังไม่พร้อมใช้งาน กรุณาติดต่อผู้ดูแล',
-      })
-    }
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), ABN_FETCH_TIMEOUT_MS)
 
     const url = `https://abr.business.gov.au/json/AbnDetails.aspx?abn=${cleanABN}&callback=callback&guid=${guid}`
 
-    const response = await fetch(url)
-    const text = await response.text()
+    const response = await fetch(url, { signal: controller.signal })
+    clearTimeout(timeout)
 
+    if (!response.ok) {
+      return downtimeResponse()
+    }
+
+    const text = await response.text()
     const jsonStr = text.replace(/^callback\(/, '').replace(/\);?$/, '')
     const data = JSON.parse(jsonStr)
+
+    if (data.Message) {
+      return downtimeResponse()
+    }
 
     if (data.AbnStatus === 'Active') {
       return NextResponse.json({
@@ -42,14 +60,18 @@ export async function POST(req: Request) {
       })
     }
 
+    if (data.AbnStatus === 'Cancelled') {
+      return NextResponse.json({
+        valid: false,
+        error: 'ABN นี้ถูกยกเลิกแล้ว (Cancelled) — ไม่สามารถลงทะเบียนได้',
+      })
+    }
+
     return NextResponse.json({
       valid: false,
       error: `ABN นี้มีสถานะ: ${data.AbnStatus ?? 'ไม่ทราบ'} — ไม่สามารถยืนยันได้`,
     })
   } catch {
-    return NextResponse.json({
-      valid: false,
-      error: 'ไม่สามารถตรวจสอบ ABN ได้ กรุณาลองใหม่อีกครั้ง',
-    })
+    return downtimeResponse()
   }
 }

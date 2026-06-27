@@ -22,6 +22,12 @@ export function Footer() {
             <Link href="/alerts" className="hover:text-white">
               แจ้งเตือนภัย
             </Link>
+            <Link href="/terms" className="hover:text-white">
+              ข้อกำหนดและเงื่อนไข
+            </Link>
+            <Link href="/privacy-policy" className="hover:text-white">
+              นโยบายความเป็นส่วนตัว
+            </Link>
             <Link href="mailto:chapter99solutions@gmail.com" className="hover:text-white">
               ติดต่อเรา
             </Link>
@@ -34,7 +40,7 @@ export function Footer() {
         </div>
 
         <p className="mt-10 border-t border-white/20 pt-6 text-center text-xs text-white/60">
-          © 2025 Thai-Aus Verified Community | Powered by Chapter99 Solutions
+          © 2026 Thai-Aus Verified Community | Powered by Chapter99 Solutions
         </p>
       </div>
     </footer>

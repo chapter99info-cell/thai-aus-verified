@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { StarRating } from '@/components/reviews/StarRating'
 import { CATEGORY_LABELS } from '@/lib/constants'
 import { ensureHttpUrl, lineHref, telHref } from '@/lib/contact'
+import { isPremiumProvider } from '@/lib/subscription'
 import type { ServiceProvider } from '@/types'
 
 interface BusinessCardProps {
@@ -12,20 +13,24 @@ interface BusinessCardProps {
 
 export function BusinessCard({ business }: BusinessCardProps) {
   const category = CATEGORY_LABELS[business.category]
+  const isPremium = isPremiumProvider(business)
 
   return (
-    <article className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:border-[#1e3a5f]/30 hover:shadow-md">
+    <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:border-[#1e3a5f]/30 hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-lg font-bold text-[#1e3a5f]">{business.business_name}</h3>
-        {business.is_verified ? (
-          <span className="shrink-0 rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700">
-            ✅ Verified
-          </span>
-        ) : (
-          <span className="shrink-0 rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">
-            ⏳ รอการยืนยัน
-          </span>
-        )}
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          {business.is_verified && (
+            <span className="rounded-full border border-green-200 bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+              ✅ Verified
+            </span>
+          )}
+          {isPremium && (
+            <span className="rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700">
+              ⭐ Premium
+            </span>
+          )}
+        </div>
       </div>
 
       <span className="mt-2 inline-flex w-fit rounded-full bg-[#1e3a5f]/10 px-2.5 py-0.5 text-xs font-medium text-[#1e3a5f]">
