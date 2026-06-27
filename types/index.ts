@@ -60,6 +60,21 @@ export interface ScamAlert {
   title: string
   description: string
   category: string
-  reported_by: string
+  is_published?: boolean
   created_at: string
+}
+
+export type KycDocumentType =
+  | 'abn_certificate'
+  | 'id_document'
+  | 'business_license'
+  | 'insurance'
+
+export interface KycDocument {
+  id: string
+  provider_id: string
+  document_type: KycDocumentType
+  file_url: string
+  status: 'pending' | 'approved' | 'rejected'
+  uploaded_at: string
 }
