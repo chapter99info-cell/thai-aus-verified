@@ -10,6 +10,7 @@ import type { User } from '@supabase/supabase-js'
 
 const publicLinks = [
   { href: '/directory', label: 'ค้นหาธุรกิจ' },
+  { href: '/pricing', label: 'ราคา' },
   { href: '/alerts', label: 'แจ้งเตือนภัย' },
 ]
 
@@ -18,6 +19,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<User | null>(null)
   const [fullName, setFullName] = useState('')
+  const [businessName, setBusinessName] = useState('')
   const [isVerifiedBusiness, setIsVerifiedBusiness] = useState(false)
 
   useEffect(() => {
@@ -40,6 +42,14 @@ export function Navbar() {
           setFullName(profile.full_name)
           setIsVerifiedBusiness(profile.role === 'verified_business')
         }
+
+        const { data: provider } = await supabase
+          .from('service_providers')
+          .select('business_name')
+          .eq('profile_id', authUser.id)
+          .maybeSingle()
+
+        setBusinessName(provider?.business_name ?? '')
       }
     }
 
@@ -89,7 +99,7 @@ export function Navbar() {
           {user ? (
             <>
               <span className="text-sm text-slate-600">
-                สวัสดี {fullName || user.email?.split('@')[0]}
+                สวัสดี {businessName || fullName || user.email?.split('@')[0]}
               </span>
               <Link
                 href="/dashboard"

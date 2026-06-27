@@ -34,6 +34,9 @@ CREATE TABLE service_providers (
   verification_status TEXT DEFAULT 'pending' CHECK (verification_status IN ('pending','approved','rejected')),
   rating DECIMAL(3,2) DEFAULT 0,
   review_count INT DEFAULT 0,
+  subscription_status TEXT DEFAULT 'free' CHECK (subscription_status IN ('free', 'premium')),
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
