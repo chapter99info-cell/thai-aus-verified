@@ -38,6 +38,9 @@ export function RegisterForm() {
   const [phone, setPhone] = useState('')
   const [lineId, setLineId] = useState('')
   const [facebookUrl, setFacebookUrl] = useState('')
+  const [instagramUrl, setInstagramUrl] = useState('')
+  const [website, setWebsite] = useState('')
+  const [portfolioUrl, setPortfolioUrl] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -80,10 +83,24 @@ export function RegisterForm() {
   }
 
   function goToStep3() {
-    if (!businessName.trim() || !suburb.trim() || !phone.trim()) {
+    if (!businessName.trim() || !suburb.trim()) {
       setError('กรุณากรอกข้อมูลที่จำเป็นให้ครบ')
       return
     }
+
+    const hasContact =
+      phone.trim() ||
+      lineId.trim() ||
+      facebookUrl.trim() ||
+      instagramUrl.trim() ||
+      website.trim() ||
+      portfolioUrl.trim()
+
+    if (!hasContact) {
+      setError('กรุณากรอกอย่างน้อย 1 ช่องทางที่ลูกค้าสามารถติดต่อได้')
+      return
+    }
+
     setError('')
     setStep(3)
   }
@@ -135,9 +152,12 @@ export function RegisterForm() {
         abn_number: cleanAbn,
         state,
         suburb,
-        phone,
+        phone: phone || null,
         line_id: lineId || null,
         facebook_url: facebookUrl || null,
+        instagram_url: instagramUrl || null,
+        website: website || null,
+        portfolio_url: portfolioUrl || null,
         is_verified: true,
         verification_status: 'approved',
         verified_at: new Date().toISOString(),
@@ -299,35 +319,67 @@ export function RegisterForm() {
                 ))}
               </select>
             </div>
-            <Input
-              id="suburb"
-              label="Suburb"
-              value={suburb}
-              onChange={(e) => setSuburb(e.target.value)}
-              required
-            />
-          </div>
           <Input
-            id="phone"
-            type="tel"
-            label="เบอร์โทร"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            id="suburb"
+            label="Suburb"
+            value={suburb}
+            onChange={(e) => setSuburb(e.target.value)}
             required
           />
-          <Input
-            id="lineId"
-            label="Line ID (ไม่บังคับ)"
-            value={lineId}
-            onChange={(e) => setLineId(e.target.value)}
-          />
-          <Input
-            id="facebookUrl"
-            label="Facebook URL (ไม่บังคับ)"
-            value={facebookUrl}
-            onChange={(e) => setFacebookUrl(e.target.value)}
-            placeholder="https://facebook.com/..."
-          />
+          </div>
+
+          <div className="rounded-xl border border-[#1e3a5f]/20 bg-slate-50 p-5">
+            <h3 className="font-semibold text-[#1e3a5f]">ช่องทางติดต่อ</h3>
+            <p className="mt-1 text-xs text-slate-600">
+              กรอกอย่างน้อย 1 ช่องทางที่ลูกค้าสามารถติดต่อได้ (ไม่บังคับทุกช่อง)
+            </p>
+
+            <div className="mt-4 space-y-4">
+              <Input
+                id="phone"
+                type="tel"
+                label="เบอร์โทร"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="04XX XXX XXX"
+              />
+              <Input
+                id="lineId"
+                label="Line ID"
+                value={lineId}
+                onChange={(e) => setLineId(e.target.value)}
+                placeholder="@yourline หรือ username"
+              />
+              <Input
+                id="facebookUrl"
+                label="Facebook Page URL"
+                value={facebookUrl}
+                onChange={(e) => setFacebookUrl(e.target.value)}
+                placeholder="https://facebook.com/yourpage"
+              />
+              <Input
+                id="instagramUrl"
+                label="Instagram URL"
+                value={instagramUrl}
+                onChange={(e) => setInstagramUrl(e.target.value)}
+                placeholder="https://instagram.com/youraccount"
+              />
+              <Input
+                id="website"
+                label="เว็บไซต์"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                placeholder="https://yourwebsite.com.au"
+              />
+              <Input
+                id="portfolioUrl"
+                label="Portfolio URL"
+                value={portfolioUrl}
+                onChange={(e) => setPortfolioUrl(e.target.value)}
+                placeholder="https://behance.net/... หรือ link ผลงาน"
+              />
+            </div>
+          </div>
 
           <div className="flex gap-3">
             <button

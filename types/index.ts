@@ -36,6 +36,11 @@ export interface ServiceProvider {
   line_id?: string
   website?: string
   facebook_url?: string
+  instagram_url?: string
+  portfolio_url?: string
+  youtube_url?: string
+  cover_image_url?: string
+  gallery_images?: string[]
   abn_number: string
   is_verified: boolean
   verified_at?: string
