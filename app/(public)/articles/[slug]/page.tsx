@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { ArticleCategoryBadge } from '@/components/articles/ArticleCategoryBadge'
 import { ArticleContent, ArticleDisclaimer } from '@/components/articles/ArticleContent'
 import { getCategoryLabel } from '@/lib/articles'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
@@ -76,9 +77,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
       <ArticleDisclaimer />
 
-      <span className="inline-block rounded-full bg-[rgba(5,26,36,0.06)] px-3 py-1 text-xs font-bold text-[rgba(5,26,36,0.5)]">
-        {getCategoryLabel(article.category)}
-      </span>
+      <ArticleCategoryBadge category={article.category} />
 
       <h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-[#051A24] md:text-4xl">
         {article.title}

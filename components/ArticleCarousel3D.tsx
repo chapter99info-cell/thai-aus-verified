@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { getCategoryLabel } from '@/lib/articles'
+import { ArticleCategoryBadge } from '@/components/articles/ArticleCategoryBadge'
 import type { ArticleListItem } from '@/types/articles'
 
 interface ArticleCarousel3DProps {
@@ -177,9 +177,7 @@ export function ArticleCarousel3D({ articles }: ArticleCarousel3DProps) {
                     isCenter ? '' : 'brightness-[0.92]'
                   }`}
                 >
-                  <span className="mb-4 inline-block w-fit rounded-full bg-[rgba(5,26,36,0.06)] px-3 py-1 text-xs font-bold text-[rgba(5,26,36,0.5)]">
-                    {getCategoryLabel(article.category)}
-                  </span>
+                  <ArticleCategoryBadge category={article.category} />
 
                   <h3 className="line-clamp-2 text-base font-bold leading-snug text-[#051A24]">
                     {article.title}
