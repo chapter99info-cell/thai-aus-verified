@@ -70,7 +70,11 @@ export interface ScamAlert {
   id: string
   title: string
   description: string
-  category: string
+  category?: string
+  alert_type?: string
+  severity?: string
+  evidence_url?: string
+  state?: string
   is_published?: boolean
   created_at: string
 }
