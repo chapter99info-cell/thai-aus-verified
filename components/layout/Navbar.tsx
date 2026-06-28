@@ -10,6 +10,9 @@ import type { User } from '@supabase/supabase-js'
 
 const CHAPTER99_URL = 'https://chapter99solutions.com'
 
+const LOGO_URL =
+  'https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png'
+
 type NavItem =
   | { type: 'link'; href: string; label: string; external?: boolean }
   | { type: 'chapter99' }
@@ -245,10 +248,13 @@ export function Navbar() {
     >
       <div className="mx-auto flex h-full max-w-[1100px] items-center justify-between px-4 sm:px-6">
         <Link href="/" className="group flex items-center gap-2">
-          <span className="flex text-lg leading-none">
-            <span className="nav-logo-emoji inline-block">🇹🇭</span>
-            <span className="nav-logo-emoji inline-block">🦘</span>
-          </span>
+          <img
+            src={LOGO_URL}
+            alt="Thai-Aus Verified"
+            width={36}
+            height={36}
+            className="nav-logo-emoji h-9 w-9 rounded-full object-contain"
+          />
           <span className="font-playfair text-[18px] font-bold text-[#1e3a5f] transition-colors duration-300 group-hover:text-[#3d6fa3]">
             Thai-Aus Verified
           </span>

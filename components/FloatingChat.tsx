@@ -31,7 +31,7 @@ export function FloatingChat() {
               alt="Thai-Aus Verified"
               width={40}
               height={40}
-              className="h-10 w-10 rounded-full object-cover"
+              className="h-10 w-10 rounded-full object-contain"
             />
             <div>
               <p className="text-sm font-bold text-gray-900">Thai-Aus Verified</p>

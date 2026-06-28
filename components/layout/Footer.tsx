@@ -31,10 +31,11 @@ export function Footer() {
             <div className="mb-3 flex items-center gap-3">
               <img
                 src="https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png"
-                alt="Thai-Aus Verified Logo"
-                width={48}
-                height={48}
-                className="rounded-full border-2 border-white object-cover"
+                alt="Thai-Aus Verified"
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full object-contain"
+                style={{ border: '2px solid rgba(255,255,255,0.2)' }}
               />
               <span className="text-xl font-bold text-white">Thai-Aus Verified</span>
             </div>
