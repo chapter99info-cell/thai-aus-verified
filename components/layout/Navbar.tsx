@@ -12,6 +12,7 @@ const publicLinks = [
   { href: '/directory', label: 'ค้นหาธุรกิจ' },
   { href: '/pricing', label: 'ราคา' },
   { href: '/alerts', label: 'แจ้งเตือนภัย' },
+  { href: '/terms', label: 'เกี่ยวกับเรา' },
 ]
 
 export function Navbar() {
@@ -20,7 +21,6 @@ export function Navbar() {
   const [user, setUser] = useState<User | null>(null)
   const [fullName, setFullName] = useState('')
   const [businessName, setBusinessName] = useState('')
-  const [isVerifiedBusiness, setIsVerifiedBusiness] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -40,7 +40,6 @@ export function Navbar() {
 
         if (profile) {
           setFullName(profile.full_name)
-          setIsVerifiedBusiness(profile.role === 'verified_business')
         }
 
         const { data: provider } = await supabase
@@ -72,32 +71,22 @@ export function Navbar() {
     router.refresh()
   }
 
+  const registerBtnClass =
+    'btn-navy-primary rounded-full px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90'
+
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-3">
-          <img
-            src="https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png"
-            alt="Thai-Aus Verified Logo"
-            width={44}
-            height={44}
-            className="rounded-full border-2 border-[#1e3a5f] object-cover shadow-sm"
-          />
-          <span className="hidden text-lg font-bold text-[#1e3a5f] sm:block">Thai-Aus Verified</span>
-          {isVerifiedBusiness && (
-            <span className="flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs text-green-700">
-              <span className="h-2 w-2 rounded-full bg-green-500" />
-              Verified
-            </span>
-          )}
+    <header className="sticky top-0 z-50 border-b border-[rgba(5,26,36,0.08)] bg-white/95 backdrop-blur-md">
+      <div className="mx-auto flex max-w-[1100px] items-center justify-between px-4 py-4 sm:px-6">
+        <Link href="/" className="font-playfair text-[20px] font-bold text-[#051A24]">
+          Thai-Aus Verified
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-8 md:flex">
           {publicLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-slate-600 transition-colors hover:text-[#1e3a5f]"
+              className="text-sm text-[rgba(5,26,36,0.45)] transition-colors hover:text-[#051A24]"
             >
               {link.label}
             </Link>
@@ -105,19 +94,19 @@ export function Navbar() {
 
           {user ? (
             <>
-              <span className="text-sm text-slate-600">
-                สวัสดี {businessName || fullName || user.email?.split('@')[0]}
+              <span className="text-sm text-[rgba(5,26,36,0.45)]">
+                {businessName || fullName || user.email?.split('@')[0]}
               </span>
               <Link
                 href="/dashboard"
-                className="text-sm font-medium text-[#1e3a5f] hover:underline"
+                className="text-sm text-[rgba(5,26,36,0.45)] hover:text-[#051A24]"
               >
                 แดชบอร์ด
               </Link>
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="text-sm text-slate-500 hover:text-slate-900"
+                className="text-sm text-[rgba(5,26,36,0.45)] hover:text-[#051A24]"
               >
                 ออกจากระบบ
               </button>
@@ -126,14 +115,11 @@ export function Navbar() {
             <>
               <Link
                 href="/login"
-                className="text-sm text-slate-600 hover:text-[#1e3a5f]"
+                className="text-sm text-[rgba(5,26,36,0.45)] hover:text-[#051A24]"
               >
                 เข้าสู่ระบบ
               </Link>
-              <Link
-                href="/register"
-                className="rounded-lg bg-[#1e3a5f] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#2d5282]"
-              >
+              <Link href="/register" className={registerBtnClass}>
                 ลงทะเบียนธุรกิจ
               </Link>
             </>
@@ -142,7 +128,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className="rounded-lg p-2 text-slate-600 md:hidden"
+          className="rounded-lg p-2 text-[#051A24] md:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? 'ปิดเมนู' : 'เปิดเมนู'}
         >
@@ -152,7 +138,7 @@ export function Navbar() {
 
       <div
         className={cn(
-          'border-t border-slate-200 bg-white md:hidden',
+          'border-t border-[rgba(5,26,36,0.08)] bg-white/95 md:hidden',
           open ? 'block' : 'hidden'
         )}
       >
@@ -161,7 +147,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+              className="rounded-lg px-3 py-2 text-sm text-[#051A24] hover:bg-[#f9fafb]"
               onClick={() => setOpen(false)}
             >
               {link.label}
@@ -169,38 +155,19 @@ export function Navbar() {
           ))}
           {user ? (
             <>
-              <Link
-                href="/dashboard"
-                className="rounded-lg px-3 py-2 text-sm text-[#1e3a5f]"
-                onClick={() => setOpen(false)}
-              >
+              <Link href="/dashboard" className="rounded-lg px-3 py-2 text-sm" onClick={() => setOpen(false)}>
                 แดชบอร์ด
               </Link>
-              <button
-                type="button"
-                onClick={() => {
-                  handleSignOut()
-                  setOpen(false)
-                }}
-                className="rounded-lg px-3 py-2 text-left text-sm text-slate-600"
-              >
+              <button type="button" onClick={handleSignOut} className="rounded-lg px-3 py-2 text-left text-sm">
                 ออกจากระบบ
               </button>
             </>
           ) : (
             <>
-              <Link
-                href="/login"
-                className="rounded-lg px-3 py-2 text-sm text-slate-700"
-                onClick={() => setOpen(false)}
-              >
+              <Link href="/login" className="rounded-lg px-3 py-2 text-sm" onClick={() => setOpen(false)}>
                 เข้าสู่ระบบ
               </Link>
-              <Link
-                href="/register"
-                className="mt-2 rounded-lg bg-[#1e3a5f] px-3 py-2 text-center text-sm font-medium text-white"
-                onClick={() => setOpen(false)}
-              >
+              <Link href="/register" className={`${registerBtnClass} mt-2 text-center`} onClick={() => setOpen(false)}>
                 ลงทะเบียนธุรกิจ
               </Link>
             </>

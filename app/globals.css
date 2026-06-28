@@ -2,21 +2,91 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #0f172a;
-  --navy: #1e3a5f;
+  --foreground: #0d212c;
+  --navy: #051a24;
+  --navy2: #0d212c;
+  --navy3: #1e3a5f;
+  --gold: #c9a84c;
+  --accent-bg: #f9fafb;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-navy: var(--navy);
+  --color-navy2: var(--navy2);
+  --color-navy3: var(--navy3);
+  --color-gold: var(--gold);
   --font-sans: var(--font-sarabun), sans-serif;
+  --font-serif: var(--font-playfair), Georgia, serif;
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Sarabun', sans-serif;
+  font-family: var(--font-sarabun), 'Sarabun', sans-serif;
+}
+
+body:has(#premium-home) > footer {
+  display: none;
+}
+
+.font-playfair {
+  font-family: var(--font-playfair), 'Playfair Display', Georgia, serif;
+}
+
+.btn-navy-primary {
+  background: var(--navy);
+  color: #fff;
+  box-shadow:
+    0 1px 2px rgba(5, 26, 36, 0.1),
+    0 4px 4px rgba(5, 26, 36, 0.09),
+    inset 0 2px 8px rgba(255, 255, 255, 0.12);
+}
+
+.btn-navy-secondary {
+  background: #fff;
+  color: var(--navy);
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.06),
+    0 4px 20px rgba(0, 0, 0, 0.07);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s ease forwards;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 32s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
 h1,
@@ -29,5 +99,5 @@ h6 {
 }
 
 h1 {
-  font-weight: 700;
+  font-weight: 800;
 }
