@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist_Mono, Sarabun } from 'next/font/google'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
+const sarabun = Sarabun({
+  variable: '--font-sarabun',
+  subsets: ['latin', 'thai'],
+  weight: ['300', '400', '500', '600', '700'],
 })
 
 const geistMono = Geist_Mono({
@@ -35,8 +36,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="th" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
-      <body className="flex min-h-full flex-col bg-white font-sans text-slate-900 antialiased">
+    <html lang="th" className={`${sarabun.variable} ${geistMono.variable} h-full`}>
+      <body className={`${sarabun.className} flex min-h-full flex-col bg-white text-slate-900 antialiased`}>
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
