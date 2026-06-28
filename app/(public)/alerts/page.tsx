@@ -1,4 +1,5 @@
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
+import { getSeverityMeta } from '@/lib/scam-alerts'
 import { formatDateDDMMYYYY } from '@/lib/utils'
 import type { ScamAlert } from '@/types'
 
@@ -15,7 +16,9 @@ export default async function AlertsPage() {
     const supabase = await createClient()
     const { data } = await supabase
       .from('scam_alerts')
-      .select('*')
+      .select(
+        'id, title, description, category, severity, state, evidence_url, created_at'
+      )
       .eq('is_published', true)
       .order('created_at', { ascending: false })
 
@@ -37,25 +40,51 @@ export default async function AlertsPage() {
         <p className="mt-10 text-center text-slate-600">ขณะนี้ไม่มีการแจ้งเตือนภัย ✅</p>
       ) : (
         <ul className="mt-10 space-y-4">
-          {alerts.map((alert) => (
-            <li
-              key={alert.id}
-              className="rounded-xl border border-slate-200 border-l-4 border-l-amber-500 bg-white p-6 shadow-sm"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <h2 className="text-lg font-bold text-[#1e3a5f]">{alert.title}</h2>
-                {alert.category && (
-                  <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-                    {alert.category}
-                  </span>
+          {alerts.map((alert) => {
+            const severity = getSeverityMeta(alert.severity)
+
+            return (
+              <li
+                key={alert.id}
+                className="rounded-xl border border-slate-200 border-l-4 border-l-amber-500 bg-white p-6 shadow-sm"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h2 className="text-lg font-bold text-[#1e3a5f]">{alert.title}</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {alert.category && (
+                      <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                        {alert.category}
+                      </span>
+                    )}
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${severity.badgeClass}`}
+                    >
+                      {severity.label.replace(/^🟡 |^🟠 |^🔴 /, '')}
+                    </span>
+                    {alert.state && (
+                      <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs text-slate-600">
+                        {alert.state}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-slate-700">{alert.description}</p>
+                {alert.evidence_url && (
+                  <a
+                    href={alert.evidence_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-block text-sm text-[#1e3a5f] underline"
+                  >
+                    ดูหลักฐาน
+                  </a>
                 )}
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">{alert.description}</p>
-              <time className="mt-4 block text-xs text-slate-500">
-                {formatDateDDMMYYYY(alert.created_at)}
-              </time>
-            </li>
-          ))}
+                <time className="mt-4 block text-xs text-slate-500">
+                  {formatDateDDMMYYYY(alert.created_at)}
+                </time>
+              </li>
+            )
+          })}
         </ul>
       )}
 

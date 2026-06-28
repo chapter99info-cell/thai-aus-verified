@@ -89,7 +89,7 @@ export function AdminPanel() {
   const loadData = useCallback(async () => {
     const supabase = createClient()
 
-    const [pendingRes, verifiedRes, alertsRes, articlesRes, membersRes, premiumRes] =
+    const [pendingRes, verifiedRes, articlesRes, membersRes, premiumRes, alertsApiRes] =
       await Promise.all([
         supabase
           .from('service_providers')
@@ -101,7 +101,6 @@ export function AdminPanel() {
           .select('*, profiles:profile_id(email, full_name, phone)')
           .eq('is_verified', true)
           .order('created_at', { ascending: false }),
-        supabase.from('scam_alerts').select('*').order('created_at', { ascending: false }),
         supabase.from('articles').select('*').order('created_at', { ascending: false }),
         supabase.from('profiles').select('*').order('created_at', { ascending: false }),
         supabase
@@ -109,14 +108,21 @@ export function AdminPanel() {
           .select('*, profiles:profile_id(email, full_name, phone)')
           .eq('subscription_status', 'premium')
           .order('created_at', { ascending: false }),
+        fetch('/api/admin/alerts'),
       ])
 
     setPending((pendingRes.data ?? []) as ProviderRow[])
     setVerified((verifiedRes.data ?? []) as ProviderRow[])
-    setAlerts((alertsRes.data ?? []) as ScamAlert[])
     setArticles((articlesRes.data ?? []) as Article[])
     setMembers((membersRes.data ?? []) as Profile[])
     setPremium((premiumRes.data ?? []) as ProviderRow[])
+
+    if (alertsApiRes.ok) {
+      const alertsData = (await alertsApiRes.json()) as ScamAlert[]
+      setAlerts(Array.isArray(alertsData) ? alertsData : [])
+    } else {
+      setAlerts([])
+    }
     setLoading(false)
   }, [])
 
@@ -244,7 +250,16 @@ export function AdminPanel() {
     const res = await fetch('/api/admin/alerts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(alertForm),
+      body: JSON.stringify({
+        title: alertForm.title,
+        description: alertForm.description,
+        category: getAlertTypeLabel(alertForm.alert_type),
+        alert_type: alertForm.alert_type,
+        severity: alertForm.severity,
+        evidence_url: alertForm.evidence_url || null,
+        state: alertForm.state,
+        is_published: alertForm.is_published,
+      }),
     })
     setSaving(false)
     if (res.ok) {
@@ -466,33 +481,69 @@ export function AdminPanel() {
             )}
 
           {tab === 'alerts' &&
-            filteredAlerts.map((alert) => (
-              <button
-                key={alert.id}
-                type="button"
-                onClick={() => {
-                  setSelectedAlertId(alert.id)
-                  setIsNewAlert(false)
-                  setSelectedProviderId(null)
-                }}
-                className={`w-full border-b border-[rgba(30,58,95,0.08)] px-4 py-3 text-left transition-colors ${
-                  selectedAlertId === alert.id ? 'bg-[#edf2fa]' : 'hover:bg-[#f8f9fc]'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="truncate font-medium text-[#1e3a5f]">{alert.title}</span>
-                  <span className="shrink-0 text-[11px] text-[rgba(30,58,95,0.4)]">
-                    {formatTime(alert.created_at)}
-                  </span>
+            filteredAlerts.map((alert) => {
+              const severity = getSeverityMeta(alert.severity)
+
+              return (
+                <div
+                  key={alert.id}
+                  className={`border-b border-[rgba(30,58,95,0.08)] ${
+                    selectedAlertId === alert.id ? 'bg-[#edf2fa]' : 'hover:bg-[#f8f9fc]'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedAlertId(alert.id)
+                      setIsNewAlert(false)
+                      setSelectedProviderId(null)
+                    }}
+                    className="w-full px-4 py-3 text-left"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="font-bold text-[#1e3a5f]">{alert.title}</h4>
+                      <time className="shrink-0 text-[11px] text-[rgba(30,58,95,0.4)]">
+                        {formatDateDDMMYYYY(alert.created_at)}
+                      </time>
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-[rgba(30,58,95,0.6)]">
+                      {alert.description}
+                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${severity.badgeClass}`}
+                      >
+                        {severity.label.replace(/^🟡 |^🟠 |^🔴 /, '')}
+                      </span>
+                      {alert.state && (
+                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600">
+                          {alert.state}
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                  <div className="flex items-center justify-between px-4 pb-3">
+                    <span className="text-[11px] text-[rgba(30,58,95,0.4)]">
+                      {alert.category || getAlertTypeLabel(alert.alert_type)}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleAlertPublish(alert.id, !alert.is_published)
+                      }}
+                      className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${
+                        alert.is_published
+                          ? 'bg-green-50 text-green-700'
+                          : 'bg-slate-100 text-slate-600'
+                      }`}
+                    >
+                      {alert.is_published ? 'Published' : 'Draft'}
+                    </button>
+                  </div>
                 </div>
-                <p className="mt-1 line-clamp-1 text-sm text-[rgba(30,58,95,0.6)]">
-                  {getAlertTypeLabel(alert.alert_type)}
-                </p>
-                <p className="mt-0.5 text-xs text-[rgba(30,58,95,0.4)]">
-                  {alert.is_published ? 'Published' : 'Draft'} · {alert.state}
-                </p>
-              </button>
-            ))}
+              )
+            })}
 
           {tab === 'articles' &&
             filteredArticles.map((article) => (
