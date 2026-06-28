@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { AdminDashboard } from '@/components/admin/AdminDashboard'
+import { AdminPanel } from '@/components/admin/AdminPanel'
 import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -25,12 +25,8 @@ export default async function AdminPage() {
   if (profile?.role !== 'admin') redirect('/')
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      <h1 className="text-2xl font-bold text-[#1e3a5f]">แผงผู้ดูแลระบบ</h1>
-      <p className="mt-1 text-sm text-slate-600">อนุมัติธุรกิจและจัดการแจ้งเตือนภัย</p>
-      <div className="mt-8">
-        <AdminDashboard />
-      </div>
+    <div className="min-h-screen bg-[#f8f9fc]">
+      <AdminPanel />
     </div>
   )
 }
