@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist_Mono, Playfair_Display, Sarabun } from 'next/font/google'
+import { FloatingChat } from '@/components/FloatingChat'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import './globals.css'
@@ -73,6 +74,7 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
+        <FloatingChat />
       </body>
     </html>
   )
