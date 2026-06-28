@@ -1,9 +1,31 @@
 import Link from 'next/link'
 
+const FOOTER_VIDEO =
+  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260302_085640_276ea93b-d7da-4418-a09b-2aa5b490e838.mp4'
+
 export function Footer() {
   return (
-    <footer className="mt-auto bg-[#1e3a5f] text-white">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <footer className="relative mt-auto overflow-hidden bg-[#122540] text-white">
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover object-center"
+          src={FOOTER_VIDEO}
+        />
+      </div>
+
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(18, 37, 64, 0.82) 0%, rgba(18, 37, 64, 0.88) 60%, rgba(18, 37, 64, 0.95) 100%)',
+        }}
+      />
+
+      <div className="relative z-[2] mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div>
             <div className="mb-3 flex items-center gap-3">
