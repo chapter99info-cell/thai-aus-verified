@@ -41,8 +41,10 @@ export function RegisterForm() {
   const [lineId, setLineId] = useState('')
   const [facebookUrl, setFacebookUrl] = useState('')
   const [instagramUrl, setInstagramUrl] = useState('')
-  const [website, setWebsite] = useState('')
-  const [portfolioUrl, setPortfolioUrl] = useState('')
+  const [tiktokUrl, setTiktokUrl] = useState('')
+  const [whatsapp, setWhatsapp] = useState('')
+  const [websiteUrl, setWebsiteUrl] = useState('')
+  const [googleMapsUrl, setGoogleMapsUrl] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
@@ -102,8 +104,10 @@ export function RegisterForm() {
       lineId.trim() ||
       facebookUrl.trim() ||
       instagramUrl.trim() ||
-      website.trim() ||
-      portfolioUrl.trim()
+      tiktokUrl.trim() ||
+      whatsapp.trim() ||
+      websiteUrl.trim() ||
+      googleMapsUrl.trim()
 
     if (!hasContact) {
       setError('กรุณากรอกอย่างน้อย 1 ช่องทางที่ลูกค้าสามารถติดต่อได้')
@@ -153,6 +157,9 @@ export function RegisterForm() {
         .update({
           phone,
           line_id: lineId || null,
+          whatsapp: whatsapp || null,
+          tiktok_url: tiktokUrl || null,
+          google_maps_url: googleMapsUrl || null,
           role: 'verified_business',
           full_name: businessName,
         })
@@ -169,8 +176,10 @@ export function RegisterForm() {
         line_id: lineId || null,
         facebook_url: facebookUrl || null,
         instagram_url: instagramUrl || null,
-        website: website || null,
-        portfolio_url: portfolioUrl || null,
+        tiktok_url: tiktokUrl || null,
+        whatsapp: whatsapp || null,
+        website: websiteUrl || null,
+        google_maps_url: googleMapsUrl || null,
         is_verified: true,
         verification_status: 'approved',
         verified_at: new Date().toISOString(),
@@ -350,55 +359,90 @@ export function RegisterForm() {
           />
           </div>
 
-          <div className="rounded-xl border border-[#1e3a5f]/20 bg-slate-50 p-5">
-            <h3 className="font-semibold text-[#1e3a5f]">ช่องทางติดต่อ</h3>
-            <p className="mt-1 text-xs text-slate-600">
-              กรอกอย่างน้อย 1 ช่องทางที่ลูกค้าสามารถติดต่อได้ (ไม่บังคับทุกช่อง)
+          <div className="space-y-3">
+            <p className="text-sm font-bold text-[#1e3a5f]">
+              ช่องทางติดต่อ (ใส่อย่างน้อย 1 ช่องทาง)
             </p>
 
-            <div className="mt-4 space-y-4">
-              <Input
-                id="phone"
+            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+              <span className="text-xl">📞</span>
+              <input
                 type="tel"
-                label="เบอร์โทร"
+                placeholder="เบอร์โทร (04xx xxx xxx)"
+                className="flex-1 text-sm outline-none"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="04XX XXX XXX"
               />
-              <Input
-                id="lineId"
-                label="Line ID"
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+              <span className="text-xl">💚</span>
+              <input
+                placeholder="Line ID"
+                className="flex-1 text-sm outline-none"
                 value={lineId}
                 onChange={(e) => setLineId(e.target.value)}
-                placeholder="@yourline หรือ username"
               />
-              <Input
-                id="facebookUrl"
-                label="Facebook Page URL"
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+              <span className="text-xl">📘</span>
+              <input
+                placeholder="Facebook URL หรือ username"
+                className="flex-1 text-sm outline-none"
                 value={facebookUrl}
                 onChange={(e) => setFacebookUrl(e.target.value)}
-                placeholder="https://facebook.com/yourpage"
               />
-              <Input
-                id="instagramUrl"
-                label="Instagram URL"
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+              <span className="text-xl">📸</span>
+              <input
+                placeholder="Instagram @username"
+                className="flex-1 text-sm outline-none"
                 value={instagramUrl}
                 onChange={(e) => setInstagramUrl(e.target.value)}
-                placeholder="https://instagram.com/youraccount"
               />
-              <Input
-                id="website"
-                label="เว็บไซต์"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-                placeholder="https://yourwebsite.com.au"
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+              <span className="text-xl">🎵</span>
+              <input
+                placeholder="TikTok @username"
+                className="flex-1 text-sm outline-none"
+                value={tiktokUrl}
+                onChange={(e) => setTiktokUrl(e.target.value)}
               />
-              <Input
-                id="portfolioUrl"
-                label="Portfolio URL"
-                value={portfolioUrl}
-                onChange={(e) => setPortfolioUrl(e.target.value)}
-                placeholder="https://behance.net/... หรือ link ผลงาน"
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+              <span className="text-xl">💬</span>
+              <input
+                type="tel"
+                placeholder="WhatsApp เบอร์ (04xx xxx xxx)"
+                className="flex-1 text-sm outline-none"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value)}
+              />
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+              <span className="text-xl">🌐</span>
+              <input
+                placeholder="เว็บไซต์ https://..."
+                className="flex-1 text-sm outline-none"
+                value={websiteUrl}
+                onChange={(e) => setWebsiteUrl(e.target.value)}
+              />
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+              <span className="text-xl">📍</span>
+              <input
+                placeholder="Google Maps link"
+                className="flex-1 text-sm outline-none"
+                value={googleMapsUrl}
+                onChange={(e) => setGoogleMapsUrl(e.target.value)}
               />
             </div>
           </div>

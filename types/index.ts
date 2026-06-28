@@ -37,6 +37,9 @@ export interface ServiceProvider {
   website?: string
   facebook_url?: string
   instagram_url?: string
+  tiktok_url?: string
+  whatsapp?: string
+  google_maps_url?: string
   portfolio_url?: string
   youtube_url?: string
   cover_image_url?: string
