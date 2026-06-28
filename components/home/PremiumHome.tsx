@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { OccupationCategories } from '@/components/OccupationCategories'
 import { CATEGORY_ICON_BASE } from '@/lib/constants'
 
 const HERO_VIDEO =
@@ -205,6 +206,8 @@ export function PremiumHome({ verifiedCount, stateCount, alertTitle }: PremiumHo
           </div>
         </div>
       </section>
+
+      <OccupationCategories />
 
       {/* Quote */}
       <FadeIn className="px-4 py-20 sm:px-6">

@@ -1,3 +1,4 @@
+import { OccupationCategories } from '@/components/OccupationCategories'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
 import { getSeverityMeta } from '@/lib/scam-alerts'
 import { formatDateDDMMYYYY } from '@/lib/utils'
@@ -26,6 +27,7 @@ export default async function AlertsPage() {
   }
 
   return (
+    <>
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <div className="rounded-xl border border-red-100 bg-red-50 px-6 py-5">
         <h1 className="text-2xl font-bold text-[#1e3a5f]">
@@ -87,8 +89,16 @@ export default async function AlertsPage() {
           })}
         </ul>
       )}
+    </div>
 
-      <div className="mt-12 rounded-xl border border-slate-200 bg-slate-50 p-6 text-center">
+    <OccupationCategories
+      variant="alerts"
+      showDefaultEyebrow={false}
+      title="ธุรกิจที่ต้องระวัง Scam มากที่สุด"
+    />
+
+    <div className="mx-auto max-w-3xl px-4 pb-12 sm:px-6">
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center">
         <p className="text-slate-700">พบเห็นการโกง? แจ้งให้เราทราบ</p>
         <a
           href="mailto:chapter99solutions@gmail.com?subject=แจ้งเตือนภัย - Thai-Aus Verified"
@@ -98,5 +108,6 @@ export default async function AlertsPage() {
         </a>
       </div>
     </div>
+    </>
   )
 }

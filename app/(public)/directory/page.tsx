@@ -1,10 +1,17 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
+import { OccupationCategories } from '@/components/OccupationCategories'
 import { BusinessCard } from '@/components/directory/BusinessCard'
 import { SearchFilter } from '@/components/directory/SearchFilter'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
 import { isPremiumProvider } from '@/lib/subscription'
-import type { ServiceProvider } from '@/types'
+import type { ServiceCategory, ServiceProvider } from '@/types'
+
+const CATEGORY_QUERY_ALIASES: Record<string, ServiceCategory> = {
+  'นวดแผนไทย': 'massage',
+  'ร้านอาหาร': 'restaurant',
+  'ช่างภาพ': 'photography',
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -40,7 +47,9 @@ async function fetchBusinesses(params: Awaited<PageProps['searchParams']>) {
       businesses = businesses.filter((b) => b.business_name.toLowerCase().includes(q))
     }
     if (params.category) {
-      businesses = businesses.filter((b) => b.category === params.category)
+      const resolved =
+        CATEGORY_QUERY_ALIASES[params.category] ?? (params.category as ServiceCategory)
+      businesses = businesses.filter((b) => b.category === resolved)
     }
     if (params.state) {
       businesses = businesses.filter((b) => b.state === params.state)
@@ -81,6 +90,7 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
   const { businesses, suburbs } = await fetchBusinesses(params)
 
   return (
+    <>
     <div className="bg-white px-4 py-10 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <Link href="/" className="text-sm text-slate-500 hover:text-[#1e3a5f]">
@@ -114,5 +124,11 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
         )}
       </div>
     </div>
+
+    <OccupationCategories
+      showDefaultEyebrow={false}
+      title="หมวดหมู่ยอดนิยม"
+    />
+    </>
   )
 }

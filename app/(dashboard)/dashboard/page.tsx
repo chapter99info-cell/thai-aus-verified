@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
+import { OccupationCategories } from '@/components/OccupationCategories'
 import { PremiumBadge, VerifiedBadge } from '@/components/business/PremiumBadge'
 import { DashboardToast } from '@/components/dashboard/DashboardToast'
 import { SignOutButton } from '@/components/dashboard/SignOutButton'
@@ -49,6 +50,7 @@ export default async function DashboardPage() {
     new Date(provider.subscription_grace_until) <= new Date()
 
   return (
+    <>
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
       <Suspense fallback={null}>
         <DashboardToast />
@@ -115,8 +117,12 @@ export default async function DashboardPage() {
           </Link>
         </div>
       )}
+    </div>
 
-      <div className="mt-8 flex flex-wrap gap-3">
+    <OccupationCategories showDefaultEyebrow={false} title="ธุรกิจในชุมชน" />
+
+    <div className="mx-auto max-w-4xl px-4 pb-12 sm:px-6">
+      <div className="flex flex-wrap gap-3">
         {provider && !isPremium && (
           <Link
             href="/pricing"
@@ -136,5 +142,6 @@ export default async function DashboardPage() {
         <SignOutButton />
       </div>
     </div>
+    </>
   )
 }
