@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-const CARD_VIDEOS = [
-  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260302_085640_276ea93b-d7da-4418-a09b-2aa5b490e838.mp4',
-  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260505_101331_74f9b798-3f00-4e86-8a01-377aa16ffeaa.mp4',
-  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_064122_c4750c0e-7476-4b44-94a2-a85a65c63bf2.mp4',
-  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260302_085640_276ea93b-d7da-4418-a09b-2aa5b490e838.mp4',
-  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260505_101331_74f9b798-3f00-4e86-8a01-377aa16ffeaa.mp4',
+const CARD_IMAGES = [
+  'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=800&q=80',
+  'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80',
+  'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=800&q=80',
+  'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80',
+  'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
 ]
 
 const CARD_DETAILS = [
@@ -18,12 +18,10 @@ const CARD_DETAILS = [
   { number: 'อสังหาริมทรัพย์ · Real Estate', name: 'REAL ESTATE', cvv: 'SA' },
 ]
 
-const CARD_COLORS = ['#1e3a5f', '#2a4f7c', '#c9a84c', '#3d6fa3', '#122540']
-
 const LOGO_URL =
   'https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png'
 
-const NUM_CARDS = CARD_VIDEOS.length
+const NUM_CARDS = CARD_IMAGES.length
 const ANGLE_STEP = 360 / NUM_CARDS
 const AUTO_ROTATE_SPEED = 0.06
 const FRICTION = 0.95
@@ -53,7 +51,7 @@ function MetallicChip({ id }: { id: number }) {
 
 function CarouselCard({ index, rotation, radius }: { index: number; rotation: number; radius: number }) {
   const details = CARD_DETAILS[index]
-  const color = CARD_COLORS[index]
+  const imageIndex = index % CARD_IMAGES.length
   const cardAngle = index * ANGLE_STEP
   const relativeAngle = ((cardAngle + rotation) % 360 + 360) % 360
   const distFromFront = relativeAngle > 180 ? relativeAngle - 360 : relativeAngle
@@ -80,18 +78,16 @@ function CarouselCard({ index, rotation, radius }: { index: number; rotation: nu
           className="absolute inset-0 overflow-hidden rounded-2xl"
           style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
         >
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 h-full w-full object-cover"
-            src={CARD_VIDEOS[index]}
+          <img
+            src={CARD_IMAGES[imageIndex]}
+            alt={CARD_DETAILS[imageIndex].name}
+            className="absolute inset-0 h-full w-full rounded-[16px] object-cover"
           />
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 rounded-[16px]"
             style={{
-              background: `linear-gradient(135deg, ${color}dd 0%, ${color}88 50%, ${color}cc 100%)`,
+              background:
+                'linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.5) 100%)',
             }}
           />
           <div className="relative flex h-full flex-col justify-between p-5 sm:p-6">
@@ -122,10 +118,19 @@ function CarouselCard({ index, rotation, radius }: { index: number; rotation: nu
             transform: 'rotateY(180deg)',
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
-            background: `linear-gradient(160deg, ${color} 0%, ${CARD_COLORS[(index + 1) % NUM_CARDS]} 100%)`,
           }}
         >
-          <div className="flex h-full flex-col justify-between p-5 sm:p-6">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{ filter: 'blur(16px)', transform: 'scale(1.15)' }}
+          >
+            <img
+              src={CARD_IMAGES[imageIndex]}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+          <div className="relative flex h-full flex-col justify-between p-5 sm:p-6">
             <div className="h-8 w-12 rounded bg-white/10" />
             <div>
               <p className="font-mono text-xs tracking-wider text-white/50">CATEGORY</p>
