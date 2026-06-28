@@ -3,6 +3,23 @@ export const runtime = 'nodejs'
 import { NextResponse } from 'next/server'
 import { ABN_DOWNTIME_MESSAGE, ABN_FETCH_TIMEOUT_MS } from '@/lib/abn'
 
+function isGuidConfigured(): boolean {
+  const guid = process.env.ABN_LOOKUP_GUID?.trim()
+  return !!guid && guid !== 'PENDING_FROM_EMAIL'
+}
+
+function mockPendingResponse(cleanABN: string) {
+  return NextResponse.json({
+    valid: true,
+    businessName: 'Business (ABN Pending Verification)',
+    abn: cleanABN,
+    status: 'Active',
+    state: 'NSW',
+    entityType: 'Individual/Sole Trader',
+    pendingVerification: true,
+  })
+}
+
 function downtimeResponse() {
   return NextResponse.json({
     valid: false,
@@ -23,8 +40,8 @@ export async function POST(req: Request) {
   }
 
   const guid = process.env.ABN_LOOKUP_GUID
-  if (!guid || guid === 'PENDING_FROM_EMAIL') {
-    return downtimeResponse()
+  if (!isGuidConfigured()) {
+    return mockPendingResponse(cleanABN)
   }
 
   try {
