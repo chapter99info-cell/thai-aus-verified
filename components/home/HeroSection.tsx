@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { HOMEPAGE_CATEGORY_ICONS } from '@/lib/constants'
 
 export function HeroSection() {
   return (
@@ -15,6 +16,25 @@ export function HeroSection() {
         <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
           ทุกธุรกิจในไดเรกทอรีนี้ผ่านการตรวจสอบ ABN และยืนยันตัวตนแล้ว ปลอดภัย ไม่มีโกง
         </p>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+          {HOMEPAGE_CATEGORY_ICONS.map((item) => (
+            <Link
+              key={item.label}
+              href={`/directory?category=${item.category}`}
+              className="inline-flex items-center gap-2 rounded-full border border-[#1e3a5f]/20 bg-slate-50 px-3 py-1.5 text-sm text-[#1e3a5f] transition-colors hover:border-[#1e3a5f] hover:bg-white"
+            >
+              <img
+                src={item.icon}
+                alt={item.label}
+                width={32}
+                height={32}
+                className="h-8 w-8"
+              />
+              <span className="font-medium">{item.label}</span>
+            </Link>
+          ))}
+        </div>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
