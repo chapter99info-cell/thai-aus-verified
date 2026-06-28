@@ -30,8 +30,6 @@ export default async function DirectoryPage() {
     <>
       <OccupationCategories hero showScrollHint />
 
-      <div className="h-12 bg-gradient-to-b from-black to-white" />
-
       <div className="bg-white px-4 py-10 sm:px-6">
         <div className="mx-auto max-w-6xl">
           <Link href="/" className="text-sm text-slate-500 hover:text-[#1e3a5f]">
