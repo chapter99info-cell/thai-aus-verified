@@ -91,41 +91,43 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
 
   return (
     <>
-    <div className="bg-white px-4 py-10 sm:px-6">
-      <div className="mx-auto max-w-6xl">
-        <Link href="/" className="text-sm text-slate-500 hover:text-[#1e3a5f]">
-          ← กลับหน้าแรก
-        </Link>
-        <h1 className="mt-4 text-3xl font-bold text-slate-900">ค้นหาธุรกิจ</h1>
-        <p className="mt-2 text-slate-600">พบ {businesses.length} ธุรกิจ</p>
+      <OccupationCategories hero showScrollHint />
 
-        <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
-          <Suspense fallback={<p className="text-sm text-slate-500">กำลังโหลดตัวกรอง...</p>}>
-            <SearchFilter suburbs={suburbs} />
-          </Suspense>
+      <div className="h-12 bg-gradient-to-b from-black to-white" />
+
+      <div className="bg-white px-4 py-10 sm:px-6">
+        <div className="mx-auto max-w-6xl">
+          <Link href="/" className="text-sm text-slate-500 hover:text-[#1e3a5f]">
+            ← กลับหน้าแรก
+          </Link>
+          <h1 className="mt-4 text-3xl font-bold text-slate-900">ค้นหาธุรกิจ</h1>
+          <p className="mt-2 text-slate-600">พบ {businesses.length} ธุรกิจ</p>
+
+          <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <Suspense fallback={<p className="text-sm text-slate-500">กำลังโหลดตัวกรอง...</p>}>
+              <SearchFilter suburbs={suburbs} />
+            </Suspense>
+          </div>
+
+          {businesses.length === 0 ? (
+            <div className="mt-10 rounded-xl border border-slate-200 bg-slate-50 p-12 text-center">
+              <p className="text-slate-600">ยังไม่มีธุรกิจในหมวดนี้ เป็นคนแรกที่ลงทะเบียน!</p>
+              <Link
+                href="/register"
+                className="mt-4 inline-block text-sm font-medium text-[#1e3a5f] hover:underline"
+              >
+                ลงทะเบียนธุรกิจ →
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {businesses.map((business) => (
+                <BusinessCard key={business.id} business={business} />
+              ))}
+            </div>
+          )}
         </div>
-
-        {businesses.length === 0 ? (
-          <div className="mt-10 rounded-xl border border-slate-200 bg-slate-50 p-12 text-center">
-            <p className="text-slate-600">ยังไม่มีธุรกิจในหมวดนี้ เป็นคนแรกที่ลงทะเบียน!</p>
-            <Link
-              href="/register"
-              className="mt-4 inline-block text-sm font-medium text-[#1e3a5f] hover:underline"
-            >
-              ลงทะเบียนธุรกิจ →
-            </Link>
-          </div>
-        ) : (
-          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {businesses.map((business) => (
-              <BusinessCard key={business.id} business={business} />
-            ))}
-          </div>
-        )}
       </div>
-    </div>
-
-    <OccupationCategories />
     </>
   )
 }

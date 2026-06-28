@@ -152,7 +152,13 @@ function CarouselCard({ index, rotation, radius }: { index: number; rotation: nu
   )
 }
 
-export default function OccupationCategories() {
+export default function OccupationCategories({
+  hero = false,
+  showScrollHint = false,
+}: {
+  hero?: boolean
+  showScrollHint?: boolean
+} = {}) {
   const [rotation, setRotation] = useState(0)
   const [radius, setRadius] = useState(420)
   const rotationRef = useRef(0)
@@ -219,8 +225,8 @@ export default function OccupationCategories() {
   }
 
   return (
-    <section className="w-full bg-black">
-      <div className="bg-black py-12 text-center">
+    <section className={`relative w-full bg-black ${hero ? 'mt-0 pt-0' : ''}`}>
+      <div className={`bg-black text-center ${hero ? 'pb-8 pt-6' : 'py-12'}`}>
         <p className="mb-3 text-xs font-bold uppercase tracking-widest text-white/30">
           อาชีพยอดฮิตของคนไทยในออสเตรเลีย
         </p>
@@ -260,7 +266,11 @@ export default function OccupationCategories() {
           </div>
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center gap-2">
+        <div
+          className={`pointer-events-none absolute inset-x-0 flex justify-center gap-2 ${
+            showScrollHint ? 'bottom-20' : 'bottom-6'
+          }`}
+        >
           {CARD_DETAILS.map((card, i) => {
             const cardAngle = i * ANGLE_STEP
             const relativeAngle = ((cardAngle + rotation) % 360 + 360) % 360
@@ -283,6 +293,15 @@ export default function OccupationCategories() {
             )
           })}
         </div>
+
+        {showScrollHint ? (
+          <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 animate-bounce flex-col items-center gap-2">
+            <span className="text-xs font-medium text-white/50">เลื่อนลงเพื่อค้นหา</span>
+            <svg className="h-4 w-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        ) : null}
       </div>
     </section>
   )
