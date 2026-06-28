@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { OccupationCategories } from '@/components/OccupationCategories'
+import OccupationCategories from '@/components/OccupationCategories'
 import { BusinessCard } from '@/components/directory/BusinessCard'
 import { SearchFilter } from '@/components/directory/SearchFilter'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
@@ -125,10 +125,7 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
       </div>
     </div>
 
-    <OccupationCategories
-      showDefaultEyebrow={false}
-      title="หมวดหมู่ยอดนิยม"
-    />
+    <OccupationCategories />
     </>
   )
 }

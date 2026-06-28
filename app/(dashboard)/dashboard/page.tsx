@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
-import { OccupationCategories } from '@/components/OccupationCategories'
+import OccupationCategories from '@/components/OccupationCategories'
 import { PremiumBadge, VerifiedBadge } from '@/components/business/PremiumBadge'
 import { DashboardToast } from '@/components/dashboard/DashboardToast'
 import { SignOutButton } from '@/components/dashboard/SignOutButton'
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
       )}
     </div>
 
-    <OccupationCategories showDefaultEyebrow={false} title="ธุรกิจในชุมชน" />
+    <OccupationCategories />
 
     <div className="mx-auto max-w-4xl px-4 pb-12 sm:px-6">
       <div className="flex flex-wrap gap-3">

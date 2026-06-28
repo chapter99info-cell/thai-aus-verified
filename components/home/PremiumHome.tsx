@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { OccupationCategories } from '@/components/OccupationCategories'
+import OccupationCategories from '@/components/OccupationCategories'
 import { CATEGORY_ICON_BASE } from '@/lib/constants'
 
 const HERO_VIDEO =

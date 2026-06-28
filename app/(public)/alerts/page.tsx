@@ -1,4 +1,4 @@
-import { OccupationCategories } from '@/components/OccupationCategories'
+import OccupationCategories from '@/components/OccupationCategories'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
 import { getSeverityMeta } from '@/lib/scam-alerts'
 import { formatDateDDMMYYYY } from '@/lib/utils'
@@ -91,11 +91,7 @@ export default async function AlertsPage() {
       )}
     </div>
 
-    <OccupationCategories
-      variant="alerts"
-      showDefaultEyebrow={false}
-      title="ธุรกิจที่ต้องระวัง Scam มากที่สุด"
-    />
+    <OccupationCategories />
 
     <div className="mx-auto max-w-3xl px-4 pb-12 sm:px-6">
       <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center">
