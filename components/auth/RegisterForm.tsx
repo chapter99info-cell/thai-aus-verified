@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CheckCircle2 } from 'lucide-react'
 import { Input } from '@/components/ui/Input'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 import { AU_STATES, CATEGORY_LABELS } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
 import type { AustralianState, ServiceCategory } from '@/types'
@@ -440,9 +441,8 @@ export function RegisterForm() {
             required
             autoComplete="email"
           />
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             label="รหัสผ่าน"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
