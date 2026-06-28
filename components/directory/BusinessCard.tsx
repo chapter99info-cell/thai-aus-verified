@@ -1,10 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { StarRating } from '@/components/reviews/StarRating'
 import { CATEGORY_LABELS } from '@/lib/constants'
-import { ensureHttpUrl, lineHref, telHref } from '@/lib/contact'
-import { isPremiumProvider } from '@/lib/subscription'
+import {
+  ensureHttpUrl,
+  lineHref,
+  messengerHref,
+  telHref,
+  whatsappHref,
+} from '@/lib/contact'
 import type { ServiceProvider } from '@/types'
 
 interface BusinessCardProps {
@@ -12,102 +16,108 @@ interface BusinessCardProps {
 }
 
 export function BusinessCard({ business }: BusinessCardProps) {
-  const category = CATEGORY_LABELS[business.category]
-  const isPremium = isPremiumProvider(business)
+  const categoryLabel = CATEGORY_LABELS[business.category]?.th ?? business.category
+  const websiteUrl = business.portfolio_url?.trim() || business.website?.trim()
+  const hasFacebook = !!business.facebook_url?.trim()
+  const hasPhone = !!business.phone?.trim()
 
   return (
-    <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:border-[#1e3a5f]/30 hover:shadow-md">
-      <div className="flex items-start justify-between gap-3">
-        <h3 className="text-lg font-bold text-[#1e3a5f]">{business.business_name}</h3>
-        <div className="flex shrink-0 flex-col items-end gap-1">
-          {business.is_verified && (
-            <span className="rounded-full border border-green-200 bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
-              ✅ Verified
+    <div className="rounded-2xl border border-[#1e3a5f]/8 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div>
+          <Link href={`/business/${business.id}`}>
+            <h3 className="text-base font-bold leading-tight text-[#1e3a5f] hover:underline">
+              {business.business_name}
+            </h3>
+          </Link>
+          <div className="mt-1 flex flex-wrap gap-2">
+            <span className="rounded-full bg-[#1e3a5f]/6 px-2 py-0.5 text-xs text-[#1e3a5f]/60">
+              {categoryLabel}
             </span>
-          )}
-          {isPremium && (
-            <span className="rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700">
-              ⭐ Premium
+            <span className="rounded-full bg-[#1e3a5f]/6 px-2 py-0.5 text-xs text-[#1e3a5f]/60">
+              📍 {business.state}
             </span>
-          )}
+            {business.is_verified && (
+              <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
+                ✓ Verified ABN
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#1e3a5f] text-lg font-bold text-white">
+          {business.business_name?.[0]?.toUpperCase() || '?'}
         </div>
       </div>
 
-      <span className="mt-2 inline-flex w-fit rounded-full bg-[#1e3a5f]/10 px-2.5 py-0.5 text-xs font-medium text-[#1e3a5f]">
-        {category.emoji} {category.th}
-      </span>
+      {business.abn_number && (
+        <p className="mb-3 text-xs text-[#1e3a5f]/40">ABN: {business.abn_number}</p>
+      )}
 
-      <p className="mt-3 text-sm text-slate-600">
-        {business.suburb}, {business.state}
-      </p>
-
-      <StarRating
-        rating={Number(business.rating)}
-        showAverage
-        reviewCount={business.review_count}
-        className="mt-3"
-        size={14}
-      />
-
-      <div className="mt-4 flex flex-wrap gap-2">
-        {business.phone?.trim() && (
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        {hasPhone && (
           <a
-            href={telHref(business.phone)}
-            onClick={(e) => e.stopPropagation()}
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-green-200 bg-green-50 text-lg hover:bg-green-100"
-            aria-label="โทร"
-            title="โทร"
+            href={telHref(business.phone!)}
+            className="flex items-center justify-center gap-2 rounded-xl bg-[#1e3a5f] py-3 text-sm font-semibold text-white transition-all active:scale-95"
           >
-            📞
+            📞 โทรเลย
           </a>
         )}
+
+        {hasFacebook && (
+          <a
+            href={messengerHref(business.facebook_url!)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 rounded-xl bg-[#1877F2] py-3 text-sm font-semibold text-white transition-all active:scale-95"
+          >
+            💬 Inbox
+          </a>
+        )}
+
         {business.line_id?.trim() && (
           <a
             href={lineHref(business.line_id)}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-green-200 bg-green-50 text-lg hover:bg-green-100"
-            aria-label="Line"
-            title="Line"
+            className="flex items-center justify-center gap-2 rounded-xl bg-[#06C755] py-3 text-sm font-semibold text-white transition-all active:scale-95"
           >
-            💬
+            💚 Line
           </a>
         )}
-        {business.facebook_url?.trim() && (
+
+        {websiteUrl && (
           <a
-            href={ensureHttpUrl(business.facebook_url)}
+            href={ensureHttpUrl(websiteUrl)}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-blue-200 bg-blue-50 text-lg hover:bg-blue-100"
-            aria-label="Facebook"
-            title="Facebook"
+            className="flex items-center justify-center gap-2 rounded-xl border border-[#1e3a5f]/15 bg-white py-3 text-sm font-semibold text-[#1e3a5f] transition-all active:scale-95"
           >
-            👥
+            🌐 เว็บไซต์
           </a>
         )}
-        {business.instagram_url?.trim() && (
+
+        {hasPhone && !hasFacebook && (
           <a
-            href={ensureHttpUrl(business.instagram_url)}
+            href={whatsappHref(business.phone!)}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-pink-200 bg-pink-50 text-lg hover:bg-pink-100"
-            aria-label="Instagram"
-            title="Instagram"
+            className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 text-sm font-semibold text-white transition-all active:scale-95"
           >
-            📸
+            💬 WhatsApp
           </a>
         )}
       </div>
 
-      <Link
-        href={`/business/${business.id}`}
-        className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#1e3a5f] px-4 py-2.5 text-center text-base font-medium text-white transition-colors hover:bg-[#2d5282]"
-      >
-        ดูโปรไฟล์เต็ม →
-      </Link>
-    </article>
+      {business.instagram_url?.trim() && (
+        <a
+          href={ensureHttpUrl(business.instagram_url)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 block text-center text-xs text-[#1e3a5f]/40 transition-colors hover:text-[#1e3a5f]"
+        >
+          Instagram →
+        </a>
+      )}
+    </div>
   )
 }

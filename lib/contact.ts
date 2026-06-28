@@ -15,6 +15,24 @@ export function ensureHttpUrl(url: string) {
   return `https://${trimmed}`
 }
 
+export function messengerHref(facebookUrl: string) {
+  const trimmed = facebookUrl.trim()
+  if (!trimmed) return ''
+  const slug = trimmed.replace(/\/$/, '').split('/').pop() ?? ''
+  if (!slug || slug === 'www.facebook.com' || slug === 'facebook.com') return ensureHttpUrl(trimmed)
+  return `https://m.me/${encodeURIComponent(slug)}`
+}
+
+export function whatsappHref(phone: string) {
+  const digits = phone.replace(/\D/g, '')
+  const au = digits.startsWith('61')
+    ? digits
+    : digits.startsWith('0')
+      ? `61${digits.slice(1)}`
+      : `61${digits}`
+  return `https://wa.me/${au}`
+}
+
 export function hasContactChannel(provider: {
   phone?: string | null
   line_id?: string | null
