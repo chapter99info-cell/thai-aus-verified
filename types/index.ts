@@ -112,3 +112,22 @@ export interface KycDocument {
   status: 'pending' | 'approved' | 'rejected'
   uploaded_at: string
 }
+
+export interface InterviewAnswer {
+  question: string
+  answer: string
+}
+
+export type InterviewSessionStatus = 'pending' | 'completed'
+
+export interface InterviewSession {
+  id: string
+  interviewee_name: string
+  business_name?: string | null
+  session_type: string
+  questions: string[]
+  answers: InterviewAnswer[]
+  ai_post?: string | null
+  status: InterviewSessionStatus
+  created_at: string
+}

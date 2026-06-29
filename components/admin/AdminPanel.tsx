@@ -9,6 +9,7 @@ import {
   Trash2,
   X,
 } from 'lucide-react'
+import { InterviewAdminTab } from '@/components/admin/InterviewAdminTab'
 import { CATEGORY_LABELS } from '@/lib/constants'
 import { slugifyTitle } from '@/lib/articles'
 import {
@@ -25,7 +26,7 @@ import { formatDateDDMMYYYY } from '@/lib/utils'
 import type { Article } from '@/types/articles'
 import type { Profile, ScamAlert, ServiceProvider } from '@/types'
 
-type AdminTab = 'pending' | 'verified' | 'alerts' | 'members' | 'premium' | 'articles' | 'sales'
+type AdminTab = 'pending' | 'verified' | 'alerts' | 'members' | 'premium' | 'articles' | 'sales' | 'interviews'
 
 type ProviderRow = ServiceProvider & {
   profiles: Pick<Profile, 'email' | 'full_name' | 'phone'> | null
@@ -89,6 +90,7 @@ export function AdminPanel() {
   const [members, setMembers] = useState<Profile[]>([])
   const [premium, setPremium] = useState<ProviderRow[]>([])
   const [salesLeads, setSalesLeads] = useState<ProviderRow[]>([])
+  const [interviewCount, setInterviewCount] = useState(0)
 
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null)
   const [selectedAlertId, setSelectedAlertId] = useState<string | null>(null)
@@ -104,7 +106,7 @@ export function AdminPanel() {
   const loadData = useCallback(async () => {
     const supabase = createClient()
 
-    const [pendingRes, verifiedRes, articlesRes, membersRes, premiumRes, salesRes, alertsApiRes] =
+    const [pendingRes, verifiedRes, articlesRes, membersRes, premiumRes, salesRes, alertsApiRes, interviewsRes] =
       await Promise.all([
         supabase
           .from('service_providers')
@@ -128,6 +130,7 @@ export function AdminPanel() {
           .select('*, profiles:profile_id(email, full_name, phone)')
           .order('created_at', { ascending: false }),
         fetch('/api/admin/alerts'),
+        supabase.from('interview_sessions').select('id', { count: 'exact', head: true }),
       ])
 
     const allProviders = (salesRes.data ?? []) as ProviderRow[]
@@ -145,6 +148,7 @@ export function AdminPanel() {
     } else {
       setAlerts([])
     }
+    setInterviewCount(interviewsRes.count ?? 0)
     setLoading(false)
   }, [])
 
@@ -161,8 +165,9 @@ export function AdminPanel() {
       premium: premium.length,
       articles: articles.length,
       sales: salesLeads.length,
+      interviews: interviewCount,
     }),
-    [pending, verified, alerts, members, premium, articles, salesLeads]
+    [pending, verified, alerts, members, premium, articles, salesLeads, interviewCount]
   )
 
   const navItems: { id: AdminTab; icon: string; label: string; count: number }[] = [
@@ -173,6 +178,7 @@ export function AdminPanel() {
     { id: 'members', icon: '👥', label: 'สมาชิก', count: counts.members },
     { id: 'premium', icon: '💎', label: 'Premium', count: counts.premium },
     { id: 'articles', icon: '📝', label: 'บทความ', count: counts.articles },
+    { id: 'interviews', icon: '🎙️', label: 'สัมภาษณ์ธุรกิจ', count: counts.interviews },
   ]
 
   function switchTab(next: AdminTab) {
@@ -366,7 +372,7 @@ export function AdminPanel() {
   return (
     <div
       className="grid min-h-screen bg-[#f8f9fc]"
-      style={{ gridTemplateColumns: tab === 'sales' ? '200px 1fr' : '200px 1fr 1.2fr' }}
+      style={{ gridTemplateColumns: tab === 'sales' || tab === 'interviews' ? '200px 1fr' : '200px 1fr 1.2fr' }}
     >
       {/* Sidebar */}
       <aside className="flex flex-col border-r border-[rgba(30,58,95,0.08)] bg-[#f8f9fc] p-3">
@@ -433,7 +439,9 @@ export function AdminPanel() {
         </div>
       </aside>
 
-      {tab === 'sales' ? (
+      {tab === 'interviews' ? (
+        <InterviewAdminTab />
+      ) : tab === 'sales' ? (
         <section className="overflow-auto bg-white p-4 sm:p-6">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
