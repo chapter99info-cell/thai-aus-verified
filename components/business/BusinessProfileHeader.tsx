@@ -16,19 +16,19 @@ export function BusinessProfileHeader({ business, isPremium }: Props) {
 
   return (
     <>
-      <div className="relative h-[200px] overflow-hidden rounded-b-2xl sm:h-[300px]">
+      <div className="relative h-[200px] w-full overflow-hidden rounded-b-2xl sm:h-[300px]">
         {hasCover ? (
           <Image
             src={business.cover_image_url!}
             alt={`ภาพปกธุรกิจ ${business.business_name}`}
             fill
-            className="object-cover"
+            className="h-full w-full object-cover"
             priority
             unoptimized
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#1e3a5f] to-[#2d5282]">
-            <span className="text-6xl font-bold text-white sm:text-8xl">{initial}</span>
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-[#1e3a5f] to-[#2d5282]">
+            <span className="text-6xl font-bold text-white">{initial}</span>
           </div>
         )}
       </div>

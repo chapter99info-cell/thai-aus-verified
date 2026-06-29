@@ -82,7 +82,7 @@ export function CoverImageUpload({ providerId, initialCoverUrl }: Props) {
 
   return (
     <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-      <p className="text-sm font-semibold text-[#1e3a5f]">รูปหน้าปกโปรไฟล์</p>
+      <p className="text-sm font-semibold text-[#1e3a5f]">อัปโหลดรูปหน้าปก</p>
       <p className="mt-1 text-xs text-slate-500">JPEG, PNG หรือ WebP · สูงสุด 5MB</p>
 
       {coverUrl && (
@@ -111,7 +111,7 @@ export function CoverImageUpload({ providerId, initialCoverUrl }: Props) {
         disabled={uploading}
         className="mt-4 rounded-xl bg-[#1e3a5f] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2d5282] disabled:opacity-50"
       >
-        {uploading ? 'กำลังอัปโหลด...' : 'อัปโหลดรูปหน้าปก'}
+        {uploading ? 'กำลังอัปโหลด...' : 'เลือกรูปหน้าปก'}
       </button>
 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
