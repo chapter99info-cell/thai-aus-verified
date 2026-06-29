@@ -1,4 +1,5 @@
 import type { ServiceCategory } from '@/types'
+import { CATEGORY_LABELS } from '@/lib/constants'
 
 export type CategoryBadge = {
   text: string
@@ -64,4 +65,49 @@ export function buildCategoryCounts(
     }
   }
   return counts
+}
+
+/** Map URL slugs / Thai labels → DB category (English slug). */
+const CATEGORY_URL_ALIASES: Record<string, ServiceCategory> = {
+  photography: 'photography',
+  massage: 'massage',
+  restaurant: 'restaurant',
+  construction: 'tradesperson',
+  tradesperson: 'tradesperson',
+  realestate: 'real_estate',
+  real_estate: 'real_estate',
+  delivery: 'transport',
+  transport: 'transport',
+  visa: 'visa',
+  accommodation: 'accommodation',
+  jobs: 'jobs',
+  other: 'other',
+  ช่างภาพ: 'photography',
+  นวดและสปา: 'massage',
+  'นวดแผนไทย': 'massage',
+  ร้านอาหาร: 'restaurant',
+  ช่างฝีมือ: 'tradesperson',
+  อสังหาริมทรัพย์: 'real_estate',
+  อสังหาฯ: 'real_estate',
+  ขนส่ง: 'transport',
+  วีซ่า: 'visa',
+  ที่พัก: 'accommodation',
+  หางาน: 'jobs',
+  อื่นๆ: 'other',
+}
+
+export function resolveCategoryFromQuery(param: string): ServiceCategory | '' {
+  const key = param.trim()
+  if (!key) return ''
+
+  const alias = CATEGORY_URL_ALIASES[key]
+  if (alias) return alias
+
+  if (key in CATEGORY_LABELS) return key as ServiceCategory
+
+  return ''
+}
+
+export function getCategoryThaiLabel(category: ServiceCategory): string {
+  return CATEGORY_LABELS[category].th
 }

@@ -8,14 +8,11 @@ import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
-const CHAPTER99_URL = 'https://chapter99solutions.com.au'
-
 const LOGO_URL =
   'https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png'
 
 type NavItem =
   | { type: 'link'; href: string; label: string; external?: boolean }
-  | { type: 'chapter99' }
   | { type: 'signout' }
 
 const loggedOutLinks: NavItem[] = [
@@ -32,7 +29,6 @@ const loggedInLinks: NavItem[] = [
   { type: 'link', href: '/resources', label: 'ลิงก์มีประโยชน์' },
   { type: 'link', href: '/alerts', label: 'แจ้งเตือนภัย' },
   { type: 'link', href: '/terms', label: 'เกี่ยวกับเรา' },
-  { type: 'chapter99' },
   { type: 'link', href: '/dashboard', label: 'แดชบอร์ด' },
   { type: 'link', href: '/pricing', label: 'ราคา' },
   { type: 'signout' },
@@ -81,35 +77,6 @@ function NavAnimatedLink({
   )
 }
 
-function Chapter99Link({ onClick }: { onClick?: () => void }) {
-  const [showTooltip, setShowTooltip] = useState(false)
-
-  return (
-    <div
-      className="relative"
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-    >
-      {showTooltip && (
-        <div className="nav-tooltip pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 whitespace-nowrap rounded-lg bg-[#1e3a5f] px-3 py-1.5 text-[11px] text-white shadow-lg">
-          บริหารโดย Chapter99 Solutions 🇹🇭
-          <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-[#1e3a5f]" />
-        </div>
-      )}
-      <a
-        href={CHAPTER99_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="nav-link"
-        onClick={onClick}
-      >
-        chapter99info
-        <span className="nav-link-dot" />
-      </a>
-    </div>
-  )
-}
-
 export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
@@ -155,23 +122,6 @@ export function Navbar() {
 
   function renderNavItem(item: NavItem, mobile = false) {
     const closeMobile = () => mobile && setOpen(false)
-
-    if (item.type === 'chapter99') {
-      return mobile ? (
-        <a
-          key="chapter99"
-          href={CHAPTER99_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="border-b border-slate-100 px-6 py-3 text-sm text-[#1e3a5f]"
-          onClick={closeMobile}
-        >
-          chapter99info
-        </a>
-      ) : (
-        <Chapter99Link key="chapter99" />
-      )
-    }
 
     if (item.type === 'signout') {
       return (

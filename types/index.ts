@@ -45,6 +45,7 @@ export interface ServiceProvider {
   whatsapp?: string
   portfolio_url?: string
   youtube_url?: string
+  google_maps_url?: string
   cover_image_url?: string
   profile_image_url?: string
   gallery_images?: string[]

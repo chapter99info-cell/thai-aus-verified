@@ -34,7 +34,9 @@ export default async function BusinessDetailPage({ params }: Props) {
 
   const { data, error } = await supabase
     .from('service_providers')
-    .select('*')
+    .select(
+      'id, profile_id, business_name, category, description, state, suburb, address, abn_number, verification_status, is_verified, phone, line_id, whatsapp, facebook_url, instagram_url, youtube_url, tiktok_url, google_maps_url, profile_image_url, cover_image_url, gallery_images, portfolio_url, website, rating, review_count, subscription_status, subscription_grace_until, created_at'
+    )
     .eq('id', id)
     .maybeSingle()
 

@@ -5,15 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { BusinessCard } from '@/components/directory/BusinessCard'
 import { SearchFilter } from '@/components/directory/SearchFilter'
+import {
+  getCategoryThaiLabel,
+  resolveCategoryFromQuery,
+} from '@/lib/categories'
 import { createClient } from '@/lib/supabase/client'
 import { isPremiumProvider } from '@/lib/subscription'
+import { CATEGORY_LABELS } from '@/lib/constants'
 import type { ServiceCategory, ServiceProvider } from '@/types'
-
-const CATEGORY_QUERY_ALIASES: Record<string, ServiceCategory> = {
-  'นวดแผนไทย': 'massage',
-  'ร้านอาหาร': 'restaurant',
-  'ช่างภาพ': 'photography',
-}
 
 interface DirectorySearchSectionProps {
   suburbs: string[]
@@ -69,7 +68,11 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
 
     try {
       const supabase = createClient()
-      let query = supabase.from('service_providers').select('*')
+      let query = supabase
+        .from('service_providers')
+        .select(
+          'id, business_name, category, state, suburb, abn_number, verification_status, is_verified, phone, whatsapp, line_id, facebook_url, instagram_url, youtube_url, tiktok_url, google_maps_url, profile_image_url, portfolio_url, website, rating, review_count, created_at, subscription_status, subscription_grace_until'
+        )
 
       if (filters.searchText.trim()) {
         query = query.ilike('business_name', `%${filters.searchText.trim()}%`)
@@ -135,11 +138,10 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
     }
 
     const catParam = searchParams.get('category') ?? ''
-    const resolvedCategory =
-      CATEGORY_QUERY_ALIASES[catParam] ?? (catParam as ServiceCategory | '')
+    const resolvedCategory = resolveCategoryFromQuery(catParam)
 
     const filters: SearchFilters = {
-      searchText: searchParams.get('q') ?? '',
+      searchText: searchParams.get('q') ?? searchParams.get('search') ?? '',
       category: resolvedCategory,
       state: searchParams.get('state') ?? '',
       suburb: searchParams.get('suburb') ?? '',
@@ -155,9 +157,13 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
     setSort(filters.sort)
 
     void runSearch(filters)
-  }, [searchParams, runSearch])
+  }, [searchParams.toString(), runSearch])
 
   const stateLabel = state && state !== 'ทุกรัฐ' ? state : null
+  const activeCategoryLabel =
+    category && category in CATEGORY_LABELS
+      ? getCategoryThaiLabel(category as ServiceCategory)
+      : null
 
   return (
     <>
@@ -189,7 +195,19 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
         </div>
       ) : hasSearched ? (
         <>
-          <p className="mt-4 text-sm text-[#1e3a5f]/50">
+          {activeCategoryLabel && (
+            <div className="mb-4 mt-4 flex items-center gap-2">
+              <span className="text-sm text-gray-500">หมวดหมู่:</span>
+              <span className="rounded-full bg-[#1e3a5f] px-3 py-1 text-sm text-white">
+                {activeCategoryLabel}
+              </span>
+              <Link href="/directory" className="text-xs text-gray-400 underline">
+                ล้างตัวกรอง
+              </Link>
+            </div>
+          )}
+
+          <p className={`text-sm text-[#1e3a5f]/50 ${activeCategoryLabel ? '' : 'mt-4'}`}>
             {results.length === 0 ? (
               <span className="text-xs italic text-[#1e3a5f]/50">เปิดรับลงทะเบียน</span>
             ) : (

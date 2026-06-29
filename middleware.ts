@@ -26,11 +26,22 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const protectedPaths = ['/dashboard', '/verify', '/admin']
-  const isProtected = protectedPaths.some((p) => request.nextUrl.pathname.startsWith(p))
+  const pathname = request.nextUrl.pathname
+
+  if (pathname === '/admin/login') {
+    return supabaseResponse
+  }
+
+  const protectedPaths = ['/dashboard', '/verify', '/admin', '/chapter99info']
+  const isProtected = protectedPaths.some(
+    (p) => pathname.startsWith(p) && pathname !== '/admin/login'
+  )
 
   if (isProtected && !user) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    const loginUrl = pathname.startsWith('/chapter99info') || pathname.startsWith('/admin')
+      ? new URL('/admin/login', request.url)
+      : new URL('/login', request.url)
+    return NextResponse.redirect(loginUrl)
   }
 
   return supabaseResponse

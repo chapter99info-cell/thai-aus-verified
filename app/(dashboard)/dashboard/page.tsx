@@ -55,7 +55,12 @@ export default async function DashboardPage() {
     new Date(provider.subscription_grace_until) <= new Date()
 
   return (
-    <>
+    <div data-dashboard-page className="min-h-screen bg-gray-50">
+      <style
+        dangerouslySetInnerHTML={{
+          __html: 'body:has([data-dashboard-page]) footer video { display: none; }',
+        }}
+      />
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
       <Suspense fallback={null}>
         <DashboardToast />
@@ -177,6 +182,6 @@ export default async function DashboardPage() {
         <SignOutButton />
       </div>
     </div>
-    </>
+    </div>
   )
 }

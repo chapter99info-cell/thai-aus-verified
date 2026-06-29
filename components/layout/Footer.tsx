@@ -66,6 +66,16 @@ export function Footer() {
         <p className="mt-10 border-t border-white/20 pt-6 text-center text-xs text-white/70">
           © 2026 Thai-Aus Verified Community | Powered by Chapter99 Solutions
         </p>
+
+        <div className="mt-4 flex justify-center pb-2">
+          <Link
+            href="/admin/login"
+            className="text-gray-600 opacity-30 transition-colors hover:text-gray-400 hover:opacity-60"
+            title=""
+          >
+            🔒
+          </Link>
+        </div>
       </div>
     </footer>
   )

@@ -1,14 +1,13 @@
 'use client'
 
 import Link from 'next/link'
+import { SocialLinkPills } from '@/components/business/SocialLinkPills'
 import { CATEGORY_LABELS } from '@/lib/constants'
 import {
   ensureHttpUrl,
-  instagramHref,
   lineHref,
   messengerHref,
   telHref,
-  tiktokHref,
   whatsappHref,
 } from '@/lib/contact'
 import type { ServiceProvider } from '@/types'
@@ -106,29 +105,9 @@ export function BusinessCard({ business }: BusinessCardProps) {
         )}
       </div>
 
+      <SocialLinkPills business={business} />
+
       <div className="mt-2 flex flex-wrap gap-3">
-        {business.instagram_url?.trim() && (
-          <a
-            href={instagramHref(business.instagram_url)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-[#1e3a5f]/50 transition-colors hover:text-pink-500"
-          >
-            📸 Instagram
-          </a>
-        )}
-
-        {business.tiktok_url?.trim() && (
-          <a
-            href={tiktokHref(business.tiktok_url)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-[#1e3a5f]/50 transition-colors hover:text-black"
-          >
-            🎵 TikTok
-          </a>
-        )}
-
         {websiteUrl && (
           <a
             href={ensureHttpUrl(websiteUrl)}

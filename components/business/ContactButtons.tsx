@@ -1,4 +1,5 @@
-import { ensureHttpUrl, lineHref, telHref } from '@/lib/contact'
+import { ensureHttpUrl, lineHref, telHref, whatsappHref } from '@/lib/contact'
+import { SocialLinkPills } from '@/components/business/SocialLinkPills'
 import type { ServiceProvider } from '@/types'
 
 const buttonBase =
@@ -9,8 +10,12 @@ interface ContactButtonsProps {
     ServiceProvider,
     | 'phone'
     | 'line_id'
+    | 'whatsapp'
     | 'facebook_url'
     | 'instagram_url'
+    | 'youtube_url'
+    | 'tiktok_url'
+    | 'google_maps_url'
     | 'website'
     | 'portfolio_url'
   >
@@ -45,30 +50,16 @@ export function ContactButtons({ business }: ContactButtonsProps) {
     )
   }
 
-  if (business.facebook_url?.trim()) {
+  if (business.whatsapp?.trim()) {
     buttons.push(
       <a
-        key="facebook"
-        href={ensureHttpUrl(business.facebook_url)}
+        key="whatsapp"
+        href={whatsappHref(business.whatsapp)}
         target="_blank"
         rel="noopener noreferrer"
-        className={`${buttonBase} border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100`}
+        className={`${buttonBase} border border-green-200 bg-green-50 text-green-700 hover:bg-green-100`}
       >
-        👥 ทักใน Facebook
-      </a>
-    )
-  }
-
-  if (business.instagram_url?.trim()) {
-    buttons.push(
-      <a
-        key="instagram"
-        href={ensureHttpUrl(business.instagram_url)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`${buttonBase} border border-pink-200 bg-pink-50 text-pink-700 hover:bg-pink-100`}
-      >
-        📸 ดูใน Instagram
+        WhatsApp
       </a>
     )
   }
@@ -101,12 +92,30 @@ export function ContactButtons({ business }: ContactButtonsProps) {
     )
   }
 
-  if (buttons.length === 0) return null
+  if (buttons.length === 0 && !hasSocialLinks(business)) return null
 
   return (
     <section>
       <h2 className="text-lg font-semibold text-slate-900">ติดต่อธุรกิจ</h2>
-      <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">{buttons}</div>
+      {buttons.length > 0 && (
+        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">{buttons}</div>
+      )}
+      <SocialLinkPills business={business} className={buttons.length > 0 ? 'mt-2' : 'mt-4'} />
     </section>
+  )
+}
+
+function hasSocialLinks(
+  business: Pick<
+    ServiceProvider,
+    'facebook_url' | 'instagram_url' | 'youtube_url' | 'tiktok_url' | 'google_maps_url'
+  >
+) {
+  return !!(
+    business.facebook_url?.trim() ||
+    business.instagram_url?.trim() ||
+    business.youtube_url?.trim() ||
+    business.tiktok_url?.trim() ||
+    business.google_maps_url?.trim()
   )
 }
