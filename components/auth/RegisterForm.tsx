@@ -47,6 +47,7 @@ export function RegisterForm() {
   const [category, setCategory] = useState<ServiceCategory>('restaurant')
   const [state, setState] = useState<AustralianState>('NSW')
   const [suburb, setSuburb] = useState('')
+  const [description, setDescription] = useState('')
   const [phone, setPhone] = useState('')
   const [lineId, setLineId] = useState('')
   const [facebookUrl, setFacebookUrl] = useState('')
@@ -54,6 +55,7 @@ export function RegisterForm() {
   const [tiktokUrl, setTiktokUrl] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
   const [websiteUrl, setWebsiteUrl] = useState('')
+  const [portfolioUrl, setPortfolioUrl] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
@@ -130,7 +132,7 @@ export function RegisterForm() {
       await supabase
         .from('profiles')
         .update({
-          phone,
+          phone: phone || null,
           line_id: lineId || null,
           whatsapp: whatsapp || null,
           tiktok_url: tiktokUrl || null,
@@ -158,6 +160,7 @@ export function RegisterForm() {
         abn_number: cleanAbn,
         state,
         suburb,
+        description: description.trim() || null,
         phone: phone || null,
         line_id: lineId || null,
         facebook_url: facebookUrl || null,
@@ -165,6 +168,7 @@ export function RegisterForm() {
         tiktok_url: tiktokUrl || null,
         whatsapp: whatsapp || null,
         website: websiteUrl || null,
+        portfolio_url: portfolioUrl || null,
         is_verified: true,
         verification_status: 'approved',
         verified_at: new Date().toISOString(),
@@ -389,25 +393,42 @@ export function RegisterForm() {
                 ))}
               </select>
             </div>
-          <Input
-            id="suburb"
-            label="Suburb"
-            value={suburb}
-            onChange={(e) => setSuburb(e.target.value)}
-            required
-          />
+            <Input
+              id="suburb"
+              label="Suburb"
+              value={suburb}
+              onChange={(e) => setSuburb(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-slate-700">
+              คำอธิบายธุรกิจ{' '}
+              <span className="font-normal text-slate-400">(ไม่บังคับ)</span>
+            </label>
+            <textarea
+              id="description"
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="อธิบายบริการของคุณสั้นๆ เช่น นวดแผนไทย remedial massage รับ HICAPS"
+              className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#1e3a5f] focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]"
+            />
           </div>
 
           <div className="space-y-3">
-            <p className="text-sm font-bold text-[#1e3a5f]">ช่องทางติดต่อ</p>
-            <p className="text-xs text-slate-500">
-              กรอกอย่างน้อย 1 ช่องทางติดต่อ เพื่อให้ลูกค้าสามารถติดต่อคุณได้
+            <p className="text-sm text-slate-600">
+              ช่องทางติดต่อ (ไม่บังคับ — กรอกอย่างน้อย 1 ช่อง เพื่อให้ลูกค้าติดต่อคุณได้)
             </p>
 
             <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
-              <span className="text-xl">📞</span>
+              <span className="text-xl" aria-hidden>
+                📞
+              </span>
               <input
                 type="tel"
+                aria-label="เบอร์โทร"
                 placeholder="เบอร์โทร (04xx xxx xxx)"
                 className="flex-1 text-sm outline-none"
                 value={phone}
@@ -416,8 +437,11 @@ export function RegisterForm() {
             </div>
 
             <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
-              <span className="text-xl">💚</span>
+              <span className="text-xl" aria-hidden>
+                💬
+              </span>
               <input
+                aria-label="Line ID"
                 placeholder="Line ID"
                 className="flex-1 text-sm outline-none"
                 value={lineId}
@@ -426,9 +450,12 @@ export function RegisterForm() {
             </div>
 
             <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
-              <span className="text-xl">📘</span>
+              <span className="text-xl" aria-hidden>
+                👥
+              </span>
               <input
-                placeholder="Facebook URL หรือ username"
+                aria-label="Facebook URL"
+                placeholder="Facebook URL"
                 className="flex-1 text-sm outline-none"
                 value={facebookUrl}
                 onChange={(e) => setFacebookUrl(e.target.value)}
@@ -436,8 +463,11 @@ export function RegisterForm() {
             </div>
 
             <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
-              <span className="text-xl">📸</span>
+              <span className="text-xl" aria-hidden>
+                📸
+              </span>
               <input
+                aria-label="Instagram"
                 placeholder="Instagram @username"
                 className="flex-1 text-sm outline-none"
                 value={instagramUrl}
@@ -446,8 +476,11 @@ export function RegisterForm() {
             </div>
 
             <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
-              <span className="text-xl">🎵</span>
+              <span className="text-xl" aria-hidden>
+                🎵
+              </span>
               <input
+                aria-label="TikTok"
                 placeholder="TikTok @username"
                 className="flex-1 text-sm outline-none"
                 value={tiktokUrl}
@@ -456,10 +489,13 @@ export function RegisterForm() {
             </div>
 
             <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
-              <span className="text-xl">💬</span>
+              <span className="text-xl" aria-hidden>
+                💚
+              </span>
               <input
                 type="tel"
-                placeholder="WhatsApp เบอร์ (04xx xxx xxx)"
+                aria-label="WhatsApp"
+                placeholder="WhatsApp (04xx xxx xxx)"
                 className="flex-1 text-sm outline-none"
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
@@ -467,12 +503,28 @@ export function RegisterForm() {
             </div>
 
             <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
-              <span className="text-xl">🌐</span>
+              <span className="text-xl" aria-hidden>
+                🌐
+              </span>
               <input
+                aria-label="เว็บไซต์"
                 placeholder="เว็บไซต์ https://..."
                 className="flex-1 text-sm outline-none"
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}
+              />
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+              <span className="text-xl" aria-hidden>
+                🎨
+              </span>
+              <input
+                aria-label="Portfolio URL"
+                placeholder="Portfolio URL https://..."
+                className="flex-1 text-sm outline-none"
+                value={portfolioUrl}
+                onChange={(e) => setPortfolioUrl(e.target.value)}
               />
             </div>
           </div>
