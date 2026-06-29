@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
-const CHAPTER99_URL = 'https://chapter99solutions.com'
+const CHAPTER99_URL = 'https://chapter99solutions.com.au'
 
 const LOGO_URL =
   'https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png'
