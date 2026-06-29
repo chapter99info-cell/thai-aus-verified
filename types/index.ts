@@ -70,6 +70,17 @@ export interface Review {
   reviewer_name: string
   rating: number
   comment: string
+  status?: 'visible' | 'hidden'
+  report_count?: number
+  reported_at?: string
+  created_at: string
+}
+
+export interface ReviewReply {
+  id: string
+  review_id: string
+  provider_id: string
+  reply_text: string
   created_at: string
 }
 

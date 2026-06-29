@@ -19,6 +19,17 @@ export function ReviewForm({ providerId }: ReviewFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+
+    if (rating === 0) {
+      setError('กรุณาเลือกคะแนนดาวก่อน')
+      return
+    }
+
+    if (comment.trim().length < 20) {
+      setError('กรุณาเขียนอย่างน้อย 20 ตัวอักษร')
+      return
+    }
+
     setLoading(true)
 
     const res = await fetch('/api/reviews', {

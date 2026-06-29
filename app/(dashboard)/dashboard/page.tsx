@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import OccupationCategories from '@/components/OccupationCategories'
 import { PremiumBadge, VerifiedBadge } from '@/components/business/PremiumBadge'
 import { CoverImageUpload } from '@/components/dashboard/CoverImageUpload'
+import { DescriptionEditor } from '@/components/dashboard/DescriptionEditor'
 import { GalleryUpload } from '@/components/dashboard/GalleryUpload'
 import { ProfileImageUpload } from '@/components/dashboard/ProfileImageUpload'
 import { DashboardToast } from '@/components/dashboard/DashboardToast'
@@ -109,6 +110,11 @@ export default async function DashboardPage() {
           >
             ดูโปรไฟล์สาธารณะ →
           </Link>
+
+          <DescriptionEditor
+            providerId={provider.id}
+            initialDescription={provider.description}
+          />
 
           <CoverImageUpload
             providerId={provider.id}

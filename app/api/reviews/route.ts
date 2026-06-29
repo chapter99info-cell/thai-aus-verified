@@ -22,15 +22,19 @@ export async function POST(request: Request) {
       comment: string
     }
 
-    if (!provider_id || !rating || rating < 1 || rating > 5) {
+    if (!provider_id || rating > 5) {
       return NextResponse.json({ error: 'ข้อมูลไม่ครบ' }, { status: 400 })
     }
 
     if (!comment || comment.trim().length < 20) {
       return NextResponse.json(
-        { error: 'ความคิดเห็นต้องมีอย่างน้อย 20 ตัวอักษร' },
+        { error: 'กรุณาเขียนอย่างน้อย 20 ตัวอักษร' },
         { status: 400 }
       )
+    }
+
+    if (!rating || rating < 1) {
+      return NextResponse.json({ error: 'กรุณาเลือกคะแนนดาวก่อน' }, { status: 400 })
     }
 
     const { error: insertError } = await supabase.from('reviews').insert({
@@ -38,6 +42,7 @@ export async function POST(request: Request) {
       reviewer_id: user.id,
       rating,
       comment: comment.trim(),
+      status: 'visible',
     })
 
     if (insertError) {
@@ -53,6 +58,7 @@ export async function POST(request: Request) {
         .from('reviews')
         .select('rating')
         .eq('provider_id', provider_id)
+        .eq('status', 'visible')
 
       const count = reviews?.length ?? 0
       const avg =

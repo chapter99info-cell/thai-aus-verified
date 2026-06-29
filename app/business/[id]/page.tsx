@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { BusinessProfileHeader } from '@/components/business/BusinessProfileHeader'
 import { ContactButtons } from '@/components/business/ContactButtons'
+import { BusinessReviewList } from '@/components/reviews/BusinessReviewList'
 import { ReviewForm } from '@/components/reviews/ReviewForm'
-import { ReviewList } from '@/components/reviews/ReviewList'
 import { StarRating } from '@/components/reviews/StarRating'
 import { ensureHttpUrl } from '@/lib/contact'
 import { isPremiumProvider } from '@/lib/subscription'
@@ -12,12 +12,17 @@ import type { ServiceProvider } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 interface Props {
   params: Promise<{ id: string }>
 }
 
 export default async function BusinessDetailPage({ params }: Props) {
   const { id } = await params
+
+  if (!UUID_RE.test(id)) notFound()
 
   if (!isSupabaseConfigured()) notFound()
 
@@ -31,7 +36,7 @@ export default async function BusinessDetailPage({ params }: Props) {
     .from('service_providers')
     .select('*')
     .eq('id', id)
-    .single()
+    .maybeSingle()
 
   if (error || !data) notFound()
 
@@ -39,11 +44,31 @@ export default async function BusinessDetailPage({ params }: Props) {
   const isPremium = isPremiumProvider(business)
   const galleryImages = (business.gallery_images ?? []).filter(Boolean)
 
+  const isOwner = user?.id === business.profile_id
+
   const { data: reviewsData } = await supabase
     .from('reviews')
-    .select('id, rating, comment, created_at, profiles(full_name)')
+    .select('id, rating, comment, created_at, profiles(full_name, email)')
     .eq('provider_id', id)
+    .eq('status', 'visible')
     .order('created_at', { ascending: false })
+
+  const reviewIds = (reviewsData ?? []).map((r) => r.id)
+  let repliesData: {
+    id: string
+    review_id: string
+    provider_id: string
+    reply_text: string
+    created_at: string
+  }[] = []
+
+  if (reviewIds.length > 0) {
+    const { data: replies } = await supabase
+      .from('review_replies')
+      .select('*')
+      .in('review_id', reviewIds)
+    repliesData = replies ?? []
+  }
 
   return (
     <div className="bg-white">
@@ -98,18 +123,24 @@ export default async function BusinessDetailPage({ params }: Props) {
         <section className="mt-10 border-t border-slate-200 pt-10">
           <h2 className="text-xl font-semibold text-slate-900">รีวิวจากลูกค้า</h2>
           <div className="mt-6">
-            <ReviewList reviews={reviewsData ?? []} />
+            <BusinessReviewList
+              reviews={reviewsData ?? []}
+              replies={repliesData}
+              providerId={business.id}
+              isOwner={isOwner}
+            />
           </div>
           <div className="mt-8">
             {user ? (
               <ReviewForm providerId={id} />
             ) : (
               <div className="rounded-xl bg-[#1e3a5f] px-5 py-4 text-center">
+                <p className="text-base text-white">กรุณาเข้าสู่ระบบก่อนรีวิว</p>
                 <Link
                   href="/login"
-                  className="text-base font-medium text-white hover:underline"
+                  className="mt-2 inline-block text-base font-medium text-white underline"
                 >
-                  เข้าสู่ระบบเพื่อเขียนรีวิว
+                  เข้าสู่ระบบ
                 </Link>
               </div>
             )}

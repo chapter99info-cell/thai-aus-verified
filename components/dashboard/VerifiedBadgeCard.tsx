@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import html2canvas from 'html2canvas'
 import { CATEGORY_LABELS } from '@/lib/constants'
 import type { ServiceCategory } from '@/types'
+
+const BADGE_LOGO_URL =
+  'https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png'
 
 type Props = {
   businessName: string
@@ -18,6 +20,21 @@ function formatAbnDisplay(abn: string) {
     return clean.replace(/(\d{2})(\d{3})(\d{3})(\d{3})/, '$1 $2 $3 $4')
   }
   return abn
+}
+
+function drawRoundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number
+) {
+  if (typeof ctx.roundRect === 'function') {
+    ctx.roundRect(x, y, w, h, r)
+    return
+  }
+  ctx.rect(x, y, w, h)
 }
 
 async function copyText(text: string) {
@@ -42,23 +59,77 @@ export function VerifiedBadgeCard({ businessName, abn, category, providerId }: P
   const categoryLabel = CATEGORY_LABELS[category]?.th ?? category
   const formattedAbn = formatAbnDisplay(abn)
 
+  const business = {
+    business_name: businessName,
+    abn_number: formattedAbn,
+    category: categoryLabel,
+  }
+
   function showToast(message: string) {
     setToast(message)
     window.setTimeout(() => setToast(''), 3500)
   }
 
   async function handleDownload() {
-    const element = document.getElementById('verified-badge-card')
-    if (!element) return
-
     setDownloading(true)
     try {
-      const canvas = await html2canvas(element, {
-        backgroundColor: '#1e3a5f',
-        scale: 2,
+      const canvas = document.createElement('canvas')
+      canvas.width = 600
+      canvas.height = 320
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      ctx.fillStyle = '#0D1B3E'
+      drawRoundRect(ctx, 0, 0, 600, 320, 20)
+      ctx.fill()
+
+      const logo = new Image()
+      logo.crossOrigin = 'anonymous'
+      logo.src = BADGE_LOGO_URL
+      await new Promise<void>((resolve) => {
+        logo.onload = () => resolve()
+        logo.onerror = () => resolve()
       })
+      if (logo.complete && logo.naturalWidth > 0) {
+        ctx.drawImage(logo, 32, 28, 48, 48)
+      }
+
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 18px sans-serif'
+      ctx.fillText('Thai-Aus Verified', 92, 60)
+
+      ctx.fillStyle = '#22c55e'
+      drawRoundRect(ctx, 32, 100, 24, 24, 4)
+      ctx.fill()
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 14px sans-serif'
+      ctx.fillText('✓', 38, 118)
+
+      ctx.fillStyle = '#9ca3af'
+      ctx.font = '13px sans-serif'
+      ctx.fillText('ยืนยันแล้ว — ABN Verified', 64, 118)
+
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 26px sans-serif'
+      ctx.fillText(business.business_name || 'ธุรกิจของคุณ', 32, 165)
+
+      ctx.fillStyle = '#1e2d4f'
+      drawRoundRect(ctx, 32, 188, 536, 60, 8)
+      ctx.fill()
+      ctx.fillStyle = '#9ca3af'
+      ctx.font = '11px sans-serif'
+      ctx.fillText('ABN', 50, 210)
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 20px monospace'
+      ctx.fillText(business.abn_number || '', 50, 236)
+
+      ctx.fillStyle = '#9ca3af'
+      ctx.font = '12px sans-serif'
+      ctx.fillText(business.category || '', 40, 295)
+      ctx.fillText('thai-ausverified.com.au', 380, 295)
+
       const link = document.createElement('a')
-      link.download = `${businessName.replace(/\s+/g, '-')}-verified-badge.png`
+      link.download = `thai-aus-verified-badge-${business.business_name.replace(/\s+/g, '-')}.png`
       link.href = canvas.toDataURL('image/png')
       link.click()
     } catch {
@@ -95,9 +166,9 @@ ABN: ${formattedAbn}
         <div className="mb-4 flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/logo.png"
-            alt="Thai-Aus Verified"
-            className="h-10 w-10 rounded-full border-2 border-white"
+            src={BADGE_LOGO_URL}
+            alt="Thai-AUS Verified"
+            className="h-10 w-10 object-contain"
           />
           <span className="text-sm font-bold opacity-80">Thai-Aus Verified</span>
         </div>
