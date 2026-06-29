@@ -12,3 +12,9 @@ export function formatDateDDMMYYYY(date: string) {
   const year = d.getFullYear()
   return `${day}/${month}/${year}`
 }
+
+export function getBusinessInitial(name: string) {
+  const trimmed = name.trim()
+  if (!trimmed) return '?'
+  return trimmed[0].toUpperCase()
+}

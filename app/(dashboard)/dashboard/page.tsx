@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 import OccupationCategories from '@/components/OccupationCategories'
 import { PremiumBadge, VerifiedBadge } from '@/components/business/PremiumBadge'
+import { CoverImageUpload } from '@/components/dashboard/CoverImageUpload'
 import { DashboardToast } from '@/components/dashboard/DashboardToast'
 import { SignOutButton } from '@/components/dashboard/SignOutButton'
 import { VerifiedBadgeShareSection } from '@/components/dashboard/VerifiedBadgeShareSection'
@@ -106,6 +107,11 @@ export default async function DashboardPage() {
           >
             ดูโปรไฟล์สาธารณะ →
           </Link>
+
+          <CoverImageUpload
+            providerId={provider.id}
+            initialCoverUrl={provider.cover_image_url}
+          />
         </div>
       ) : (
         <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

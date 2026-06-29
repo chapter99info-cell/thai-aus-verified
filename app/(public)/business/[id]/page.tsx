@@ -1,13 +1,11 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { BusinessProfileHeader } from '@/components/business/BusinessProfileHeader'
 import { ContactButtons } from '@/components/business/ContactButtons'
 import { Gallery } from '@/components/business/Gallery'
-import { PremiumBadge, VerifiedBadge } from '@/components/business/PremiumBadge'
 import { ReviewForm } from '@/components/reviews/ReviewForm'
 import { ReviewList } from '@/components/reviews/ReviewList'
 import { StarRating } from '@/components/reviews/StarRating'
-import { CATEGORY_LABELS } from '@/lib/constants'
 import { isPremiumProvider } from '@/lib/subscription'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
 import type { ServiceProvider } from '@/types'
@@ -38,7 +36,6 @@ export default async function BusinessDetailPage({ params }: Props) {
   if (error || !data) notFound()
 
   const business = data as ServiceProvider
-  const category = CATEGORY_LABELS[business.category]
   const isPremium = isPremiumProvider(business)
 
   const { data: reviewsData } = await supabase
@@ -49,47 +46,14 @@ export default async function BusinessDetailPage({ params }: Props) {
 
   return (
     <div className="bg-white">
-      <div className="relative h-40 sm:h-52">
-        {business.cover_image_url ? (
-          <Image
-            src={business.cover_image_url}
-            alt={`ภาพปกธุรกิจ ${business.business_name}`}
-            fill
-            className="object-cover"
-            priority
-            unoptimized
-          />
-        ) : (
-          <div className="h-full w-full bg-gradient-to-br from-[#1e3a5f] to-[#2d5282]" />
-        )}
-      </div>
+      <BusinessProfileHeader business={business} isPremium={isPremium} />
 
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-        <div className="relative -mt-16 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:-mt-20">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#1e3a5f] sm:text-3xl">
-              {business.business_name}
-            </h1>
-            {business.is_verified && <VerifiedBadge />}
-            {isPremium && <PremiumBadge />}
-          </div>
-
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-[#1e3a5f]/10 px-2.5 py-0.5 text-xs font-medium text-[#1e3a5f]">
-              {category.emoji} {category.th}
-            </span>
-            <span className="text-sm text-slate-600">
-              {business.state} · {business.suburb}
-            </span>
-          </div>
-
-          <StarRating
-            rating={Number(business.rating)}
-            showAverage
-            reviewCount={business.review_count}
-            className="mt-4"
-          />
-        </div>
+      <div className="mx-auto max-w-3xl px-4 pb-8 pt-4 sm:px-6">
+        <StarRating
+          rating={Number(business.rating)}
+          showAverage
+          reviewCount={business.review_count}
+        />
 
         <div className="mt-8">
           <ContactButtons business={business} />
