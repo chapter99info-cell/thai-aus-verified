@@ -5,6 +5,7 @@ import OccupationCategories from '@/components/OccupationCategories'
 import { PremiumBadge, VerifiedBadge } from '@/components/business/PremiumBadge'
 import { DashboardToast } from '@/components/dashboard/DashboardToast'
 import { SignOutButton } from '@/components/dashboard/SignOutButton'
+import { VerifiedBadgeShareSection } from '@/components/dashboard/VerifiedBadgeShareSection'
 import { CATEGORY_LABELS } from '@/lib/constants'
 import {
   graceDaysRemaining,
@@ -116,6 +117,14 @@ export default async function DashboardPage() {
             ลงทะเบียนธุรกิจ
           </Link>
         </div>
+      )}
+
+      {provider?.is_verified && (
+        <VerifiedBadgeShareSection
+          businessName={provider.business_name}
+          abnNumber={provider.abn_number}
+          providerId={provider.id}
+        />
       )}
     </div>
 
