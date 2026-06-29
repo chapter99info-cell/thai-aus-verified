@@ -26,7 +26,7 @@ async function getMarqueeBusinesses(): Promise<MarqueeBusiness[]> {
   const supabase = await createClient()
   const { data } = await supabase
     .from('service_providers')
-    .select('id, business_name, category')
+    .select('id, business_name, category, profile_image_url')
     .eq('is_verified', true)
     .limit(20)
 

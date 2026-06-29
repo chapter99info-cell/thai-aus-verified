@@ -76,15 +76,31 @@ function FadeIn({ children, delay = 0, className = '' }: { children: ReactNode; 
 }
 
 function MarqueeCard({ business }: { business: MarqueeBusiness }) {
-  const isSeed = business.id.startsWith('seed-')
-  const href = isSeed ? '/directory' : `/business/${business.id}`
+  const isFallback =
+    business.id.startsWith('seed-') ||
+    business.id === 'f1' ||
+    business.id === 'f2' ||
+    business.id === 'f3' ||
+    business.id === 'f4'
+  const href = isFallback ? '/directory' : `/business/${business.id}`
 
   return (
     <Link
       href={href}
-      className="flex h-[68px] min-w-[180px] shrink-0 items-center gap-2.5 rounded-full border border-[rgba(5,26,36,0.1)] bg-white px-4 shadow-[0_2px_8px_rgba(5,26,36,0.04)] transition-shadow hover:border-[rgba(5,26,36,0.2)] hover:shadow-[0_6px_16px_rgba(5,26,36,0.08)]"
+      className="inline-flex h-[68px] min-w-[180px] shrink-0 items-center gap-2.5 rounded-full border border-[rgba(5,26,36,0.1)] bg-white px-4 shadow-[0_2px_8px_rgba(5,26,36,0.04)] transition-shadow hover:border-[rgba(5,26,36,0.2)] hover:shadow-[0_6px_16px_rgba(5,26,36,0.08)]"
     >
-      <span className="text-xl">{business.emoji}</span>
+      {business.logo_url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={business.logo_url}
+          alt=""
+          width={28}
+          height={28}
+          className="h-7 w-7 shrink-0 rounded-full object-cover"
+        />
+      ) : (
+        <span className="text-xl">{business.emoji}</span>
+      )}
       <p className="truncate text-xs font-semibold text-[#051A24]">{business.name}</p>
     </Link>
   )
@@ -187,8 +203,8 @@ export function PremiumHome({
         <p className="mb-4 text-center text-[10px] uppercase tracking-[2px] text-[rgba(5,26,36,0.25)]">
           ธุรกิจที่จดทะเบียนกับ Chapter99 Solutions
         </p>
-        <div className="marquee-mask overflow-hidden">
-          <div className="marquee-track flex w-max gap-3 px-3">
+        <div className="marquee-mask w-full overflow-hidden">
+          <div className="animate-marquee flex gap-6 whitespace-nowrap px-3">
             {marqueeBusinesses.map((biz, i) => (
               <MarqueeCard key={`${biz.id}-${i}`} business={biz} />
             ))}
