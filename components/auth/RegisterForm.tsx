@@ -109,20 +109,6 @@ export function RegisterForm() {
       return
     }
 
-    const hasContact =
-      phone.trim() ||
-      lineId.trim() ||
-      facebookUrl.trim() ||
-      instagramUrl.trim() ||
-      tiktokUrl.trim() ||
-      whatsapp.trim() ||
-      websiteUrl.trim()
-
-    if (!hasContact) {
-      setError('กรุณากรอกอย่างน้อย 1 ช่องทางที่ลูกค้าสามารถติดต่อได้')
-      return
-    }
-
     setError('')
     setStep(3)
   }
@@ -413,8 +399,9 @@ export function RegisterForm() {
           </div>
 
           <div className="space-y-3">
-            <p className="text-sm font-bold text-[#1e3a5f]">
-              ช่องทางติดต่อ (ใส่อย่างน้อย 1 ช่องทาง)
+            <p className="text-sm font-bold text-[#1e3a5f]">ช่องทางติดต่อ</p>
+            <p className="text-xs text-slate-500">
+              กรอกอย่างน้อย 1 ช่องทางติดต่อ เพื่อให้ลูกค้าสามารถติดต่อคุณได้
             </p>
 
             <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
