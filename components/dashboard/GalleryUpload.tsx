@@ -4,7 +4,11 @@ import Image from 'next/image'
 import { X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import {
+  deleteBusinessPhotoByUrl,
+  getDbClient,
+  uploadBusinessPhoto,
+} from '@/lib/supabase/storage-upload'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const MAX_SIZE = 5 * 1024 * 1024
@@ -13,14 +17,6 @@ const MAX_GALLERY = 6
 type Props = {
   providerId: string
   initialGallery?: string[] | null
-}
-
-function storagePathFromUrl(url: string, providerId: string): string | null {
-  const marker = `/business-photos/${providerId}/gallery/`
-  const idx = url.indexOf(marker)
-  if (idx === -1) return null
-  const rest = url.slice(idx + '/business-photos/'.length).split('?')[0]
-  return rest || null
 }
 
 export function GalleryUpload({ providerId, initialGallery }: Props) {
@@ -63,76 +59,66 @@ export function GalleryUpload({ providerId, initialGallery }: Props) {
     setError('')
     setUploading(true)
 
-    const supabase = createClient()
-    const newUrls: string[] = []
+    try {
+      const newUrls: string[] = []
 
-    for (const file of toUpload) {
-      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-      const path = `${providerId}/gallery/${Date.now()}-${safeName}`
+      for (const file of toUpload) {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+        const publicUrl = await uploadBusinessPhoto(
+          `gallery/${Date.now()}-${safeName}`,
+          file
+        )
+        newUrls.push(publicUrl)
+      }
 
-      const { error: uploadError } = await supabase.storage
-        .from('business-photos')
-        .upload(path, file, { upsert: true, contentType: file.type })
+      const updated = [...images, ...newUrls]
+      const supabase = getDbClient()
+      const { error: updateError } = await supabase
+        .from('service_providers')
+        .update({ gallery_images: updated })
+        .eq('id', providerId)
 
-      if (uploadError) {
-        setError(uploadError.message)
-        setUploading(false)
+      if (updateError) {
+        setError(updateError.message)
         return
       }
 
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('business-photos').getPublicUrl(path)
-
-      newUrls.push(`${publicUrl}?t=${Date.now()}`)
-    }
-
-    const updated = [...images, ...newUrls]
-
-    const { error: updateError } = await supabase
-      .from('service_providers')
-      .update({ gallery_images: updated })
-      .eq('id', providerId)
-
-    if (updateError) {
-      setError(updateError.message)
+      setImages(updated)
+      showToast('เพิ่มรูปผลงานสำเร็จ ✅')
+      router.refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'อัปโหลดไม่สำเร็จ')
+    } finally {
       setUploading(false)
-      return
     }
-
-    setImages(updated)
-    showToast('เพิ่มรูปผลงานสำเร็จ ✅')
-    setUploading(false)
-    router.refresh()
   }
 
   async function handleDelete(url: string) {
     setDeleting(url)
     setError('')
 
-    const supabase = createClient()
-    const path = storagePathFromUrl(url, providerId)
+    try {
+      await deleteBusinessPhotoByUrl(url)
 
-    if (path) {
-      await supabase.storage.from('business-photos').remove([path])
-    }
+      const updated = images.filter((img) => img !== url)
+      const supabase = getDbClient()
+      const { error: updateError } = await supabase
+        .from('service_providers')
+        .update({ gallery_images: updated })
+        .eq('id', providerId)
 
-    const updated = images.filter((img) => img !== url)
+      if (updateError) {
+        setError(updateError.message)
+        return
+      }
 
-    const { error: updateError } = await supabase
-      .from('service_providers')
-      .update({ gallery_images: updated })
-      .eq('id', providerId)
-
-    if (updateError) {
-      setError(updateError.message)
+      setImages(updated)
+      router.refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'ลบรูปไม่สำเร็จ')
+    } finally {
       setDeleting(null)
-      return
     }
-
-    setImages(updated)
-    setDeleting(null)
-    router.refresh()
   }
 
   return (

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 import { getBusinessInitial } from '@/lib/utils'
-import { createClient } from '@/lib/supabase/client'
+import { getDbClient, uploadBusinessPhoto } from '@/lib/supabase/storage-upload'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const MAX_SIZE = 5 * 1024 * 1024
@@ -47,40 +47,29 @@ export function ProfileImageUpload({ providerId, businessName, initialProfileUrl
     setError('')
     setUploading(true)
 
-    const supabase = createClient()
-    const path = `${providerId}/profile/avatar.jpg`
+    try {
+      const cacheBustedUrl = await uploadBusinessPhoto('profile/avatar.jpg', file)
 
-    const { error: uploadError } = await supabase.storage
-      .from('business-photos')
-      .upload(path, file, { upsert: true, contentType: file.type })
+      const supabase = getDbClient()
+      const { error: updateError } = await supabase
+        .from('service_providers')
+        .update({ profile_image_url: cacheBustedUrl })
+        .eq('id', providerId)
 
-    if (uploadError) {
-      setError(uploadError.message)
+      if (updateError) {
+        setError(updateError.message)
+        setUploading(false)
+        return
+      }
+
+      setProfileUrl(cacheBustedUrl)
+      showToast('อัปโหลดรูปโปรไฟล์สำเร็จ ✅')
+      router.refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'อัปโหลดไม่สำเร็จ')
+    } finally {
       setUploading(false)
-      return
     }
-
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from('business-photos').getPublicUrl(path)
-
-    const cacheBustedUrl = `${publicUrl}?t=${Date.now()}`
-
-    const { error: updateError } = await supabase
-      .from('service_providers')
-      .update({ profile_image_url: cacheBustedUrl })
-      .eq('id', providerId)
-
-    if (updateError) {
-      setError(updateError.message)
-      setUploading(false)
-      return
-    }
-
-    setProfileUrl(cacheBustedUrl)
-    showToast('อัปโหลดรูปโปรไฟล์สำเร็จ ✅')
-    setUploading(false)
-    router.refresh()
   }
 
   return (
