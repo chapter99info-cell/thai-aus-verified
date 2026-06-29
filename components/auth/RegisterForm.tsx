@@ -21,6 +21,16 @@ type AbnResult = {
 
 const STEPS = ['ตรวจสอบ ABN', 'ข้อมูลธุรกิจ', 'สร้างบัญชี']
 
+function isDuplicateEmailError(error: { message?: string; status?: number | undefined }): boolean {
+  const msg = (error.message ?? '').toLowerCase()
+  return (
+    error.status === 422 ||
+    msg.includes('already registered') ||
+    msg.includes('already exists') ||
+    msg.includes('user already')
+  )
+}
+
 function mapState(code?: string): AustralianState {
   const valid = AU_STATES as readonly string[]
   if (code && valid.includes(code)) return code as AustralianState
@@ -49,6 +59,7 @@ export function RegisterForm() {
   const [password, setPassword] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [error, setError] = useState('')
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
   const [loading, setLoading] = useState(false)
   const [verifying, setVerifying] = useState(false)
 
@@ -125,33 +136,13 @@ export function RegisterForm() {
       return
     }
     setError('')
+    setShowLoginPrompt(false)
     setLoading(true)
 
     const supabase = createClient()
     const cleanAbn = abnResult?.abn ?? abnInput.replace(/\s/g, '')
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: businessName },
-      },
-    })
-
-    if (signUpError) {
-      setError(signUpError.message)
-      setLoading(false)
-      return
-    }
-
-    const user = data.user
-    if (!user) {
-      setError('ไม่สามารถสร้างบัญชีได้ กรุณาลองใหม่')
-      setLoading(false)
-      return
-    }
-
-    if (data.session) {
+    async function completeRegistration(userId: string) {
       await supabase
         .from('profiles')
         .update({
@@ -163,10 +154,22 @@ export function RegisterForm() {
           role: 'verified_business',
           full_name: businessName,
         })
-        .eq('id', user.id)
+        .eq('id', userId)
+
+      const { data: existingProvider } = await supabase
+        .from('service_providers')
+        .select('id')
+        .eq('profile_id', userId)
+        .maybeSingle()
+
+      if (existingProvider) {
+        router.push('/dashboard?registered=1')
+        router.refresh()
+        return
+      }
 
       const { error: bizError } = await supabase.from('service_providers').insert({
-        profile_id: user.id,
+        profile_id: userId,
         business_name: businessName,
         category,
         abn_number: cleanAbn,
@@ -196,6 +199,52 @@ export function RegisterForm() {
 
       router.push('/dashboard?registered=1')
       router.refresh()
+    }
+
+    const {
+      data: { user: sessionUser },
+    } = await supabase.auth.getUser()
+
+    if (sessionUser?.email?.toLowerCase() === email.trim().toLowerCase()) {
+      await completeRegistration(sessionUser.id)
+      return
+    }
+
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: businessName },
+      },
+    })
+
+    if (signUpError) {
+      if (isDuplicateEmailError(signUpError)) {
+        setError('อีเมลนี้มีบัญชีอยู่แล้ว กรุณาเข้าสู่ระบบ')
+        setShowLoginPrompt(true)
+      } else {
+        setError(signUpError.message)
+      }
+      setLoading(false)
+      return
+    }
+
+    const user = data.user
+    if (!user) {
+      setError('ไม่สามารถสร้างบัญชีได้ กรุณาลองใหม่')
+      setLoading(false)
+      return
+    }
+
+    if (user.identities?.length === 0) {
+      setError('อีเมลนี้มีบัญชีอยู่แล้ว กรุณาเข้าสู่ระบบ')
+      setShowLoginPrompt(true)
+      setLoading(false)
+      return
+    }
+
+    if (data.session) {
+      await completeRegistration(user.id)
       return
     }
 
@@ -244,7 +293,15 @@ export function RegisterForm() {
 
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
+          <p>{error}</p>
+          {showLoginPrompt && (
+            <Link
+              href="/login"
+              className="mt-3 inline-flex min-h-10 items-center justify-center rounded-lg bg-[#1e3a5f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2d5282]"
+            >
+              เข้าสู่ระบบ
+            </Link>
+          )}
         </div>
       )}
 
