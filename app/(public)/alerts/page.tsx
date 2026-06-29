@@ -1,3 +1,4 @@
+import { AlertDescription } from '@/components/alerts/AlertDescription'
 import OccupationCategories from '@/components/OccupationCategories'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
 import { getSeverityMeta } from '@/lib/scam-alerts'
@@ -70,7 +71,7 @@ export default async function AlertsPage() {
                     )}
                   </div>
                 </div>
-                <p className="mt-3 text-sm leading-relaxed text-slate-700">{alert.description}</p>
+                <AlertDescription description={alert.description} />
                 {alert.evidence_url && (
                   <a
                     href={alert.evidence_url}

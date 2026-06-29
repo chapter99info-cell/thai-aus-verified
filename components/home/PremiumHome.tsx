@@ -4,22 +4,13 @@ import Link from 'next/link'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import OccupationCategories from '@/components/OccupationCategories'
 import { CATEGORY_ICON_BASE } from '@/lib/constants'
+import type { MarqueeBusiness } from '@/lib/marquee-businesses'
 
 const HERO_VIDEO =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260505_101331_74f9b798-3f00-4e86-8a01-377aa16ffeaa.mp4'
 
-const MARQUEE_BUSINESSES = [
-  { emoji: '💆', name: 'Mira Thai Massage', badge: 'NSW', badgeClass: 'bg-[#051A24]', icon: 'icons8-oil-massage-50.png' },
-  { emoji: '🍜', name: 'Thai Garlic Rest.', badge: 'NSW', badgeClass: 'bg-[#c9a84c]', icon: 'icons8-restaurant-50.png' },
-  { emoji: '📸', name: 'Chapter99 Photo', badge: 'SYD', badgeClass: 'bg-[#1e3a5f]' },
-  { emoji: '🌸', name: 'Jasmine Massage', badge: 'VIC', badgeClass: 'bg-[#051A24]', icon: 'icons8-oil-massage-50.png' },
-  { emoji: '🐨', name: 'Koala Wellness', badge: 'QLD', badgeClass: 'bg-green-700' },
-  { emoji: '🌺', name: 'The Princess Thai', badge: 'NSW', badgeClass: 'bg-purple-700' },
-  { emoji: '🏖️', name: 'Trip2Talk Tours', badge: 'SYD', badgeClass: 'bg-[#c9a84c]' },
-  { emoji: '🏠', name: 'Thai Real Estate', badge: 'MEL', badgeClass: 'bg-[#051A24]' },
-  { emoji: '💅', name: 'Bangkok Beauty', badge: 'BNE', badgeClass: 'bg-rose-600' },
-  { emoji: '🧹', name: 'SkyClean Services', badge: 'PER', badgeClass: 'bg-blue-700', icon: 'icons8-cleaning-a-surface-50.png' },
-]
+const LOGO_PLACEHOLDER =
+  'https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png'
 
 const TESTIMONIALS = [
   {
@@ -49,6 +40,7 @@ interface PremiumHomeProps {
   verifiedCount: number
   stateCount: number
   alertTitle?: string
+  marqueeBusinesses: MarqueeBusiness[]
 }
 
 function FadeIn({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
@@ -82,34 +74,43 @@ function FadeIn({ children, delay = 0, className = '' }: { children: ReactNode; 
   )
 }
 
-function MarqueeCard({
-  emoji,
-  name,
-  badge,
-  badgeClass,
-  icon,
-}: (typeof MARQUEE_BUSINESSES)[number]) {
+function MarqueeCard({ business }: { business: MarqueeBusiness }) {
+  const logo = business.logo_url ?? LOGO_PLACEHOLDER
+
   return (
-    <div className="flex h-[68px] w-[164px] shrink-0 items-center gap-2.5 rounded-full border border-[rgba(5,26,36,0.1)] bg-white px-3 shadow-[0_2px_8px_rgba(5,26,36,0.04)] transition-all hover:-translate-y-0.5 hover:border-[rgba(5,26,36,0.2)] hover:shadow-[0_6px_16px_rgba(5,26,36,0.08)]">
-      {icon ? (
-        <img src={`${CATEGORY_ICON_BASE}/${icon}`} alt="" width={28} height={28} className="h-7 w-7 shrink-0" />
-      ) : (
-        <span className="text-xl">{emoji}</span>
-      )}
+    <Link
+      href={`/business/${business.id}`}
+      className="flex h-[68px] w-[164px] shrink-0 items-center gap-2.5 rounded-full border border-[rgba(5,26,36,0.1)] bg-white px-3 shadow-[0_2px_8px_rgba(5,26,36,0.04)] transition-shadow hover:border-[rgba(5,26,36,0.2)] hover:shadow-[0_6px_16px_rgba(5,26,36,0.08)]"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={logo}
+        alt={business.business_name}
+        width={28}
+        height={28}
+        className="h-7 w-7 shrink-0 rounded-full object-cover"
+      />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[10px] font-semibold text-[#051A24]">{name}</p>
-        <span className={`mt-0.5 inline-block rounded-full px-1.5 py-0.5 text-[9px] font-medium text-white ${badgeClass}`}>
-          {badge}
-        </span>
+        <p className="truncate text-[10px] font-semibold text-[#051A24]">{business.business_name}</p>
+        {business.state && (
+          <span className="mt-0.5 inline-block rounded-full bg-[#1e3a5f] px-1.5 py-0.5 text-[9px] font-medium text-white">
+            {business.state}
+          </span>
+        )}
       </div>
-    </div>
+    </Link>
   )
 }
 
-export function PremiumHome({ verifiedCount, stateCount, alertTitle }: PremiumHomeProps) {
+export function PremiumHome({
+  verifiedCount,
+  stateCount,
+  alertTitle,
+  marqueeBusinesses,
+}: PremiumHomeProps) {
   const statVerified = verifiedCount > 0 ? String(verifiedCount) : '30'
   const statStates = stateCount > 0 ? String(stateCount) : '8'
-  const marqueeItems = [...MARQUEE_BUSINESSES, ...MARQUEE_BUSINESSES]
+  const marqueeItems = [...marqueeBusinesses, ...marqueeBusinesses]
 
   return (
     <div id="premium-home" className="overflow-x-hidden bg-white pb-28">
@@ -201,7 +202,7 @@ export function PremiumHome({ verifiedCount, stateCount, alertTitle }: PremiumHo
         <div className="marquee-mask overflow-hidden">
           <div className="marquee-track flex w-max gap-3 px-3">
             {marqueeItems.map((biz, i) => (
-              <MarqueeCard key={`${biz.name}-${i}`} {...biz} />
+              <MarqueeCard key={`${biz.id}-${i}`} business={biz} />
             ))}
           </div>
         </div>

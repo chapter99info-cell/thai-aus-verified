@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { CategoryCountLabel } from '@/components/CategoryCountLabel'
 import { createClient } from '@/lib/supabase/client'
 import type { ServiceCategory } from '@/types'
 
@@ -69,9 +70,7 @@ export default function OccupationCategories({
             >
               <span className="text-4xl">{item.emoji}</span>
               <h3 className="mt-2 font-bold text-[#1e3a5f]">{item.label}</h3>
-              <span className="mt-1 block text-sm text-slate-500">
-                {counts[item.category] ?? 0} ธุรกิจ
-              </span>
+              <CategoryCountLabel count={counts[item.category] ?? 0} />
             </Link>
           ))}
         </div>

@@ -11,6 +11,9 @@ CREATE TABLE profiles (
   phone TEXT,
   line_id TEXT,
   role TEXT NOT NULL DEFAULT 'member' CHECK (role IN ('member', 'verified_business', 'admin')),
+  membership_tier TEXT DEFAULT 'free',
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

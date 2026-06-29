@@ -10,6 +10,8 @@ export function DashboardToast() {
   useEffect(() => {
     if (searchParams.get('registered') === '1') {
       setMessage('ยืนยัน ABN สำเร็จ! ธุรกิจของคุณขึ้น Directory แล้ว ✅')
+    } else if (searchParams.get('payment') === 'success') {
+      setMessage('อัปเกรด Premium สำเร็จ! 🎉')
     } else if (searchParams.get('upgraded') === 'true') {
       setMessage('อัปเกรด Premium สำเร็จ! 🎉')
     }

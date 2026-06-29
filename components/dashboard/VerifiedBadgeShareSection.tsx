@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { VerifiedBadgeCard } from '@/components/dashboard/VerifiedBadgeCard'
 
 const PROFILE_BASE_URL = 'https://thai-ausverified.com.au/business'
 
@@ -135,9 +136,11 @@ export function VerifiedBadgeShareSection({ businessName, abnNumber, providerId 
         </button>
       </div>
 
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-500">
-        🏅 Verified Badge Image — Coming Soon
-      </div>
+      <VerifiedBadgeCard
+        businessName={businessName}
+        abnNumber={abnNumber}
+        providerId={providerId}
+      />
     </section>
   )
 }

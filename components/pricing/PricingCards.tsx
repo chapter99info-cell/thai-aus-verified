@@ -1,56 +1,16 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { Check, Crown } from 'lucide-react'
+import { UpgradeButton } from '@/components/UpgradeButton'
 
 export function PricingCards() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
-  async function handlePremiumCheckout() {
-    setError('')
-    setLoading(true)
-
-    try {
-      const res = await fetch('/api/stripe/checkout', { method: 'POST' })
-      const data = await res.json()
-
-      if (!res.ok) {
-        if (res.status === 401) {
-          window.location.href = '/login?redirect=/pricing'
-          return
-        }
-        setError(data.error ?? 'ไม่สามารถเริ่มชำระเงินได้')
-        setLoading(false)
-        return
-      }
-
-      if (data.url) {
-        window.location.href = data.url
-        return
-      }
-
-      setError('ไม่สามารถเริ่มชำระเงินได้')
-    } catch {
-      setError('เกิดข้อผิดพลาด กรุณาลองใหม่')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-[#1e3a5f]">แผนราคา</h1>
         <p className="mt-2 text-slate-600">เริ่มต้นฟรี ไม่ต้องใช้บัตรเครดิต</p>
       </div>
-
-      {error && (
-        <div className="mx-auto mt-6 max-w-md rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
 
       <div className="mt-12 grid gap-6 md:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
@@ -116,14 +76,7 @@ export function PricingCards() {
             </li>
           </ul>
 
-          <button
-            type="button"
-            onClick={handlePremiumCheckout}
-            disabled={loading}
-            className="mt-8 w-full rounded-lg bg-[#1e3a5f] py-3 text-sm font-semibold text-white hover:bg-[#2d5282] disabled:opacity-50"
-          >
-            {loading ? 'กำลังโหลด...' : 'สมัคร Premium'}
-          </button>
+          <UpgradeButton className="mt-8 w-full rounded-lg bg-[#1e3a5f] py-3 text-sm font-semibold text-white hover:bg-[#2d5282] disabled:opacity-50" />
         </div>
       </div>
 

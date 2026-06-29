@@ -1,45 +1,75 @@
 export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
-import Stripe from 'stripe'
+import type Stripe from 'stripe'
+import { getStripe } from '@/lib/stripe'
 import { createServiceClient } from '@/lib/supabase/admin'
 
-function graceUntilSevenDays(): string {
-  const date = new Date()
-  date.setDate(date.getDate() + 7)
-  return date.toISOString()
+function getCustomerId(customer: Stripe.Invoice['customer'] | Stripe.Checkout.Session['customer']) {
+  if (!customer) return null
+  return typeof customer === 'string' ? customer : customer.id
 }
 
-function getCustomerId(invoice: Stripe.Invoice): string | null {
-  if (!invoice.customer) return null
-  return typeof invoice.customer === 'string' ? invoice.customer : invoice.customer.id
+async function setProfileMembership(
+  admin: NonNullable<ReturnType<typeof createServiceClient>>,
+  userId: string,
+  updates: {
+    membership_tier: 'free' | 'premium'
+    stripe_customer_id?: string | null
+    stripe_subscription_id?: string | null
+  }
+) {
+  const profileUpdate: Record<string, unknown> = {
+    membership_tier: updates.membership_tier,
+  }
+  if (updates.stripe_customer_id !== undefined) {
+    profileUpdate.stripe_customer_id = updates.stripe_customer_id
+  }
+  if (updates.stripe_subscription_id !== undefined) {
+    profileUpdate.stripe_subscription_id = updates.stripe_subscription_id
+  }
+
+  await admin.from('profiles').update(profileUpdate).eq('id', userId)
+
+  const providerUpdate: Record<string, unknown> = {
+    subscription_status: updates.membership_tier,
+  }
+  if (updates.stripe_customer_id !== undefined) {
+    providerUpdate.stripe_customer_id = updates.stripe_customer_id
+  }
+  if (updates.stripe_subscription_id !== undefined) {
+    providerUpdate.stripe_subscription_id = updates.stripe_subscription_id
+  }
+  if (updates.membership_tier === 'premium') {
+    providerUpdate.subscription_grace_until = null
+  }
+
+  await admin.from('service_providers').update(providerUpdate).eq('profile_id', userId)
 }
 
-async function updateProviderByCustomer(
+async function setMembershipByCustomerId(
   admin: NonNullable<ReturnType<typeof createServiceClient>>,
   customerId: string,
-  updates: Record<string, unknown>
+  membership_tier: 'free' | 'premium'
 ) {
-  await admin.from('service_providers').update(updates).eq('stripe_customer_id', customerId)
-}
-
-async function findProviderBySubscription(
-  admin: NonNullable<ReturnType<typeof createServiceClient>>,
-  subscriptionId: string
-) {
-  const { data } = await admin
-    .from('service_providers')
-    .select('id, subscription_grace_until, subscription_status')
-    .eq('stripe_subscription_id', subscriptionId)
+  const { data: profile } = await admin
+    .from('profiles')
+    .select('id')
+    .eq('stripe_customer_id', customerId)
     .maybeSingle()
-  return data
+
+  if (profile?.id) {
+    await setProfileMembership(admin, profile.id, {
+      membership_tier,
+      stripe_subscription_id: membership_tier === 'free' ? null : undefined,
+    })
+  }
 }
 
 export async function POST(req: Request) {
-  const stripeKey = process.env.STRIPE_SECRET_KEY
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
 
-  if (!stripeKey || !webhookSecret || webhookSecret === 'YOUR_WEBHOOK_SECRET') {
+  if (!webhookSecret || webhookSecret === 'YOUR_WEBHOOK_SECRET') {
     return NextResponse.json({ error: 'Webhook not configured' }, { status: 503 })
   }
 
@@ -50,7 +80,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Missing signature' }, { status: 400 })
   }
 
-  const stripe = new Stripe(stripeKey)
+  const stripe = getStripe()
   let event: Stripe.Event
 
   try {
@@ -66,66 +96,35 @@ export async function POST(req: Request) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
-    const providerId = session.metadata?.provider_id
+    const userId = session.metadata?.userId
+    const customerId = getCustomerId(session.customer)
     const subscriptionId =
       typeof session.subscription === 'string' ? session.subscription : session.subscription?.id
 
-    if (providerId) {
-      await admin
-        .from('service_providers')
-        .update({
-          subscription_status: 'premium',
-          stripe_subscription_id: subscriptionId ?? null,
-          subscription_grace_until: null,
-        })
-        .eq('id', providerId)
+    if (userId) {
+      await setProfileMembership(admin, userId, {
+        membership_tier: 'premium',
+        stripe_customer_id: customerId,
+        stripe_subscription_id: subscriptionId ?? null,
+      })
     }
   }
 
   if (event.type === 'invoice.payment_failed') {
     const invoice = event.data.object as Stripe.Invoice
-    const customerId = getCustomerId(invoice)
+    const customerId = getCustomerId(invoice.customer)
 
     if (customerId) {
-      await updateProviderByCustomer(admin, customerId, {
-        subscription_grace_until: graceUntilSevenDays(),
-      })
-
-      console.info('[stripe] payment_failed — grace period set for customer', customerId)
-    }
-  }
-
-  if (event.type === 'invoice.paid') {
-    const invoice = event.data.object as Stripe.Invoice
-    const customerId = getCustomerId(invoice)
-
-    if (customerId) {
-      await updateProviderByCustomer(admin, customerId, {
-        subscription_status: 'premium',
-        subscription_grace_until: null,
-      })
+      await setMembershipByCustomerId(admin, customerId, 'free')
     }
   }
 
   if (event.type === 'customer.subscription.deleted') {
     const subscription = event.data.object as Stripe.Subscription
-    const provider = await findProviderBySubscription(admin, subscription.id)
+    const customerId = getCustomerId(subscription.customer)
 
-    if (provider) {
-      const graceActive =
-        provider.subscription_grace_until &&
-        new Date(provider.subscription_grace_until) > new Date()
-
-      if (!graceActive) {
-        await admin
-          .from('service_providers')
-          .update({
-            subscription_status: 'free',
-            stripe_subscription_id: null,
-            subscription_grace_until: null,
-          })
-          .eq('id', provider.id)
-      }
+    if (customerId) {
+      await setMembershipByCustomerId(admin, customerId, 'free')
     }
   }
 

@@ -7,6 +7,9 @@ export interface Profile {
   phone?: string
   line_id?: string
   role: UserRole
+  membership_tier?: 'free' | 'premium'
+  stripe_customer_id?: string
+  stripe_subscription_id?: string
   created_at: string
 }
 

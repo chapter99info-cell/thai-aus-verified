@@ -190,8 +190,14 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
       ) : hasSearched ? (
         <>
           <p className="mt-4 text-sm text-[#1e3a5f]/50">
-            พบ {results.length} ธุรกิจ
-            {stateLabel ? ` ใน ${stateLabel}` : ' ทั่วออสเตรเลีย'}
+            {results.length === 0 ? (
+              <span className="text-xs italic text-[#1e3a5f]/50">เปิดรับลงทะเบียน</span>
+            ) : (
+              <>
+                พบ {results.length} ธุรกิจ
+                {stateLabel ? ` ใน ${stateLabel}` : ' ทั่วออสเตรเลีย'}
+              </>
+            )}
           </p>
 
           {results.length === 0 ? (
