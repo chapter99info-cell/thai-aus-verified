@@ -25,7 +25,7 @@ import { formatDateDDMMYYYY } from '@/lib/utils'
 import type { Article } from '@/types/articles'
 import type { Profile, ScamAlert, ServiceProvider } from '@/types'
 
-type AdminTab = 'pending' | 'verified' | 'alerts' | 'members' | 'premium' | 'articles'
+type AdminTab = 'pending' | 'verified' | 'alerts' | 'members' | 'premium' | 'articles' | 'sales'
 
 type ProviderRow = ServiceProvider & {
   profiles: Pick<Profile, 'email' | 'full_name' | 'phone'> | null
@@ -62,6 +62,20 @@ function formatTime(dateStr: string) {
   return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 }
 
+function buildSalesOfferMailto(businessName: string) {
+  const subject = encodeURIComponent(`สนใจทำเว็บไซต์ - ${businessName}`)
+  const body = encodeURIComponent(
+    `สวัสดีครับ ${businessName} สนใจให้เราช่วยทำเว็บไซต์ไหมครับ?`
+  )
+  return `mailto:chapter99solutions@gmail.com?subject=${subject}&body=${body}`
+}
+
+function isSalesLead(provider: ServiceProvider) {
+  const noWebsite = !provider.website?.trim()
+  const noFacebook = !provider.facebook_url?.trim()
+  return noWebsite && noFacebook
+}
+
 export function AdminPanel() {
   const [tab, setTab] = useState<AdminTab>('pending')
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
@@ -74,6 +88,7 @@ export function AdminPanel() {
   const [articles, setArticles] = useState<Article[]>([])
   const [members, setMembers] = useState<Profile[]>([])
   const [premium, setPremium] = useState<ProviderRow[]>([])
+  const [salesLeads, setSalesLeads] = useState<ProviderRow[]>([])
 
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null)
   const [selectedAlertId, setSelectedAlertId] = useState<string | null>(null)
@@ -89,7 +104,7 @@ export function AdminPanel() {
   const loadData = useCallback(async () => {
     const supabase = createClient()
 
-    const [pendingRes, verifiedRes, articlesRes, membersRes, premiumRes, alertsApiRes] =
+    const [pendingRes, verifiedRes, articlesRes, membersRes, premiumRes, salesRes, alertsApiRes] =
       await Promise.all([
         supabase
           .from('service_providers')
@@ -108,8 +123,15 @@ export function AdminPanel() {
           .select('*, profiles:profile_id(email, full_name, phone)')
           .eq('subscription_status', 'premium')
           .order('created_at', { ascending: false }),
+        supabase
+          .from('service_providers')
+          .select('*, profiles:profile_id(email, full_name, phone)')
+          .order('created_at', { ascending: false }),
         fetch('/api/admin/alerts'),
       ])
+
+    const allProviders = (salesRes.data ?? []) as ProviderRow[]
+    setSalesLeads(allProviders.filter(isSalesLead))
 
     setPending((pendingRes.data ?? []) as ProviderRow[])
     setVerified((verifiedRes.data ?? []) as ProviderRow[])
@@ -138,13 +160,15 @@ export function AdminPanel() {
       members: members.length,
       premium: premium.length,
       articles: articles.length,
+      sales: salesLeads.length,
     }),
-    [pending, verified, alerts, members, premium, articles]
+    [pending, verified, alerts, members, premium, articles, salesLeads]
   )
 
   const navItems: { id: AdminTab; icon: string; label: string; count: number }[] = [
     { id: 'pending', icon: '📥', label: 'รอการอนุมัติ', count: counts.pending },
     { id: 'verified', icon: '✅', label: 'ยืนยันแล้ว', count: counts.verified },
+    { id: 'sales', icon: '💼', label: 'โอกาสขาย', count: counts.sales },
     { id: 'alerts', icon: '⚠️', label: 'Scam Alerts', count: counts.alerts },
     { id: 'members', icon: '👥', label: 'สมาชิก', count: counts.members },
     { id: 'premium', icon: '💎', label: 'Premium', count: counts.premium },
@@ -206,6 +230,21 @@ export function AdminPanel() {
         m.email.toLowerCase().includes(q)
     )
   }, [members, search])
+
+  const filteredSalesLeads = useMemo(() => {
+    const q = search.toLowerCase()
+    return salesLeads.filter((p) => {
+      const matchSearch =
+        !q ||
+        p.business_name.toLowerCase().includes(q) ||
+        p.abn_number.includes(q) ||
+        p.suburb.toLowerCase().includes(q) ||
+        p.profiles?.email?.toLowerCase().includes(q) ||
+        p.phone?.includes(q)
+      const matchCat = !categoryFilter || p.category === categoryFilter
+      return matchSearch && matchCat
+    })
+  }, [salesLeads, search, categoryFilter])
 
   const selectedProvider = useMemo(() => {
     const all = [...pending, ...verified, ...premium]
@@ -327,7 +366,7 @@ export function AdminPanel() {
   return (
     <div
       className="grid min-h-screen bg-[#f8f9fc]"
-      style={{ gridTemplateColumns: '200px 1fr 1.2fr' }}
+      style={{ gridTemplateColumns: tab === 'sales' ? '200px 1fr' : '200px 1fr 1.2fr' }}
     >
       {/* Sidebar */}
       <aside className="flex flex-col border-r border-[rgba(30,58,95,0.08)] bg-[#f8f9fc] p-3">
@@ -394,6 +433,100 @@ export function AdminPanel() {
         </div>
       </aside>
 
+      {tab === 'sales' ? (
+        <section className="overflow-auto bg-white p-4 sm:p-6">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-bold text-[#1e3a5f]">โอกาสขาย — ไม่มีเว็บไซต์ / Facebook</h2>
+              <p className="mt-1 text-sm text-[rgba(30,58,95,0.55)]">
+                พบ {filteredSalesLeads.length} ธุรกิจที่ยังไม่มี website และ facebook_url
+              </p>
+            </div>
+            <div className="relative min-w-[220px] flex-1 sm:max-w-xs">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[rgba(30,58,95,0.35)]"
+              />
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="ค้นหาธุรกิจ..."
+                className="w-full rounded-xl bg-[rgba(30,58,95,0.05)] py-2.5 pl-9 pr-3 text-sm text-[#1e3a5f] placeholder:text-[rgba(30,58,95,0.35)] outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="overflow-x-auto rounded-xl border border-[rgba(30,58,95,0.08)]">
+            <table className="w-full min-w-[880px] text-left text-sm">
+              <thead className="bg-[#f8f9fc] text-xs font-bold uppercase tracking-wide text-[rgba(30,58,95,0.55)]">
+                <tr>
+                  <th className="px-4 py-3">ชื่อธุรกิจ</th>
+                  <th className="px-4 py-3">ประเภท</th>
+                  <th className="px-4 py-3">Suburb</th>
+                  <th className="px-4 py-3">ABN</th>
+                  <th className="px-4 py-3">ติดต่อ</th>
+                  <th className="px-4 py-3">สถานะ</th>
+                  <th className="px-4 py-3">ดำเนินการ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredSalesLeads.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-12 text-center text-[rgba(30,58,95,0.45)]">
+                      ไม่พบโอกาสขายในหมวดนี้
+                    </td>
+                  </tr>
+                ) : (
+                  filteredSalesLeads.map((lead) => {
+                    const cat = CATEGORY_LABELS[lead.category]
+                    const contactEmail = lead.profiles?.email
+                    const contactPhone = lead.phone || lead.profiles?.phone
+                    const contactParts = [contactPhone, contactEmail].filter(Boolean)
+
+                    return (
+                      <tr
+                        key={lead.id}
+                        className="border-t border-[rgba(30,58,95,0.08)] hover:bg-[#f8f9fc]"
+                      >
+                        <td className="px-4 py-3 font-semibold text-[#1e3a5f]">
+                          {lead.business_name}
+                        </td>
+                        <td className="px-4 py-3 text-[rgba(30,58,95,0.7)]">
+                          {cat?.th ?? lead.category}
+                        </td>
+                        <td className="px-4 py-3 text-[rgba(30,58,95,0.7)]">
+                          {lead.suburb}, {lead.state}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-xs text-[rgba(30,58,95,0.7)]">
+                          {lead.abn_number}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-[rgba(30,58,95,0.7)]">
+                          {contactParts.length > 0 ? contactParts.join(' · ') : '—'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-bold text-red-700">
+                            ไม่มีเว็บไซต์
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <a
+                            href={buildSalesOfferMailto(lead.business_name)}
+                            className="inline-flex rounded-lg bg-[#1e3a5f] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#2d5282]"
+                          >
+                            ส่ง offer
+                          </a>
+                        </td>
+                      </tr>
+                    )
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : (
+        <>
       {/* List panel */}
       <section className="flex flex-col border-r border-[rgba(30,58,95,0.08)] bg-white">
         <div className="border-b border-[rgba(30,58,95,0.08)] p-3">
@@ -832,6 +965,8 @@ export function AdminPanel() {
             </div>
           )}
       </section>
+        </>
+      )}
     </div>
   )
 }
