@@ -13,34 +13,45 @@ export function BusinessProfileHeader({ business, isPremium }: Props) {
   const category = CATEGORY_LABELS[business.category]
   const initial = getBusinessInitial(business.business_name)
   const hasCover = Boolean(business.cover_image_url?.trim())
+  const hasProfileImage = Boolean(business.profile_image_url?.trim())
 
   return (
     <>
-      <div className="relative h-[200px] w-full overflow-hidden rounded-b-2xl sm:h-[300px]">
-        {hasCover ? (
-          <Image
+      {hasCover ? (
+        <div className="relative h-48 w-full md:h-72">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={business.cover_image_url!}
-            alt={`ภาพปกธุรกิจ ${business.business_name}`}
-            fill
-            className="h-full w-full object-cover"
-            priority
-            unoptimized
+            alt="cover"
+            className="h-full w-full rounded-b-2xl object-cover"
           />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-[#1e3a5f] to-[#2d5282]">
-            <span className="text-6xl font-bold text-white">{initial}</span>
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="flex h-48 w-full items-center justify-center rounded-b-2xl bg-gradient-to-r from-[#1e3a5f] to-[#2d5282] md:h-72">
+          <span className="text-8xl font-bold text-white opacity-20">{initial}</span>
+        </div>
+      )}
 
       <div className="relative mx-auto max-w-3xl px-4 sm:px-6">
         <div className="relative -mt-10 flex items-end gap-4 pb-2 sm:-mt-12">
-          <div
-            className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-[#1e3a5f] text-2xl font-bold text-white shadow-md"
-            aria-hidden
-          >
-            {initial}
-          </div>
+          {hasProfileImage ? (
+            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 border-white shadow-md">
+              <Image
+                src={business.profile_image_url!}
+                alt={business.business_name}
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+          ) : (
+            <div
+              className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-[#1e3a5f] text-2xl font-bold text-white shadow-md"
+              aria-hidden
+            >
+              {initial}
+            </div>
+          )}
 
           <div className="min-w-0 flex-1 pb-1">
             <div className="flex flex-wrap items-center gap-2">

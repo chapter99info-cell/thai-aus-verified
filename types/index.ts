@@ -42,6 +42,7 @@ export interface ServiceProvider {
   portfolio_url?: string
   youtube_url?: string
   cover_image_url?: string
+  profile_image_url?: string
   gallery_images?: string[]
   abn_number: string
   is_verified: boolean

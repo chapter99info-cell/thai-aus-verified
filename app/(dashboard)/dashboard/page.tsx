@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation'
 import OccupationCategories from '@/components/OccupationCategories'
 import { PremiumBadge, VerifiedBadge } from '@/components/business/PremiumBadge'
 import { CoverImageUpload } from '@/components/dashboard/CoverImageUpload'
+import { GalleryUpload } from '@/components/dashboard/GalleryUpload'
+import { ProfileImageUpload } from '@/components/dashboard/ProfileImageUpload'
 import { DashboardToast } from '@/components/dashboard/DashboardToast'
 import { SignOutButton } from '@/components/dashboard/SignOutButton'
 import { VerifiedBadgeShareSection } from '@/components/dashboard/VerifiedBadgeShareSection'
@@ -111,6 +113,17 @@ export default async function DashboardPage() {
           <CoverImageUpload
             providerId={provider.id}
             initialCoverUrl={provider.cover_image_url}
+          />
+
+          <ProfileImageUpload
+            providerId={provider.id}
+            businessName={provider.business_name}
+            initialProfileUrl={provider.profile_image_url}
+          />
+
+          <GalleryUpload
+            providerId={provider.id}
+            initialGallery={provider.gallery_images}
           />
         </div>
       ) : (

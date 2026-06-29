@@ -32,6 +32,7 @@ CREATE TABLE service_providers (
   portfolio_url TEXT,
   youtube_url TEXT,
   cover_image_url TEXT,
+  profile_image_url TEXT,
   gallery_images TEXT[] DEFAULT '{}',
   abn_number TEXT NOT NULL,
   is_verified BOOLEAN DEFAULT FALSE,

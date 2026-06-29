@@ -2,10 +2,10 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { BusinessProfileHeader } from '@/components/business/BusinessProfileHeader'
 import { ContactButtons } from '@/components/business/ContactButtons'
-import { Gallery } from '@/components/business/Gallery'
 import { ReviewForm } from '@/components/reviews/ReviewForm'
 import { ReviewList } from '@/components/reviews/ReviewList'
 import { StarRating } from '@/components/reviews/StarRating'
+import { ensureHttpUrl } from '@/lib/contact'
 import { isPremiumProvider } from '@/lib/subscription'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
 import type { ServiceProvider } from '@/types'
@@ -37,6 +37,7 @@ export default async function BusinessDetailPage({ params }: Props) {
 
   const business = data as ServiceProvider
   const isPremium = isPremiumProvider(business)
+  const galleryImages = (business.gallery_images ?? []).filter(Boolean)
 
   const { data: reviewsData } = await supabase
     .from('reviews')
@@ -59,6 +60,23 @@ export default async function BusinessDetailPage({ params }: Props) {
           <ContactButtons business={business} />
         </div>
 
+        {galleryImages.length > 0 && (
+          <section className="mt-10">
+            <h3 className="text-lg font-semibold text-slate-900">ผลงาน / Gallery</h3>
+            <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-3">
+              {galleryImages.map((url) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={url}
+                  src={url}
+                  alt={`ผลงาน ${business.business_name}`}
+                  className="h-40 w-full rounded-xl object-cover"
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
         {business.description && (
           <section className="mt-10">
             <h2 className="text-lg font-semibold text-slate-900">เกี่ยวกับเรา</h2>
@@ -66,11 +84,16 @@ export default async function BusinessDetailPage({ params }: Props) {
           </section>
         )}
 
-        <Gallery
-          businessName={business.business_name}
-          galleryImages={business.gallery_images ?? []}
-          portfolioUrl={business.portfolio_url}
-        />
+        {business.portfolio_url?.trim() && (
+          <a
+            href={ensureHttpUrl(business.portfolio_url)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex min-h-14 items-center rounded-xl bg-purple-50 px-5 py-3 text-base font-medium text-purple-700 hover:bg-purple-100"
+          >
+            ดูผลงานเพิ่มเติม →
+          </a>
+        )}
 
         <section className="mt-10 border-t border-slate-200 pt-10">
           <h2 className="text-xl font-semibold text-slate-900">รีวิวจากลูกค้า</h2>
