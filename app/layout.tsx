@@ -73,7 +73,7 @@ export default function RootLayout({
         className={`${sarabun.className} flex min-h-full flex-col bg-white text-[#0D212C] antialiased`}
       >
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pt-16">{children}</main>
         <Footer />
         <FloatingChat />
       </body>

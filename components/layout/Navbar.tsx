@@ -115,8 +115,6 @@ export function Navbar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<User | null>(null)
-  const [scrolled, setScrolled] = useState(false)
-  const [borderAnimated, setBorderAnimated] = useState(true)
 
   useEffect(() => {
     const supabase = createClient()
@@ -137,20 +135,6 @@ export function Navbar() {
     })
 
     return () => subscription.unsubscribe()
-  }, [])
-
-  useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > 20)
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setBorderAnimated(false), 1500)
-    return () => window.clearTimeout(timer)
   }, [])
 
   async function handleSignOut() {
@@ -179,7 +163,7 @@ export function Navbar() {
           href={CHAPTER99_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="border-b border-[rgba(30,58,95,0.05)] px-6 py-3 text-sm text-[#1e3a5f] active:scale-95"
+          className="border-b border-slate-100 px-6 py-3 text-sm text-[#1e3a5f]"
           onClick={closeMobile}
         >
           chapter99info
@@ -200,7 +184,7 @@ export function Navbar() {
           }}
           className={cn(
             mobile
-              ? 'border-b border-[rgba(30,58,95,0.05)] px-6 py-3 text-left text-sm text-[#1e3a5f] active:scale-95'
+              ? 'border-b border-slate-100 px-6 py-3 text-left text-sm text-[#1e3a5f]'
               : 'nav-link'
           )}
         >
@@ -219,7 +203,7 @@ export function Navbar() {
         <Link
           key={item.href}
           href={item.href}
-          className="border-b border-[rgba(30,58,95,0.05)] px-6 py-3 text-sm text-[#1e3a5f] active:scale-95"
+          className="border-b border-slate-100 px-6 py-3 text-sm text-[#1e3a5f]"
           onClick={closeMobile}
         >
           {item.label}
@@ -239,71 +223,65 @@ export function Navbar() {
   }
 
   return (
-    <header
-      className={cn(
-        'sticky top-0 z-50 h-[60px] transition-[box-shadow,background-color] duration-300',
-        borderAnimated ? 'nav-border-animate' : 'border-b border-[rgba(30,58,95,0.08)]',
-        scrolled
-          ? 'bg-[rgba(255,255,255,0.97)] shadow-[0_4px_20px_rgba(30,58,95,0.08)] backdrop-blur-[16px]'
-          : 'bg-[rgba(255,255,255,0.92)] backdrop-blur-[16px]'
-      )}
-    >
-      <div className="mx-auto flex h-full max-w-[1100px] items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="group flex items-center gap-2">
-          <img
-            src={LOGO_URL}
-            alt="Thai-Aus Verified"
-            width={36}
-            height={36}
-            className="nav-logo-emoji h-9 w-9 rounded-full object-contain"
-          />
-          <span className="font-playfair text-[18px] font-bold text-[#1e3a5f] transition-colors duration-300 group-hover:text-[#3d6fa3]">
-            Thai-Aus Verified
-          </span>
-        </Link>
+    <header className="fixed top-0 left-0 right-0 z-50 will-change-transform">
+      <nav className="border-b border-slate-200 bg-white shadow-sm">
+        <div className="mx-auto flex h-16 max-w-[1100px] items-center justify-between px-4 sm:px-6">
+          <Link href="/" className="group flex items-center gap-2">
+            <img
+              src={LOGO_URL}
+              alt="Thai-Aus Verified"
+              width={36}
+              height={36}
+              className="h-9 w-9 rounded-full object-contain"
+            />
+            <span className="font-playfair text-[18px] font-bold text-[#1e3a5f]">
+              Thai-Aus Verified
+            </span>
+          </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
-          {navItems.map((item) => renderNavItem(item))}
-          {!user && (
-            <Link
-              href="/register"
-              className="nav-cta-btn inline-flex items-center gap-1 rounded-full px-5 py-2.5 text-[13px] font-bold text-white"
-            >
-              <span className="text-[10px] opacity-70">✦</span>
-              ลงทะเบียนธุรกิจ
-            </Link>
-          )}
-        </nav>
+          <div className="hidden items-center gap-6 md:flex">
+            {navItems.map((item) => renderNavItem(item))}
+            {!user && (
+              <Link
+                href="/register"
+                className="nav-cta-btn inline-flex items-center gap-1 rounded-full px-5 py-2.5 text-[13px] font-bold text-white"
+              >
+                <span className="text-[10px] opacity-70">✦</span>
+                ลงทะเบียนธุรกิจ
+              </Link>
+            )}
+          </div>
 
-        <button
-          type="button"
-          className="rounded-lg p-2 text-[#1e3a5f] md:hidden"
-          onClick={() => setOpen((v) => !v)}
-          aria-label={open ? 'ปิดเมนู' : 'เปิดเมนู'}
-        >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </div>
+          <button
+            type="button"
+            className="rounded-lg p-2 text-[#1e3a5f] md:hidden"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? 'ปิดเมนู' : 'เปิดเมนู'}
+          >
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+      </nav>
 
       <div
         className={cn(
-          'border-b border-[rgba(30,58,95,0.08)] bg-white md:hidden',
+          'border-b border-slate-200 bg-white md:hidden',
           open ? 'block' : 'hidden'
         )}
       >
-        <nav className="flex flex-col gap-1 py-4">
+        <div className="flex flex-col gap-1 py-4">
           {navItems.map((item) => renderNavItem(item, true))}
           {!user && (
             <Link
               href="/register"
-              className="nav-cta-btn mx-6 mt-2 inline-flex items-center justify-center gap-1 rounded-full px-5 py-2.5 text-center text-[13px] font-bold text-white active:scale-95"
+              className="nav-cta-btn mx-6 mt-2 inline-flex items-center justify-center gap-1 rounded-full px-5 py-2.5 text-center text-[13px] font-bold text-white"
               onClick={() => setOpen(false)}
             >
               <span className="text-[10px] opacity-70">✦</span>
               ลงทะเบียนธุรกิจ
             </Link>
           )}
-        </nav>
+        </div>
       </div>
     </header>
   )

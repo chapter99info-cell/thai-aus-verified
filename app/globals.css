@@ -10,6 +10,12 @@
   --accent-bg: #f9fafb;
 }
 
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -26,6 +32,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sarabun), 'Sarabun', sans-serif;
+  overscroll-behavior: none;
+  overflow-x: hidden;
 }
 
 body:has(#premium-home) > footer {
@@ -144,10 +152,6 @@ h1 {
   animation: navBorderSlide 1.5s ease forwards;
 }
 
-.group:hover .nav-logo-emoji {
-  animation: logoEmojiBounce 0.3s ease;
-}
-
 .nav-link {
   position: relative;
   display: inline-flex;
@@ -162,7 +166,6 @@ h1 {
 .nav-link:hover {
   color: #1e3a5f;
   font-weight: 600;
-  transform: scale(1.12);
 }
 
 .nav-link-dot {
@@ -204,15 +207,10 @@ h1 {
 
 .nav-cta-btn:hover {
   background: #2a4f7c;
-  transform: translateY(-1px);
-  box-shadow:
-    0 2px 4px rgba(30, 58, 95, 0.2),
-    0 6px 12px rgba(30, 58, 95, 0.15),
-    inset 0 1px 4px rgba(255, 255, 255, 0.12);
 }
 
 .nav-cta-btn:active {
-  transform: scale(0.97);
+  opacity: 0.95;
 }
 
 .nav-tooltip {
