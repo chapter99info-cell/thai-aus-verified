@@ -20,6 +20,7 @@ type NavItem =
 
 const loggedOutLinks: NavItem[] = [
   { type: 'link', href: '/directory', label: 'ค้นหาธุรกิจ' },
+  { type: 'link', href: '/resources', label: 'ลิงก์มีประโยชน์' },
   { type: 'link', href: '/alerts', label: 'แจ้งเตือนภัย' },
   { type: 'link', href: '/terms', label: 'เกี่ยวกับเรา' },
   { type: 'link', href: '/pricing', label: 'ราคา' },
@@ -28,6 +29,7 @@ const loggedOutLinks: NavItem[] = [
 
 const loggedInLinks: NavItem[] = [
   { type: 'link', href: '/directory', label: 'ค้นหาธุรกิจ' },
+  { type: 'link', href: '/resources', label: 'ลิงก์มีประโยชน์' },
   { type: 'link', href: '/alerts', label: 'แจ้งเตือนภัย' },
   { type: 'link', href: '/terms', label: 'เกี่ยวกับเรา' },
   { type: 'chapter99' },
