@@ -62,7 +62,6 @@ export function hasContactChannel(provider: {
   whatsapp?: string | null
   website?: string | null
   portfolio_url?: string | null
-  google_maps_url?: string | null
 }) {
   return !!(
     provider.phone?.trim() ||
@@ -72,7 +71,6 @@ export function hasContactChannel(provider: {
     provider.tiktok_url?.trim() ||
     provider.whatsapp?.trim() ||
     provider.website?.trim() ||
-    provider.portfolio_url?.trim() ||
-    provider.google_maps_url?.trim()
+    provider.portfolio_url?.trim()
   )
 }

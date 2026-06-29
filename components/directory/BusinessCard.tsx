@@ -140,16 +140,6 @@ export function BusinessCard({ business }: BusinessCardProps) {
           </a>
         )}
 
-        {business.google_maps_url?.trim() && (
-          <a
-            href={ensureHttpUrl(business.google_maps_url)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-[#1e3a5f]/50 transition-colors hover:text-red-500"
-          >
-            📍 Google Maps
-          </a>
-        )}
       </div>
     </div>
   )

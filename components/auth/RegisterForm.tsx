@@ -54,7 +54,6 @@ export function RegisterForm() {
   const [tiktokUrl, setTiktokUrl] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
   const [websiteUrl, setWebsiteUrl] = useState('')
-  const [googleMapsUrl, setGoogleMapsUrl] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
@@ -117,8 +116,7 @@ export function RegisterForm() {
       instagramUrl.trim() ||
       tiktokUrl.trim() ||
       whatsapp.trim() ||
-      websiteUrl.trim() ||
-      googleMapsUrl.trim()
+      websiteUrl.trim()
 
     if (!hasContact) {
       setError('กรุณากรอกอย่างน้อย 1 ช่องทางที่ลูกค้าสามารถติดต่อได้')
@@ -150,7 +148,6 @@ export function RegisterForm() {
           line_id: lineId || null,
           whatsapp: whatsapp || null,
           tiktok_url: tiktokUrl || null,
-          google_maps_url: googleMapsUrl || null,
           role: 'verified_business',
           full_name: businessName,
         })
@@ -182,7 +179,6 @@ export function RegisterForm() {
         tiktok_url: tiktokUrl || null,
         whatsapp: whatsapp || null,
         website: websiteUrl || null,
-        google_maps_url: googleMapsUrl || null,
         is_verified: true,
         verification_status: 'approved',
         verified_at: new Date().toISOString(),
@@ -490,16 +486,6 @@ export function RegisterForm() {
                 className="flex-1 text-sm outline-none"
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}
-              />
-            </div>
-
-            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
-              <span className="text-xl">📍</span>
-              <input
-                placeholder="Google Maps link"
-                className="flex-1 text-sm outline-none"
-                value={googleMapsUrl}
-                onChange={(e) => setGoogleMapsUrl(e.target.value)}
               />
             </div>
           </div>
