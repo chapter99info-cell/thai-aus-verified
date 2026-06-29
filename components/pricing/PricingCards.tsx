@@ -1,10 +1,25 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { Check, Crown } from 'lucide-react'
 import { UpgradeButton } from '@/components/UpgradeButton'
 
+const VALID_PROMO_CODES = ['THAIAUS3FREE', 'EARLYBIRD']
+
 export function PricingCards() {
+  const [promoCode, setPromoCode] = useState('')
+  const [promoMessage, setPromoMessage] = useState('')
+
+  function handleApplyPromo() {
+    const code = promoCode.trim().toUpperCase()
+    if (VALID_PROMO_CODES.includes(code)) {
+      setPromoMessage('✅ โค้ดใช้ได้! รับฟรี 3 เดือนเมื่อสมัคร Premium')
+      return
+    }
+    setPromoMessage('โค้ดไม่ถูกต้อง ลองใช้ THAIAUS3FREE')
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
       <div className="text-center">
@@ -12,11 +27,23 @@ export function PricingCards() {
         <p className="mt-2 text-slate-600">เริ่มต้นฟรี ไม่ต้องใช้บัตรเครดิต</p>
       </div>
 
-      <div className="mt-12 grid gap-6 md:grid-cols-2">
+      <div className="mb-8 mt-8 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-center">
+        <p className="text-lg font-bold text-amber-800">
+          🎉 Early Adopter Special — สมัครตอนนี้รับฟรี 3 เดือนแรก!
+        </p>
+        <p className="mt-1 text-sm text-amber-700">
+          สำหรับ 50 ธุรกิจแรกเท่านั้น — ไม่ต้องใช้บัตรเครดิต
+        </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <h2 className="text-xl font-bold text-[#1e3a5f]">FREE</h2>
           <p className="mt-2 text-3xl font-bold text-slate-900">ฟรี</p>
           <p className="mt-1 text-sm text-slate-500">ตลอดไป</p>
+          <p className="mt-3 text-sm font-medium text-slate-600">
+            เหมาะสำหรับ: ธุรกิจที่เพิ่งเริ่มต้น
+          </p>
 
           <ul className="mt-6 space-y-3">
             <li className="flex items-start gap-2 text-sm text-slate-700">
@@ -49,9 +76,11 @@ export function PricingCards() {
             <Crown size={22} className="text-[#1e3a5f]" />
             <h2 className="text-xl font-bold text-[#1e3a5f]">PREMIUM</h2>
           </div>
-          <p className="mt-2 text-3xl font-bold text-slate-900">
-            A$9<span className="text-base font-normal text-slate-500">/เดือน</span>
+          <p className="mt-2">
+            <s className="text-slate-400">A$9/เดือน</s>
           </p>
+          <p className="mt-1 text-2xl font-bold text-green-600">ฟรี 3 เดือน</p>
+          <p className="mt-1 text-xs text-slate-500">จากนั้น A$9/เดือน — ยกเลิกได้ตลอด</p>
 
           <ul className="mt-6 space-y-3">
             <li className="flex items-start gap-2 text-sm text-slate-700">
@@ -76,7 +105,37 @@ export function PricingCards() {
             </li>
           </ul>
 
-          <UpgradeButton className="mt-8 w-full rounded-lg bg-[#1e3a5f] py-3 text-sm font-semibold text-white hover:bg-[#2d5282] disabled:opacity-50" />
+          <UpgradeButton
+            label="สมัครฟรี 3 เดือน"
+            className="mt-8 w-full rounded-lg bg-green-600 py-3 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+          />
+
+          <div className="mt-4">
+            <label htmlFor="promo-code" className="block text-sm font-medium text-slate-700">
+              มีโค้ดส่วนลดไหม?
+            </label>
+            <div className="mt-2 flex gap-2">
+              <input
+                id="promo-code"
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                placeholder="EARLYBIRD"
+                className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-[#1e3a5f] focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]"
+              />
+              <button
+                type="button"
+                onClick={handleApplyPromo}
+                className="shrink-0 rounded-lg bg-[#1e3a5f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2d5282]"
+              >
+                ใช้โค้ด
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">ใช้โค้ด THAIAUS3FREE รับฟรี 3 เดือน</p>
+            {promoMessage && (
+              <p className="mt-2 text-xs font-medium text-green-700">{promoMessage}</p>
+            )}
+          </div>
         </div>
       </div>
 

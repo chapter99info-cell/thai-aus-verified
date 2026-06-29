@@ -22,6 +22,7 @@ export type ServiceCategory =
   | 'transport'
   | 'tradesperson'
   | 'photography'
+  | 'real_estate'
   | 'other'
 
 export type AustralianState = 'NSW' | 'VIC' | 'QLD' | 'WA' | 'SA' | 'TAS' | 'ACT' | 'NT'

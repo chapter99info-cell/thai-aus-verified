@@ -1,49 +1,40 @@
-import { CATEGORY_ICON_BASE } from '@/lib/constants'
-
-const LOGO_PLACEHOLDER =
-  'https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png'
+import type { ServiceCategory } from '@/types'
+import { CATEGORY_EMOJI } from '@/lib/categories'
 
 export type MarqueeBusiness = {
   id: string
-  business_name: string
-  logo_url: string | null
-  state?: string | null
+  name: string
+  emoji: string
+  category?: string
 }
 
-export const MARQUEE_FALLBACK: MarqueeBusiness[] = [
-  {
-    id: 'seed-mira',
-    business_name: 'Mira Thai Massage',
-    logo_url: `${CATEGORY_ICON_BASE}/icons8-oil-massage-50.png`,
-    state: 'NSW',
-  },
-  {
-    id: 'seed-garlic',
-    business_name: 'Thai Garlic Rest.',
-    logo_url: `${CATEGORY_ICON_BASE}/icons8-restaurant-50.png`,
-    state: 'NSW',
-  },
-  {
-    id: 'seed-photo',
-    business_name: 'Chapter99 Photo',
-    logo_url: LOGO_PLACEHOLDER,
-    state: 'SYD',
-  },
-  {
-    id: 'seed-jasmine',
-    business_name: 'Jasmine Massage',
-    logo_url: `${CATEGORY_ICON_BASE}/icons8-oil-massage-50.png`,
-    state: 'VIC',
-  },
+export const SEED_BUSINESSES: MarqueeBusiness[] = [
+  { id: 'seed-1', name: 'ช่างไฟฟ้าไทย', category: 'ช่างฝีมือ', emoji: '🔧' },
+  { id: 'seed-2', name: 'Thai Express Transport', category: 'ขนส่ง', emoji: '🚗' },
+  { id: 'seed-3', name: 'Sydney Thai Kitchen', category: 'ร้านอาหาร', emoji: '🍜' },
+  { id: 'seed-4', name: 'Thai Visa Assist', category: 'วีซ่า', emoji: '📋' },
+  { id: 'seed-5', name: 'Mira Thai Massage', category: 'นวดและสปา', emoji: '💆' },
+  { id: 'seed-6', name: 'Thai Real Estate AU', category: 'อสังหาฯ', emoji: '🏠' },
+  { id: 'seed-7', name: 'BKK Photography', category: 'ช่างภาพ', emoji: '📸' },
+  { id: 'seed-8', name: 'Thai Cleaning Pro', category: 'ช่างฝีมือ', emoji: '🧹' },
 ]
 
-export function mergeMarqueeBusinesses(data: MarqueeBusiness[]): MarqueeBusiness[] {
-  if (data.length >= 4) return data
+export function mapProviderToMarquee(row: {
+  id: string
+  business_name: string
+  category: string | null
+}): MarqueeBusiness {
+  const cat = (row.category ?? 'other') as ServiceCategory
+  return {
+    id: row.id,
+    name: row.business_name,
+    emoji: CATEGORY_EMOJI[cat] ?? '🌐',
+    category: row.category ?? undefined,
+  }
+}
 
-  const needed = 4 - data.length
-  const seeds = MARQUEE_FALLBACK.filter(
-    (seed) => !data.some((item) => item.business_name === seed.business_name)
-  )
-
-  return [...data, ...seeds.slice(0, needed)]
+/** Use DB results when available; otherwise seed. Duplicate ×3 for infinite scroll. */
+export function buildMarqueeTrack(data: MarqueeBusiness[]): MarqueeBusiness[] {
+  const base = data.length > 0 ? data : SEED_BUSINESSES
+  return [...base, ...base, ...base]
 }

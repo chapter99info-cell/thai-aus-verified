@@ -41,6 +41,7 @@ interface PremiumHomeProps {
   stateCount: number
   alertTitle?: string
   marqueeBusinesses: MarqueeBusiness[]
+  categoryCounts?: Record<string, number>
 }
 
 function FadeIn({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
@@ -75,29 +76,16 @@ function FadeIn({ children, delay = 0, className = '' }: { children: ReactNode; 
 }
 
 function MarqueeCard({ business }: { business: MarqueeBusiness }) {
-  const logo = business.logo_url ?? LOGO_PLACEHOLDER
+  const isSeed = business.id.startsWith('seed-')
+  const href = isSeed ? '/directory' : `/business/${business.id}`
 
   return (
     <Link
-      href={`/business/${business.id}`}
-      className="flex h-[68px] w-[164px] shrink-0 items-center gap-2.5 rounded-full border border-[rgba(5,26,36,0.1)] bg-white px-3 shadow-[0_2px_8px_rgba(5,26,36,0.04)] transition-shadow hover:border-[rgba(5,26,36,0.2)] hover:shadow-[0_6px_16px_rgba(5,26,36,0.08)]"
+      href={href}
+      className="flex h-[68px] min-w-[180px] shrink-0 items-center gap-2.5 rounded-full border border-[rgba(5,26,36,0.1)] bg-white px-4 shadow-[0_2px_8px_rgba(5,26,36,0.04)] transition-shadow hover:border-[rgba(5,26,36,0.2)] hover:shadow-[0_6px_16px_rgba(5,26,36,0.08)]"
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={logo}
-        alt={business.business_name}
-        width={28}
-        height={28}
-        className="h-7 w-7 shrink-0 rounded-full object-cover"
-      />
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-[10px] font-semibold text-[#051A24]">{business.business_name}</p>
-        {business.state && (
-          <span className="mt-0.5 inline-block rounded-full bg-[#1e3a5f] px-1.5 py-0.5 text-[9px] font-medium text-white">
-            {business.state}
-          </span>
-        )}
-      </div>
+      <span className="text-xl">{business.emoji}</span>
+      <p className="truncate text-xs font-semibold text-[#051A24]">{business.name}</p>
     </Link>
   )
 }
@@ -107,10 +95,10 @@ export function PremiumHome({
   stateCount,
   alertTitle,
   marqueeBusinesses,
+  categoryCounts,
 }: PremiumHomeProps) {
   const statVerified = verifiedCount > 0 ? String(verifiedCount) : '30'
   const statStates = stateCount > 0 ? String(stateCount) : '8'
-  const marqueeItems = [...marqueeBusinesses, ...marqueeBusinesses]
 
   return (
     <div id="premium-home" className="overflow-x-hidden bg-white pb-28">
@@ -201,14 +189,14 @@ export function PremiumHome({
         </p>
         <div className="marquee-mask overflow-hidden">
           <div className="marquee-track flex w-max gap-3 px-3">
-            {marqueeItems.map((biz, i) => (
+            {marqueeBusinesses.map((biz, i) => (
               <MarqueeCard key={`${biz.id}-${i}`} business={biz} />
             ))}
           </div>
         </div>
       </section>
 
-      <OccupationCategories />
+      <OccupationCategories initialCounts={categoryCounts} />
 
       {/* Quote */}
       <FadeIn className="px-4 py-20 sm:px-6">

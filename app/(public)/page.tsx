@@ -1,31 +1,37 @@
 import { PremiumHome } from '@/components/home/PremiumHome'
-import { mergeMarqueeBusinesses, type MarqueeBusiness } from '@/lib/marquee-businesses'
+import { buildCategoryCounts } from '@/lib/categories'
+import {
+  buildMarqueeTrack,
+  mapProviderToMarquee,
+  type MarqueeBusiness,
+} from '@/lib/marquee-businesses'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
 import type { ScamAlert } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
+async function getCategoryCounts(): Promise<Record<string, number>> {
+  if (!isSupabaseConfigured()) return {}
+
+  const supabase = await createClient()
+  const { data } = await supabase.from('service_providers').select('category')
+  return buildCategoryCounts(data)
+}
+
 async function getMarqueeBusinesses(): Promise<MarqueeBusiness[]> {
   if (!isSupabaseConfigured()) {
-    return mergeMarqueeBusinesses([])
+    return buildMarqueeTrack([])
   }
 
   const supabase = await createClient()
   const { data } = await supabase
     .from('service_providers')
-    .select('id, business_name, profile_image_url, state')
+    .select('id, business_name, category')
     .eq('is_verified', true)
-    .eq('verification_status', 'approved')
     .limit(20)
 
-  const mapped: MarqueeBusiness[] = (data ?? []).map((row) => ({
-    id: row.id,
-    business_name: row.business_name,
-    logo_url: row.profile_image_url ?? null,
-    state: row.state,
-  }))
-
-  return mergeMarqueeBusinesses(mapped)
+  const mapped = (data ?? []).map(mapProviderToMarquee)
+  return buildMarqueeTrack(mapped)
 }
 
 async function getHomeStats() {
@@ -57,10 +63,8 @@ async function getHomeStats() {
 }
 
 export default async function HomePage() {
-  const [{ verifiedCount, stateCount, latestAlert }, marqueeBusinesses] = await Promise.all([
-    getHomeStats(),
-    getMarqueeBusinesses(),
-  ])
+  const [{ verifiedCount, stateCount, latestAlert }, marqueeBusinesses, categoryCounts] =
+    await Promise.all([getHomeStats(), getMarqueeBusinesses(), getCategoryCounts()])
 
   return (
     <PremiumHome
@@ -68,6 +72,7 @@ export default async function HomePage() {
       stateCount={stateCount}
       alertTitle={latestAlert?.title}
       marqueeBusinesses={marqueeBusinesses}
+      categoryCounts={categoryCounts}
     />
   )
 }

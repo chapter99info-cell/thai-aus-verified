@@ -3,29 +3,27 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { CategoryCountLabel } from '@/components/CategoryCountLabel'
+import { DIRECTORY_CATEGORIES } from '@/lib/categories'
 import { createClient } from '@/lib/supabase/client'
-import type { ServiceCategory } from '@/types'
-
-const CATEGORIES: { emoji: string; label: string; category: ServiceCategory }[] = [
-  { emoji: '🍜', label: 'ร้านอาหาร', category: 'restaurant' },
-  { emoji: '💆', label: 'นวดและสปา', category: 'massage' },
-  { emoji: '📸', label: 'ช่างภาพ', category: 'photography' },
-  { emoji: '🔧', label: 'ช่างฝีมือ', category: 'tradesperson' },
-  { emoji: '🏠', label: 'อสังหาริมทรัพย์', category: 'accommodation' },
-  { emoji: '🚗', label: 'ขนส่ง', category: 'transport' },
-]
 
 export default function OccupationCategories({
   hero = false,
   showScrollHint = false,
+  initialCounts,
 }: {
   hero?: boolean
   showScrollHint?: boolean
   showGradient?: boolean
+  initialCounts?: Record<string, number>
 } = {}) {
-  const [counts, setCounts] = useState<Record<string, number>>({})
+  const [counts, setCounts] = useState<Record<string, number>>(initialCounts ?? {})
 
   useEffect(() => {
+    if (initialCounts) {
+      setCounts(initialCounts)
+      return
+    }
+
     async function loadCounts() {
       const supabase = createClient()
       const { data } = await supabase.from('service_providers').select('category')
@@ -42,7 +40,7 @@ export default function OccupationCategories({
     }
 
     loadCounts()
-  }, [])
+  }, [initialCounts])
 
   return (
     <section className="w-full overflow-x-hidden bg-white py-10">
@@ -61,15 +59,22 @@ export default function OccupationCategories({
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-          {CATEGORIES.map((item) => (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+          {DIRECTORY_CATEGORIES.map((item) => (
             <Link
               key={item.category}
               href={`/directory?category=${item.category}`}
-              className="block rounded-2xl border-2 border-[#1e3a5f] bg-white p-6 text-center transition-shadow hover:shadow-md"
+              className="relative block rounded-2xl border-2 border-[#1e3a5f] bg-white p-5 text-center transition-shadow hover:shadow-md"
             >
-              <span className="text-4xl">{item.emoji}</span>
-              <h3 className="mt-2 font-bold text-[#1e3a5f]">{item.label}</h3>
+              {item.badge && (
+                <span
+                  className={`absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold ${item.badge.className}`}
+                >
+                  {item.badge.text}
+                </span>
+              )}
+              <span className="text-3xl md:text-4xl">{item.emoji}</span>
+              <h3 className="mt-2 text-sm font-bold text-[#1e3a5f] md:text-base">{item.label}</h3>
               <CategoryCountLabel count={counts[item.category] ?? 0} />
             </Link>
           ))}

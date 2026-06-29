@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import OccupationCategories from '@/components/OccupationCategories'
 import { DirectorySearchSection } from '@/components/directory/DirectorySearchSection'
+import { buildCategoryCounts } from '@/lib/categories'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -25,10 +26,17 @@ async function fetchSuburbs() {
 
 export default async function DirectoryPage() {
   const suburbs = await fetchSuburbs()
+  let categoryCounts: Record<string, number> = {}
+
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient()
+    const { data } = await supabase.from('service_providers').select('category')
+    categoryCounts = buildCategoryCounts(data)
+  }
 
   return (
     <>
-      <OccupationCategories hero showScrollHint />
+      <OccupationCategories hero showScrollHint initialCounts={categoryCounts} />
 
       <div className="bg-white px-4 py-10 sm:px-6">
         <div className="mx-auto max-w-6xl">

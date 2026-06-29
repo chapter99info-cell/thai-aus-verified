@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { VerifiedBadgeCard } from '@/components/dashboard/VerifiedBadgeCard'
+import type { ServiceCategory } from '@/types'
 
 const PROFILE_BASE_URL = 'https://thai-ausverified.com.au/business'
 
@@ -9,6 +10,7 @@ type Props = {
   businessName: string
   abnNumber: string
   providerId: string
+  category: ServiceCategory
 }
 
 function formatAbnDisplay(abn: string) {
@@ -41,7 +43,12 @@ async function copyText(text: string) {
   document.body.removeChild(textarea)
 }
 
-export function VerifiedBadgeShareSection({ businessName, abnNumber, providerId }: Props) {
+export function VerifiedBadgeShareSection({
+  businessName,
+  abnNumber,
+  providerId,
+  category,
+}: Props) {
   const [toast, setToast] = useState('')
 
   const profileUrl = `${PROFILE_BASE_URL}/${providerId}`
@@ -138,7 +145,8 @@ export function VerifiedBadgeShareSection({ businessName, abnNumber, providerId 
 
       <VerifiedBadgeCard
         businessName={businessName}
-        abnNumber={abnNumber}
+        abn={abnNumber}
+        category={category}
         providerId={providerId}
       />
     </section>

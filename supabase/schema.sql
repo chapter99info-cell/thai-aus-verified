@@ -22,7 +22,7 @@ CREATE TABLE service_providers (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   business_name TEXT NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('accommodation','jobs','visa','restaurant','massage','transport','tradesperson','photography','other')),
+  category TEXT NOT NULL CHECK (category IN ('accommodation','jobs','visa','restaurant','massage','transport','tradesperson','photography','real_estate','other')),
   description TEXT,
   address TEXT,
   suburb TEXT,

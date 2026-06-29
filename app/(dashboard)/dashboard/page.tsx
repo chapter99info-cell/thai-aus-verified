@@ -143,6 +143,7 @@ export default async function DashboardPage() {
           businessName={provider.business_name}
           abnNumber={provider.abn_number}
           providerId={provider.id}
+          category={provider.category}
         />
       )}
     </div>
