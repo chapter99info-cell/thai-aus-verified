@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Check, Crown } from 'lucide-react'
+import { Crown } from 'lucide-react'
 import { UpgradeButton } from '@/components/UpgradeButton'
 
 const VALID_PROMO_CODES = ['THAIAUS3FREE', 'EARLYBIRD']
@@ -45,18 +45,26 @@ export function PricingCards() {
             เหมาะสำหรับ: ธุรกิจที่เพิ่งเริ่มต้น
           </p>
 
-          <ul className="mt-6 space-y-3">
-            <li className="flex items-start gap-2 text-sm text-slate-700">
-              <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
-              Verified Badge บน Directory
+          <ul className="mt-6">
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>✅</span>
+              <span>ค้นหาร้านค้าในไดเรกทอรี</span>
             </li>
-            <li className="flex items-start gap-2 text-sm text-slate-700">
-              <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
-              ขึ้น Directory ค้นหาได้
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>✅</span>
+              <span>กดติดต่อร้านได้ทุกช่องทาง (โทร, Line, Facebook, อีเมล)</span>
             </li>
-            <li className="flex items-start gap-2 text-sm text-slate-700">
-              <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
-              ยืนยัน ABN อัตโนมัติ
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>✅</span>
+              <span>ค้นหางานในชุมชนไทย</span>
+            </li>
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>✅</span>
+              <span>อ่านบทความกฎหมายและวีซ่า</span>
+            </li>
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>✅</span>
+              <span>แจ้งเตือนภัยร้านค้าต้มตุ๋น (Scam Alerts)</span>
             </li>
           </ul>
 
@@ -82,26 +90,34 @@ export function PricingCards() {
           <p className="mt-1 text-2xl font-bold text-green-600">ฟรี 3 เดือน</p>
           <p className="mt-1 text-xs text-slate-500">จากนั้น A$9/เดือน — ยกเลิกได้ตลอด</p>
 
-          <ul className="mt-6 space-y-3">
-            <li className="flex items-start gap-2 text-sm text-slate-700">
-              <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
-              ทุกอย่างใน Free
+          <ul className="mt-6">
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>🌟</span>
+              <span>ทุกอย่างในแผนฟรี</span>
             </li>
-            <li className="flex items-start gap-2 text-sm text-slate-700">
-              <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
-              โพสต์โฆษณาใน Facebook Group ได้
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>📢</span>
+              <span>โพสต์ประกาศรับสมัครงานได้ไม่จำกัด</span>
             </li>
-            <li className="flex items-start gap-2 text-sm text-slate-700">
-              <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
-              แสดงลำดับต้นใน Directory
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>🏆</span>
+              <span>Badge &quot;Verified Premium&quot; สีทอง บนโปรไฟล์ร้าน</span>
             </li>
-            <li className="flex items-start gap-2 text-sm text-slate-700">
-              <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
-              ⭐ Premium Verified badge
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>⬆️</span>
+              <span>ร้านของคุณขึ้นอันดับต้นๆ ในการค้นหา</span>
             </li>
-            <li className="flex items-start gap-2 text-sm text-slate-700">
-              <Check size={18} className="mt-0.5 shrink-0 text-green-600" />
-              สนับสนุนชุมชนไทย-ออส
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>📊</span>
+              <span>ดูสถิติว่ามีคนดูร้านคุณกี่คน (Analytics)</span>
+            </li>
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>💼</span>
+              <span>เข้าร่วม Facebook Group เจ้าของธุรกิจไทย</span>
+            </li>
+            <li className="flex items-start gap-2 py-2 text-base leading-relaxed text-[#0D1B3E]">
+              <span className="shrink-0" aria-hidden>🎯</span>
+              <span>รับโอกาสถูกแนะนำในบทความและโซเชียล</span>
             </li>
           </ul>
 
