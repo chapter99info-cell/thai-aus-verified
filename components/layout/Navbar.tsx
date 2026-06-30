@@ -15,7 +15,6 @@ const LOGO_URL =
 const MVP_LINKS = [
   { href: '/jobs', label: '🔍 หางาน' },
   { href: '/shops', label: '🏪 ร้านค้า' },
-  { href: '/services', label: '⚡ บริการ' },
 ] as const
 
 type NavItem =
