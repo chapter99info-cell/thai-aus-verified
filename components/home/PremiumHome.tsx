@@ -280,7 +280,6 @@ export function PremiumHome({
             title="🌐 เว็บไซต์ธุรกิจ"
             tag="Chapter99 · A$199 setup"
           />
-          <BentoCard title="📊 POS & Booking System" tag="SaaS Platform" />
         </div>
       </FadeIn>
 

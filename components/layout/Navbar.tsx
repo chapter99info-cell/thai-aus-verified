@@ -166,6 +166,8 @@ function UserMenu({
   )
 }
 
+export const NAVBAR_VERSION = 'user-menu-v2'
+
 export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
@@ -175,11 +177,11 @@ export function Navbar() {
 
   useEffect(() => {
     const supabase = createClient()
+    let mounted = true
 
-    async function loadUser() {
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser()
+    async function syncProfile(authUser: User | null) {
+      if (!mounted) return
+
       setUser(authUser)
 
       if (!authUser) {
@@ -193,19 +195,62 @@ export function Navbar() {
         .eq('id', authUser.id)
         .single()
 
-      setIsVerifiedOwner(isVerifiedOwnerRole(profile?.role))
+      if (mounted) {
+        setIsVerifiedOwner(isVerifiedOwnerRole(profile?.role))
+      }
     }
 
-    loadUser()
+    async function refreshSession() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      await syncProfile(session?.user ?? null)
+    }
+
+    void refreshSession()
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      loadUser()
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      void syncProfile(session?.user ?? null)
     })
 
-    return () => subscription.unsubscribe()
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        void refreshSession()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [])
+
+  useEffect(() => {
+    const supabase = createClient()
+
+    void supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+
+      if (!session?.user) {
+        setIsVerifiedOwner(false)
+        return
+      }
+
+      void supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single()
+        .then(({ data: profile }) => {
+          setIsVerifiedOwner(isVerifiedOwnerRole(profile?.role))
+        })
+    })
+  }, [pathname])
 
   async function handleSignOut() {
     const supabase = createClient()

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Geist_Mono, Playfair_Display, Sarabun } from 'next/font/google'
 import { FloatingChat } from '@/components/FloatingChat'
 import { Footer } from '@/components/layout/Footer'
-import { Navbar } from '@/components/layout/Navbar'
+import { Navbar, NAVBAR_VERSION } from '@/components/layout/Navbar'
 import './globals.css'
 
 const sarabun = Sarabun({
@@ -50,6 +50,8 @@ export const viewport: Viewport = {
   themeColor: '#1e3a5f',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -73,8 +75,8 @@ export default function RootLayout({
       <body
         className={`${sarabun.className} flex min-h-full flex-col bg-white text-[#0D212C] antialiased`}
       >
-        <Navbar />
-        <main className="flex-1 pt-16">{children}</main>
+        <Navbar key={NAVBAR_VERSION} />
+        <main className="flex-1 pt-[72px]">{children}</main>
         <Footer />
         <FloatingChat />
       </body>

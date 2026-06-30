@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Facebook, Instagram, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
+import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import { businessTypeBadge } from '@/lib/job-board'
 import { lineHref, telHref } from '@/lib/contact'
 import type { JobBoardBusiness } from '@/types/job-board'
@@ -58,8 +58,8 @@ export function ShopCard({ shop }: { shop: ShopWithContacts }) {
             rel="noopener noreferrer"
             className={outlineBtn}
           >
-            <Facebook className="h-4 w-4 shrink-0" aria-hidden />
-            👍 Facebook
+            <span className="shrink-0 text-base" aria-hidden>👍</span>
+            Facebook
           </a>
         )}
         {shop.instagram_url?.trim() && (
@@ -69,8 +69,8 @@ export function ShopCard({ shop }: { shop: ShopWithContacts }) {
             rel="noopener noreferrer"
             className={outlineBtn}
           >
-            <Instagram className="h-4 w-4 shrink-0" aria-hidden />
-            📸 Instagram
+            <span className="shrink-0 text-base" aria-hidden>📸</span>
+            Instagram
           </a>
         )}
         {shop.email?.trim() && (
