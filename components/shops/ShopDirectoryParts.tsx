@@ -1,10 +1,19 @@
 import Link from 'next/link'
-import { MapPin, MessageCircle, Phone } from 'lucide-react'
+import { Facebook, Instagram, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import { businessTypeBadge } from '@/lib/job-board'
 import { lineHref, telHref } from '@/lib/contact'
 import type { JobBoardBusiness } from '@/types/job-board'
 
-export function ShopCard({ shop }: { shop: JobBoardBusiness }) {
+type ShopWithContacts = JobBoardBusiness & {
+  facebook_url?: string | null
+  instagram_url?: string | null
+  email?: string | null
+}
+
+const outlineBtn =
+  'inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl border-2 border-[#0D1B3E] bg-white text-base font-semibold text-[#0D1B3E]'
+
+export function ShopCard({ shop }: { shop: ShopWithContacts }) {
   const badge = businessTypeBadge(shop.business_type)
   const location = [shop.suburb, shop.state].filter(Boolean).join(', ')
 
@@ -21,13 +30,13 @@ export function ShopCard({ shop }: { shop: JobBoardBusiness }) {
         </p>
       )}
 
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+      <div className="mt-4 grid grid-cols-2 gap-2 lg:flex lg:flex-row">
         {shop.contact_phone?.trim() && (
           <a
             href={telHref(shop.contact_phone)}
             className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-[#0D1B3E] text-base font-semibold text-white"
           >
-            <Phone className="h-4 w-4" aria-hidden />
+            <Phone className="h-4 w-4 shrink-0" aria-hidden />
             📞 โทรเลย {shop.contact_phone}
           </a>
         )}
@@ -36,10 +45,38 @@ export function ShopCard({ shop }: { shop: JobBoardBusiness }) {
             href={lineHref(shop.line_id)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl border-2 border-[#0D1B3E] bg-white text-base font-semibold text-[#0D1B3E]"
+            className={outlineBtn}
           >
-            <MessageCircle className="h-4 w-4" aria-hidden />
+            <MessageCircle className="h-4 w-4 shrink-0" aria-hidden />
             💬 Line {shop.line_id}
+          </a>
+        )}
+        {shop.facebook_url?.trim() && (
+          <a
+            href={shop.facebook_url.trim()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={outlineBtn}
+          >
+            <Facebook className="h-4 w-4 shrink-0" aria-hidden />
+            👍 Facebook
+          </a>
+        )}
+        {shop.instagram_url?.trim() && (
+          <a
+            href={shop.instagram_url.trim()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={outlineBtn}
+          >
+            <Instagram className="h-4 w-4 shrink-0" aria-hidden />
+            📸 Instagram
+          </a>
+        )}
+        {shop.email?.trim() && (
+          <a href={`mailto:${shop.email.trim()}`} className={outlineBtn}>
+            <Mail className="h-4 w-4 shrink-0" aria-hidden />
+            ✉️ อีเมล
           </a>
         )}
       </div>
