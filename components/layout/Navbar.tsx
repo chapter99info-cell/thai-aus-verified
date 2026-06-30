@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { LogOut, Menu, X } from 'lucide-react'
 import { isVerifiedOwnerRole } from '@/lib/job-board'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
@@ -17,9 +17,13 @@ const MVP_LINKS = [
   { href: '/shops', label: '🏪 ร้านค้า' },
 ] as const
 
-type NavItem =
-  | { type: 'link'; href: string; label: string; external?: boolean; gold?: boolean }
-  | { type: 'signout' }
+type NavItem = {
+  type: 'link'
+  href: string
+  label: string
+  external?: boolean
+  gold?: boolean
+}
 
 const loggedOutTail: NavItem[] = [
   { type: 'link', href: '/directory', label: 'ค้นหาธุรกิจ' },
@@ -37,7 +41,6 @@ const loggedInTail: NavItem[] = [
   { type: 'link', href: '/terms', label: 'เกี่ยวกับเรา' },
   { type: 'link', href: '/dashboard', label: 'แดชบอร์ด' },
   { type: 'link', href: '/pricing', label: 'ราคา' },
-  { type: 'signout' },
 ]
 
 function NavAnimatedLink({
@@ -90,6 +93,32 @@ function NavAnimatedLink({
     <Link href={href} className={className} onClick={onClick}>
       {content}
     </Link>
+  )
+}
+
+function LogoutButton({
+  mobile = false,
+  onClick,
+}: {
+  mobile?: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={mobile ? undefined : 'ออกจากระบบ'}
+      aria-label="ออกจากระบบ"
+      className={cn(
+        'rounded text-[#0D1B3E] transition-colors hover:bg-slate-100 hover:text-red-500',
+        mobile
+          ? 'flex min-h-[52px] w-full items-center gap-3 px-6 text-base font-semibold'
+          : 'inline-flex h-10 w-10 items-center justify-center'
+      )}
+    >
+      <LogOut className="h-5 w-5 shrink-0" aria-hidden />
+      {mobile && <span>ออกจากระบบ</span>}
+    </button>
   )
 }
 
@@ -172,31 +201,6 @@ export function Navbar() {
   function renderNavItem(item: NavItem, mobile = false) {
     const closeMobile = () => mobile && setOpen(false)
 
-    if (item.type === 'signout') {
-      return (
-        <button
-          key="signout"
-          type="button"
-          onClick={() => {
-            closeMobile()
-            handleSignOut()
-          }}
-          className={cn(
-            mobile
-              ? 'flex min-h-[52px] items-center border-b border-[#0D1B3E]/10 px-6 text-base font-semibold text-[#0D1B3E]'
-              : 'nav-link'
-          )}
-        >
-          {mobile ? 'ออกจากระบบ' : (
-            <>
-              ออกจากระบบ
-              <span className="nav-link-dot" />
-            </>
-          )}
-        </button>
-      )
-    }
-
     if (mobile) {
       return (
         <Link
@@ -246,17 +250,20 @@ export function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-4 lg:flex">
-            {navItems.map((item) => renderNavItem(item))}
-            {!user && (
-              <Link
-                href="/register"
-                className="nav-cta-btn inline-flex items-center gap-1 rounded-full px-5 py-2.5 text-[13px] font-bold text-white"
-              >
-                <span className="text-[10px] opacity-70">✦</span>
-                ลงทะเบียนธุรกิจ
-              </Link>
-            )}
+          <div className="hidden items-center gap-3 lg:flex">
+            <div className="flex items-center gap-4">
+              {navItems.map((item) => renderNavItem(item))}
+              {!user && (
+                <Link
+                  href="/register"
+                  className="nav-cta-btn inline-flex items-center gap-1 rounded-full px-5 py-2.5 text-[13px] font-bold text-white"
+                >
+                  <span className="text-[10px] opacity-70">✦</span>
+                  ลงทะเบียนธุรกิจ
+                </Link>
+              )}
+            </div>
+            {user && <LogoutButton onClick={handleSignOut} />}
           </div>
 
           <button
@@ -287,6 +294,18 @@ export function Navbar() {
               <span className="text-[10px] opacity-70">✦</span>
               ลงทะเบียนธุรกิจ
             </Link>
+          )}
+          {user && (
+            <>
+              <div className="mt-2 border-t border-[#0D1B3E]/10" />
+              <LogoutButton
+                mobile
+                onClick={() => {
+                  setOpen(false)
+                  handleSignOut()
+                }}
+              />
+            </>
           )}
         </div>
       </div>
