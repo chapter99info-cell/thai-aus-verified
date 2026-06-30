@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:mvp": "node --env-file=.env.local scripts/seed-mvp-demo.mjs"
   },
   "dependencies": {
     "@stripe/stripe-js": "^9.8.0",

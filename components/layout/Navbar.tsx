@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Menu, X } from 'lucide-react'
+import { isVerifiedOwnerRole } from '@/lib/job-board'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -11,11 +12,17 @@ import type { User } from '@supabase/supabase-js'
 const LOGO_URL =
   'https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png'
 
+const MVP_LINKS = [
+  { href: '/jobs', label: '🔍 หางาน' },
+  { href: '/shops', label: '🏪 ร้านค้า' },
+  { href: '/services', label: '⚡ บริการ' },
+] as const
+
 type NavItem =
-  | { type: 'link'; href: string; label: string; external?: boolean }
+  | { type: 'link'; href: string; label: string; external?: boolean; gold?: boolean }
   | { type: 'signout' }
 
-const loggedOutLinks: NavItem[] = [
+const loggedOutTail: NavItem[] = [
   { type: 'link', href: '/directory', label: 'ค้นหาธุรกิจ' },
   { type: 'link', href: '/resources', label: 'ลิงก์มีประโยชน์' },
   { type: 'link', href: '/alerts', label: 'แจ้งเตือนภัย' },
@@ -24,7 +31,7 @@ const loggedOutLinks: NavItem[] = [
   { type: 'link', href: '/login', label: 'เข้าสู่ระบบ' },
 ]
 
-const loggedInLinks: NavItem[] = [
+const loggedInTail: NavItem[] = [
   { type: 'link', href: '/directory', label: 'ค้นหาธุรกิจ' },
   { type: 'link', href: '/resources', label: 'ลิงก์มีประโยชน์' },
   { type: 'link', href: '/alerts', label: 'แจ้งเตือนภัย' },
@@ -39,20 +46,30 @@ function NavAnimatedLink({
   label,
   isActive,
   external,
+  gold,
   onClick,
 }: {
   href: string
   label: string
   isActive: boolean
   external?: boolean
+  gold?: boolean
   onClick?: () => void
 }) {
-  const className = cn('nav-link', isActive && 'nav-link-active')
+  const className = cn(
+    gold
+      ? 'inline-flex min-h-[40px] items-center rounded-full bg-[#D4A017] px-4 text-sm font-semibold text-[#0D1B3E]'
+      : cn(
+          'nav-link',
+          isActive &&
+            'text-[#D4A017] underline decoration-[#D4A017] decoration-2 underline-offset-4'
+        )
+  )
 
   const content = (
     <>
       {label}
-      <span className="nav-link-dot" />
+      {!gold && <span className="nav-link-dot" />}
     </>
   )
 
@@ -82,6 +99,7 @@ export function Navbar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<User | null>(null)
+  const [isVerifiedOwner, setIsVerifiedOwner] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -91,6 +109,19 @@ export function Navbar() {
         data: { user: authUser },
       } = await supabase.auth.getUser()
       setUser(authUser)
+
+      if (!authUser) {
+        setIsVerifiedOwner(false)
+        return
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', authUser.id)
+        .single()
+
+      setIsVerifiedOwner(isVerifiedOwnerRole(profile?.role))
     }
 
     loadUser()
@@ -108,6 +139,7 @@ export function Navbar() {
     const supabase = createClient()
     await supabase.auth.signOut()
     setUser(null)
+    setIsVerifiedOwner(false)
     setOpen(false)
     router.push('/')
     router.refresh()
@@ -118,7 +150,25 @@ export function Navbar() {
     return pathname === href || pathname.startsWith(`${href}/`)
   }
 
-  const navItems = user ? loggedInLinks : loggedOutLinks
+  const navItems = useMemo(() => {
+    const mvpItems: NavItem[] = MVP_LINKS.map((link) => ({
+      type: 'link' as const,
+      href: link.href,
+      label: link.label,
+    }))
+
+    if (isVerifiedOwner && user) {
+      mvpItems.push({
+        type: 'link',
+        href: '/jobs/post',
+        label: '📢 โพสต์งาน',
+        gold: true,
+      })
+    }
+
+    const tail = user ? loggedInTail : loggedOutTail
+    return [...mvpItems, ...tail]
+  }, [user, isVerifiedOwner])
 
   function renderNavItem(item: NavItem, mobile = false) {
     const closeMobile = () => mobile && setOpen(false)
@@ -134,7 +184,7 @@ export function Navbar() {
           }}
           className={cn(
             mobile
-              ? 'border-b border-slate-100 px-6 py-3 text-left text-sm text-[#1e3a5f]'
+              ? 'flex min-h-[52px] items-center border-b border-[#0D1B3E]/10 px-6 text-base font-semibold text-[#0D1B3E]'
               : 'nav-link'
           )}
         >
@@ -153,7 +203,14 @@ export function Navbar() {
         <Link
           key={item.href}
           href={item.href}
-          className="border-b border-slate-100 px-6 py-3 text-sm text-[#1e3a5f]"
+          className={cn(
+            'flex min-h-[52px] items-center border-b border-[#0D1B3E]/10 px-6 text-base font-semibold',
+            item.gold
+              ? 'bg-[#D4A017] text-[#0D1B3E] justify-center mx-4 my-1 rounded-full border-0'
+              : isActive(item.href)
+                ? 'border-l-4 border-[#D4A017] bg-[#D4A017]/5 text-[#D4A017]'
+                : 'text-[#0D1B3E]'
+          )}
           onClick={closeMobile}
         >
           {item.label}
@@ -168,6 +225,7 @@ export function Navbar() {
         label={item.label}
         isActive={isActive(item.href)}
         external={item.external}
+        gold={item.gold}
       />
     )
   }
@@ -189,7 +247,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-6 md:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             {navItems.map((item) => renderNavItem(item))}
             {!user && (
               <Link
@@ -204,7 +262,7 @@ export function Navbar() {
 
           <button
             type="button"
-            className="rounded-lg p-2 text-[#1e3a5f] md:hidden"
+            className="rounded-lg p-2 text-[#1e3a5f] lg:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? 'ปิดเมนู' : 'เปิดเมนู'}
           >
@@ -215,16 +273,16 @@ export function Navbar() {
 
       <div
         className={cn(
-          'border-b border-slate-200 bg-white md:hidden',
+          'border-b border-slate-200 bg-white lg:hidden',
           open ? 'block' : 'hidden'
         )}
       >
-        <div className="flex flex-col gap-1 py-4">
+        <div className="flex flex-col py-2">
           {navItems.map((item) => renderNavItem(item, true))}
           {!user && (
             <Link
               href="/register"
-              className="nav-cta-btn mx-6 mt-2 inline-flex items-center justify-center gap-1 rounded-full px-5 py-2.5 text-center text-[13px] font-bold text-white"
+              className="nav-cta-btn mx-6 mt-2 inline-flex min-h-[52px] items-center justify-center gap-1 rounded-full px-5 py-2.5 text-center text-base font-bold text-white"
               onClick={() => setOpen(false)}
             >
               <span className="text-[10px] opacity-70">✦</span>
