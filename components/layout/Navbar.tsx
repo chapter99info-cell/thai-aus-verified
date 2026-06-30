@@ -60,9 +60,9 @@ function NavAnimatedLink({
 }) {
   const className = cn(
     gold
-      ? 'inline-flex min-h-[40px] items-center rounded-full bg-[#D4A017] px-4 text-sm font-semibold text-[#0D1B3E]'
+      ? 'inline-flex min-h-[44px] items-center rounded-full bg-[#D4A017] px-4 py-2 text-base font-semibold text-[#0D1B3E]'
       : cn(
-          'nav-link',
+          'nav-link px-4 py-2 !text-base !font-medium',
           isActive &&
             'text-[#D4A017] underline decoration-[#D4A017] decoration-2 underline-offset-4'
         )
@@ -110,9 +110,9 @@ function LogoutButton({
       title={mobile ? undefined : 'ออกจากระบบ'}
       aria-label="ออกจากระบบ"
       className={cn(
-        'rounded text-[#0D1B3E] transition-colors hover:bg-slate-100 hover:text-red-500',
+        'rounded text-[#0D1B3E] transition-colors hover:bg-red-50 hover:text-red-500',
         mobile
-          ? 'flex min-h-[52px] w-full items-center gap-3 px-6 text-base font-semibold'
+          ? 'flex min-h-[52px] w-full items-center gap-3 px-6 py-2 text-base font-medium'
           : 'inline-flex h-10 w-10 items-center justify-center'
       )}
     >
@@ -207,7 +207,7 @@ export function Navbar() {
           key={item.href}
           href={item.href}
           className={cn(
-            'flex min-h-[52px] items-center border-b border-[#0D1B3E]/10 px-6 text-base font-semibold',
+            'flex min-h-[52px] items-center border-b border-[#0D1B3E]/10 px-6 py-2 text-base font-medium',
             item.gold
               ? 'bg-[#D4A017] text-[#0D1B3E] justify-center mx-4 my-1 rounded-full border-0'
               : isActive(item.href)
@@ -236,22 +236,22 @@ export function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 will-change-transform">
       <nav className="border-b border-slate-200 bg-white shadow-sm">
-        <div className="mx-auto flex h-16 max-w-[1100px] items-center justify-between px-4 sm:px-6">
+        <div className="mx-auto flex min-h-[72px] max-w-[1100px] items-center justify-between px-4 sm:px-6">
           <Link href="/" className="group flex items-center gap-2">
             <img
               src={LOGO_URL}
               alt="Thai-Aus Verified"
-              width={36}
-              height={36}
-              className="h-9 w-9 rounded-full object-contain"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-full object-contain"
             />
-            <span className="font-playfair text-[18px] font-bold text-[#1e3a5f]">
+            <span className="font-playfair text-xl font-bold text-[#1e3a5f]">
               Thai-Aus Verified
             </span>
           </Link>
 
-          <div className="hidden items-center gap-3 lg:flex">
-            <div className="flex items-center gap-4">
+          <div className="hidden items-center gap-6 lg:flex">
+            <div className="flex items-center gap-6">
               {navItems.map((item) => renderNavItem(item))}
               {!user && (
                 <Link
