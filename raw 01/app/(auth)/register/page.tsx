@@ -1,0 +1,22 @@
+import { RegisterForm } from '@/components/auth/RegisterForm'
+
+export const metadata = {
+  title: 'ลงทะเบียน | Thai-Aus Verified',
+}
+
+export default function RegisterPage() {
+  return (
+    <div className="mx-auto max-w-lg px-4 py-16 sm:px-6">
+      <h1 className="text-2xl font-bold text-[#1e3a5f]">ลงทะเบียนธุรกิจ</h1>
+      <p className="mt-2 text-sm text-slate-600">
+        ลงทะเบียนใน 30 วินาที — ตรวจสอบ ABN อัตโนมัติ ขึ้น Directory ทันที
+      </p>
+      <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        ⚠️ ระบบ ABN กำลังอยู่ระหว่างการเชื่อมต่อ — ABN จะถูกตรวจสอบภายใน 24 ชั่วโมง
+      </div>
+      <div className="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <RegisterForm />
+      </div>
+    </div>
+  )
+}
