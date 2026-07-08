@@ -6,16 +6,23 @@ export const metadata = {
 
 export default function RegisterPage() {
   return (
-    <div className="mx-auto max-w-lg px-4 py-16 sm:px-6">
-      <h1 className="text-2xl font-bold text-[#1e3a5f]">ลงทะเบียนธุรกิจ</h1>
-      <p className="mt-2 text-sm text-slate-600">
-        ลงทะเบียนใน 30 วินาที — ตรวจสอบ ABN อัตโนมัติ ขึ้น Directory ทันที
-      </p>
-      <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-        ⚠️ ระบบ ABN กำลังอยู่ระหว่างการเชื่อมต่อ — ABN จะถูกตรวจสอบภายใน 24 ชั่วโมง
-      </div>
-      <div className="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <RegisterForm />
+    <div className="min-h-screen bg-[#F5F5F0] px-4 py-16 sm:px-6">
+      <div className="mx-auto max-w-lg">
+        <h1 className="text-2xl font-bold text-[#0D1B3E]">ลงทะเบียนธุรกิจ</h1>
+        <p className="mt-2 text-base text-[#243B6E]/70">
+          ลงทะเบียนใน 30 วินาที — ตรวจสอบ ABN อัตโนมัติ ขึ้น Directory ทันที
+        </p>
+        <div className="mt-4 rounded-lg border border-[#C9A84C]/30 bg-[#0D1B3E] px-4 py-3 text-sm text-white">
+          <div className="flex items-start gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#C9A84C] text-xs font-bold text-[#0D1B3E]">
+              1
+            </span>
+            <p>กรอก ABN → ข้อมูลธุรกิจ → สร้างบัญชี ใช้เวลาไม่กี่นาที</p>
+          </div>
+        </div>
+        <div className="mt-8 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+          <RegisterForm />
+        </div>
       </div>
     </div>
   )

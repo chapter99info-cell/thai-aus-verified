@@ -68,5 +68,11 @@ export const CATEGORY_LABELS: Record<
 
 export const AU_STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'] as const
 
-export const NAVY = '#1e3a5f'
-export const NAVY_HOVER = '#2d5282'
+export const NAVY = '#0D1B3E'
+export const NAVY_DARK = '#1B2A5E'
+export const NAVY_MEDIUM = '#243B6E'
+export const NAVY_HOVER = '#243B6E'
+export const GOLD = '#C9A84C'
+export const GOLD_WARM = '#D4A017'
+export const GOLD_LIGHT = '#F0D060'
+export const PAGE_BG = '#F5F5F0'

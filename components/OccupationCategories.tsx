@@ -43,15 +43,15 @@ export default function OccupationCategories({
   }, [initialCounts])
 
   return (
-    <section className="w-full overflow-x-hidden bg-white py-10">
+    <section className="w-full overflow-x-hidden bg-[#F5F5F0] py-10">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className={`text-center ${hero ? 'pt-2 pb-6' : 'mb-8'}`}>
           {!hero && (
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#1e3a5f]/30">
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#243B6E]/50">
               อาชีพยอดฮิตของคนไทยในออสเตรเลีย
             </p>
           )}
-          <h2 className="text-2xl font-bold tracking-tight text-[#1e3a5f] md:text-3xl">
+          <h2 className="text-2xl font-bold tracking-tight text-[#0D1B3E] md:text-3xl">
             ค้นหาตามประเภทธุรกิจ
           </h2>
           {showScrollHint && (
@@ -64,7 +64,7 @@ export default function OccupationCategories({
             <Link
               key={item.category}
               href={`/directory?category=${item.category}`}
-              className="relative block rounded-2xl border-2 border-[#1e3a5f] bg-white p-5 text-center transition-shadow hover:shadow-md"
+              className="relative block rounded-2xl border border-gray-200 bg-white p-5 text-center transition-all hover:border-[#C9A84C] hover:shadow-[0_8px_24px_rgba(201,168,76,0.1)]"
             >
               {item.badge && (
                 <span
@@ -74,7 +74,7 @@ export default function OccupationCategories({
                 </span>
               )}
               <span className="text-3xl md:text-4xl">{item.emoji}</span>
-              <h3 className="mt-2 text-sm font-bold text-[#1e3a5f] md:text-base">{item.label}</h3>
+              <h3 className="mt-2 text-sm font-bold text-[#0D1B3E] md:text-base">{item.label}</h3>
               <CategoryCountLabel count={counts[item.category] ?? 0} />
             </Link>
           ))}

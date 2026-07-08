@@ -59,20 +59,14 @@ function NavAnimatedLink({
 }) {
   const className = cn(
     gold
-      ? 'inline-flex min-h-[44px] items-center rounded-full bg-[#D4A017] px-4 py-2 text-base font-semibold text-[#0D1B3E]'
+      ? 'inline-flex min-h-[44px] items-center rounded-full bg-[#C9A84C] px-4 py-2 text-base font-bold text-[#0D1B3E] hover:bg-[#D4A017]'
       : cn(
-          'nav-link px-3 py-2 !text-base !font-medium',
-          isActive &&
-            'text-[#D4A017] underline decoration-[#D4A017] decoration-2 underline-offset-4'
+          'px-3 py-2 text-base font-medium text-white/80 transition-colors hover:text-[#C9A84C]',
+          isActive && 'font-semibold text-[#C9A84C]'
         )
   )
 
-  const content = (
-    <>
-      {label}
-      {!gold && <span className="nav-link-dot" />}
-    </>
-  )
+  const content = <>{label}</>
 
   if (external) {
     return (
@@ -126,7 +120,7 @@ function UserMenu({
         aria-label="เมนูผู้ใช้"
         aria-expanded={menuOpen}
         aria-haspopup="menu"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full text-[#0D1B3E] transition-colors hover:bg-[#0D1B3E]/10"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10 hover:text-[#C9A84C]"
       >
         <UserCircle className="h-6 w-6" aria-hidden />
       </button>
@@ -166,7 +160,7 @@ function UserMenu({
   )
 }
 
-export const NAVBAR_VERSION = 'user-menu-v2'
+export const NAVBAR_VERSION = 'user-menu-v3-brand'
 
 export function Navbar() {
   const router = useRouter()
@@ -296,12 +290,12 @@ export function Navbar() {
           key={item.href}
           href={item.href}
           className={cn(
-            'flex min-h-[52px] items-center border-b border-[#0D1B3E]/10 px-6 py-2 text-base font-medium',
+            'flex min-h-[52px] items-center border-b border-white/10 px-6 py-2 text-base font-medium',
             item.gold
-              ? 'bg-[#D4A017] text-[#0D1B3E] justify-center mx-4 my-1 rounded-full border-0'
+              ? 'bg-[#C9A84C] text-[#0D1B3E] justify-center mx-4 my-1 rounded-full border-0 font-bold'
               : isActive(item.href)
-                ? 'border-l-4 border-[#D4A017] bg-[#D4A017]/5 text-[#D4A017]'
-                : 'text-[#0D1B3E]'
+                ? 'border-l-4 border-[#C9A84C] bg-[#C9A84C]/10 text-[#C9A84C]'
+                : 'text-white/80'
           )}
           onClick={closeMobile}
         >
@@ -324,7 +318,7 @@ export function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 will-change-transform">
-      <nav className="border-b border-slate-200 bg-white shadow-sm">
+      <nav className="border-b border-[#C9A84C]/20 bg-[#0D1B3E] shadow-sm">
         <div className="mx-auto flex min-h-[72px] max-w-[1100px] items-center justify-between px-4 sm:px-6">
           <Link href="/" className="group flex items-center gap-2">
             <img
@@ -332,9 +326,9 @@ export function Navbar() {
               alt="Thai-Aus Verified"
               width={40}
               height={40}
-              className="h-10 w-10 rounded-full object-contain"
+              className="h-10 w-10 rounded-full object-contain ring-2 ring-[#C9A84C]/30"
             />
-            <span className="font-playfair text-xl font-bold text-[#1e3a5f]">
+            <span className="font-playfair text-xl font-bold text-[#C9A84C]">
               Thai-Aus Verified
             </span>
           </Link>
@@ -354,7 +348,7 @@ export function Navbar() {
             </div>
             {user && (
               <>
-                <div className="h-8 w-px bg-[#0D1B3E]/15" aria-hidden />
+                <div className="h-8 w-px bg-[#C9A84C]/20" aria-hidden />
                 <UserMenu email={user.email ?? ''} onSignOut={handleSignOut} />
               </>
             )}
@@ -364,7 +358,7 @@ export function Navbar() {
             {user && <UserMenu email={user.email ?? ''} onSignOut={handleSignOut} />}
             <button
               type="button"
-              className="rounded-lg p-2 text-[#1e3a5f]"
+              className="rounded-lg p-2 text-white/90 hover:text-[#C9A84C]"
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? 'ปิดเมนู' : 'เปิดเมนู'}
             >
@@ -376,7 +370,7 @@ export function Navbar() {
 
       <div
         className={cn(
-          'border-b border-slate-200 bg-white lg:hidden',
+          'border-b border-[#C9A84C]/20 bg-[#0D1B3E] lg:hidden',
           open ? 'block' : 'hidden'
         )}
       >

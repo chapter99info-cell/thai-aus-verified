@@ -24,7 +24,9 @@ export default async function PricingPage() {
 
   return (
     <>
-      <PricingCards />
+      <div className="bg-[#F5F5F0]">
+        <PricingCards />
+      </div>
       <KnowledgeHub articles={articles} />
     </>
   )

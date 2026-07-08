@@ -23,7 +23,7 @@ export function PricingCards() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-[#1e3a5f]">แผนราคา</h1>
+        <h1 className="text-3xl font-bold text-[#0D1B3E]">แผนราคา</h1>
         <p className="mt-2 text-slate-600">เริ่มต้นฟรี ไม่ต้องใช้บัตรเครดิต</p>
       </div>
 
@@ -37,8 +37,8 @@ export function PricingCards() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-[#1e3a5f]">FREE</h2>
+        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+          <h2 className="text-xl font-bold text-[#0D1B3E]">FREE</h2>
           <p className="mt-2 text-3xl font-bold text-slate-900">ฟรี</p>
           <p className="mt-1 text-sm text-slate-500">ตลอดไป</p>
           <p className="mt-3 text-sm font-medium text-slate-600">
@@ -70,24 +70,24 @@ export function PricingCards() {
 
           <Link
             href="/register"
-            className="mt-8 block w-full rounded-lg border border-[#1e3a5f] py-3 text-center text-sm font-semibold text-[#1e3a5f] hover:bg-slate-50"
+            className="mt-8 block w-full rounded-lg border border-[#C9A84C] py-3 text-center text-sm font-semibold text-[#0D1B3E] hover:bg-[#C9A84C]/10"
           >
             ลงทะเบียนฟรี
           </Link>
         </div>
 
-        <div className="relative rounded-2xl border-2 border-[#1e3a5f] bg-white p-8 shadow-md">
-          <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#1e3a5f] px-3 py-1 text-xs font-semibold text-white">
+        <div className="relative rounded-2xl border-2 border-[#C9A84C] bg-white p-8 shadow-md">
+          <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#C9A84C] px-3 py-1 text-xs font-bold text-[#0D1B3E]">
             แนะนำ
           </span>
           <div className="flex items-center gap-2">
-            <Crown size={22} className="text-[#1e3a5f]" />
-            <h2 className="text-xl font-bold text-[#1e3a5f]">PREMIUM</h2>
+            <Crown size={22} className="text-[#C9A84C]" />
+            <h2 className="text-xl font-bold text-[#0D1B3E]">PREMIUM</h2>
           </div>
           <p className="mt-2">
             <s className="text-slate-400">A$9/เดือน</s>
           </p>
-          <p className="mt-1 text-2xl font-bold text-green-600">ฟรี 3 เดือน</p>
+          <p className="mt-1 text-3xl font-black text-[#0D1B3E]">ฟรี 3 เดือน</p>
           <p className="mt-1 text-xs text-slate-500">จากนั้น A$9/เดือน — ยกเลิกได้ตลอด</p>
 
           <ul className="mt-6">
@@ -123,7 +123,7 @@ export function PricingCards() {
 
           <UpgradeButton
             label="สมัครฟรี 3 เดือน"
-            className="mt-8 w-full rounded-lg bg-green-600 py-3 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+            className="mt-8 w-full rounded-lg bg-[#C9A84C] py-3 text-sm font-bold text-[#0D1B3E] hover:bg-[#D4A017] disabled:opacity-50"
           />
 
           <div className="mt-4">
@@ -137,12 +137,12 @@ export function PricingCards() {
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value)}
                 placeholder="EARLYBIRD"
-                className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-[#1e3a5f] focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]"
+                className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm text-[#0D1B3E] placeholder:text-gray-400 focus:border-[#C9A84C] focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/20"
               />
               <button
                 type="button"
                 onClick={handleApplyPromo}
-                className="shrink-0 rounded-lg bg-[#1e3a5f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2d5282]"
+                className="shrink-0 rounded-lg bg-[#0D1B3E] px-4 py-2 text-sm font-semibold text-white hover:bg-[#243B6E]"
               >
                 ใช้โค้ด
               </button>
@@ -155,7 +155,7 @@ export function PricingCards() {
         </div>
       </div>
 
-      <p className="mt-8 text-center text-sm font-medium text-[#1e3a5f]">
+      <p className="mt-8 text-center text-sm font-medium text-[#0D1B3E]">
         เริ่มต้นฟรี ไม่ต้องใช้บัตรเครดิต
       </p>
     </div>

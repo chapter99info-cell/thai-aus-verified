@@ -47,7 +47,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#1e3a5f',
+  themeColor: '#0D1B3E',
 }
 
 export const dynamic = 'force-dynamic'
@@ -65,7 +65,7 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href={LOGO_URL} />
-        <meta name="theme-color" content="#1e3a5f" />
+        <meta name="theme-color" content="#0D1B3E" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -73,7 +73,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href={LOGO_URL} />
       </head>
       <body
-        className={`${sarabun.className} flex min-h-full flex-col bg-white text-[#0D212C] antialiased`}
+        className={`${sarabun.className} flex min-h-full flex-col bg-[#F5F5F0] text-[#0D1B3E] antialiased`}
       >
         <Navbar key={NAVBAR_VERSION} />
         <main className="flex-1 pt-[72px]">{children}</main>

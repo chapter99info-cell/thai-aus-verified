@@ -18,21 +18,21 @@ const TESTIMONIALS = [
     name: 'คุณมิรา',
     role: 'เจ้าของร้านนวด',
     company: 'MIRA MASSAGE',
-    color: 'bg-[#051A24]',
+    color: 'bg-[#1B2A5E]',
   },
   {
     quote: 'ระบบ ABN อัตโนมัติทำให้ลงทะเบียนได้ในไม่กี่นาที',
     name: 'คุณสมชาย',
     role: 'ร้านอาหารไทย',
     company: 'THAI GARLIC',
-    color: 'bg-[#c9a84c]',
+    color: 'bg-[#C9A84C]',
   },
   {
     quote: 'ชุมชนไทยในออส finally มีที่ที่ปลอดภัยจริงๆ',
     name: 'คุณนิด',
     role: 'ผู้ประกอบการ',
     company: 'CHAPTER99',
-    color: 'bg-[#1e3a5f]',
+    color: 'bg-[#243B6E]',
   },
 ]
 
@@ -101,7 +101,7 @@ function MarqueeCard({ business }: { business: MarqueeBusiness }) {
       ) : (
         <span className="text-xl">{business.emoji}</span>
       )}
-      <p className="truncate text-xs font-semibold text-[#051A24]">{business.name}</p>
+      <p className="truncate text-xs font-semibold text-[#0D1B3E]">{business.name}</p>
     </Link>
   )
 }
@@ -117,7 +117,7 @@ export function PremiumHome({
   const statStates = stateCount > 0 ? String(stateCount) : '8'
 
   return (
-    <div id="premium-home" className="overflow-x-hidden bg-white pb-28">
+    <div id="premium-home" className="overflow-x-hidden bg-[#F5F5F0] pb-28">
       {alertTitle && (
         <div className="border-b border-amber-200/60 bg-amber-50/80 px-4 py-2.5 text-center text-sm text-amber-900">
           ⚠️ {alertTitle} —{' '}
@@ -128,37 +128,34 @@ export function PremiumHome({
       )}
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden bg-[#0D1B3E]">
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.07]"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
           src={HERO_VIDEO}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/88 to-white/98" />
+        <div className="absolute inset-0 bg-[#0D1B3E]/75" />
 
         <div className="relative mx-auto max-w-[600px] px-4 pb-16 pt-20 text-center sm:px-6">
           <FadeIn delay={0.1}>
-            <p className="font-mono text-[11px] uppercase tracking-[1.5px] text-[rgba(5,26,36,0.4)]">
+            <p className="inline-block rounded-full border border-[#C9A84C]/40 bg-[#C9A84C]/20 px-4 py-1.5 text-sm font-medium text-[#C9A84C]">
               ตรวจสอบ ABN · เชื่อถือได้ · ทั่วออสเตรเลีย
             </p>
           </FadeIn>
 
           <FadeIn delay={0.2}>
-            <h1
-              className="mt-6 text-[clamp(40px,5.5vw,66px)] font-extrabold leading-none tracking-[-2px] text-[#0D212C]"
-              style={{ fontWeight: 800 }}
-            >
+            <h1 className="mt-6 text-[clamp(40px,5.5vw,66px)] font-bold leading-none tracking-[-2px] text-white">
               ค้นหาธุรกิจไทย
               <br />
-              <span className="font-playfair italic font-bold">ที่เชื่อถือได้</span>
+              <span className="font-playfair italic font-bold text-[#F0D060]">ที่เชื่อถือได้</span>
             </h1>
           </FadeIn>
 
           <FadeIn delay={0.3}>
-            <p className="mx-auto mt-6 max-w-[420px] text-[15px] leading-[1.7] text-[rgba(5,26,36,0.5)]">
+            <p className="mx-auto mt-6 max-w-[420px] text-base leading-relaxed text-white/70">
               ไดเรกทอรีธุรกิจไทยที่ผ่านการยืนยัน ABN จากรัฐบาลออสเตรเลีย ปลอดภัย โปร่งใส
               เชื่อถือได้ในทุกรัฐ
             </p>
@@ -168,31 +165,39 @@ export function PremiumHome({
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 href="/directory"
-                className="btn-navy-primary inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold"
+                className="inline-flex items-center justify-center rounded-full bg-[#C9A84C] px-6 py-3 text-base font-bold text-[#0D1B3E] transition-colors hover:bg-[#D4A017]"
               >
                 🔍 ค้นหาธุรกิจ
               </Link>
               <Link
                 href="/register"
-                className="btn-navy-secondary inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold"
+                className="inline-flex items-center justify-center rounded-full border border-[#C9A84C] bg-[#1B2A5E] px-6 py-3 text-base font-bold text-white transition-colors hover:bg-[#243B6E]"
               >
                 ลงทะเบียนธุรกิจของคุณ →
+              </Link>
+              <Link
+                href="/pricing"
+                className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-white/20"
+              >
+                ดูแผน Premium
               </Link>
             </div>
           </FadeIn>
 
           <FadeIn delay={0.5}>
-            <div className="mt-10 flex items-center justify-center gap-0 divide-x divide-[rgba(5,26,36,0.12)]">
-              {[
-                { value: statVerified, label: 'ยืนยัน ABN' },
-                { value: statStates, label: 'รัฐ & เขต' },
-                { value: 'A$9', label: 'Premium/เดือน' },
-              ].map((stat) => (
-                <div key={stat.label} className="px-6 text-center">
-                  <p className="font-playfair text-[26px] text-[#051A24]">{stat.value}</p>
-                  <p className="mt-1 text-xs text-[rgba(5,26,36,0.45)]">{stat.label}</p>
-                </div>
-              ))}
+            <div className="mt-10 rounded-2xl bg-[#1B2A5E]/80 px-4 py-6 backdrop-blur">
+              <div className="flex items-center justify-center gap-0 divide-x divide-white/20">
+                {[
+                  { value: statVerified, label: 'ยืนยัน ABN' },
+                  { value: statStates, label: 'รัฐ & เขต' },
+                  { value: 'A$9', label: 'Premium/เดือน' },
+                ].map((stat) => (
+                  <div key={stat.label} className="px-6 text-center">
+                    <p className="font-playfair text-[26px] font-bold text-[#C9A84C]">{stat.value}</p>
+                    <p className="mt-1 text-xs text-white/70">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </FadeIn>
         </div>
@@ -219,8 +224,7 @@ export function PremiumHome({
         <div className="mx-auto max-w-[680px] text-center">
           <span className="font-playfair text-[48px] leading-none text-[rgba(5,26,36,0.15)]">&ldquo;</span>
           <p
-            className="text-[clamp(28px,3.5vw,42px)] font-extrabold leading-tight tracking-[-1px] text-[#0D212C]"
-            style={{ fontWeight: 800 }}
+            className="text-[clamp(28px,3.5vw,42px)] font-bold leading-tight tracking-[-1px] text-[#0D1B3E]"
           >
             ชุมชนไทยในออสเตรเลียต้องการ
             <br />
@@ -235,7 +239,7 @@ export function PremiumHome({
             {['Chapter99', 'Trip2Talk', 'Thai-Aus Verified'].map((brand) => (
               <span
                 key={brand}
-                className="cursor-default text-[15px] font-bold text-[rgba(5,26,36,0.35)] transition-colors hover:text-[#051A24]"
+                className="cursor-default text-[15px] font-bold text-[#243B6E]/50 transition-colors hover:text-[#0D1B3E]"
               >
                 {brand}
               </span>
@@ -247,7 +251,7 @@ export function PremiumHome({
       {/* Bento Grid */}
       <FadeIn className="mx-auto max-w-[1100px] px-6 pb-16">
         <div className="grid auto-rows-auto grid-cols-1 gap-3 md:grid-cols-3">
-          <div className="rounded-[28px] bg-[#051A24] p-7 md:col-span-2">
+          <div className="rounded-[28px] bg-[#1B2A5E] p-7 md:col-span-2">
             <img
               src={`${CATEGORY_ICON_BASE}/icons8-visa-stamp-64.png`}
               alt=""
@@ -284,30 +288,30 @@ export function PremiumHome({
       </FadeIn>
 
       {/* Testimonials */}
-      <section className="border-t border-[rgba(5,26,36,0.06)] bg-[#f9fafb] py-16">
+      <section className="border-t border-gray-200 bg-[#F5F5F0] py-16">
         <FadeIn className="mx-auto max-w-[1100px] px-6">
           <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <h2 className="text-2xl font-extrabold text-[#0D212C]" style={{ fontWeight: 800 }}>
+            <h2 className="text-2xl font-bold text-[#0D1B3E]">
               เสียงจากชุมชน
               <span className="font-playfair italic font-bold">ธุรกิจไทย</span>
             </h2>
-            <p className="text-sm text-[#c9a84c]">★★★★★ 5.0 · Community Reviews</p>
+            <p className="text-sm text-[#C9A84C]">★★★★★ 5.0 · Community Reviews</p>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {TESTIMONIALS.map((t) => (
               <div
                 key={t.name}
-                className="rounded-[24px] border border-[rgba(5,26,36,0.09)] bg-white p-6 transition-transform hover:-translate-y-1"
+                className="rounded-[24px] border border-gray-100 bg-white p-6 transition-transform hover:-translate-y-1"
               >
-                <p className="text-sm italic leading-relaxed text-[rgba(5,26,36,0.65)]">&ldquo;{t.quote}&rdquo;</p>
+                <p className="text-sm italic leading-relaxed text-[#243B6E]/80">&ldquo;{t.quote}&rdquo;</p>
                 <div className="mt-5 flex items-center gap-3">
                   <div className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white ${t.color}`}>
                     {t.name.charAt(2)}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-[#051A24]">{t.name}</p>
-                    <p className="text-xs text-[rgba(5,26,36,0.45)]">{t.role}</p>
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-[#051A24]">{t.company}</p>
+                    <p className="text-sm font-bold text-[#0D1B3E]">{t.name}</p>
+                    <p className="text-xs text-[#243B6E]/60">{t.role}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-[#0D1B3E]">{t.company}</p>
                   </div>
                 </div>
               </div>
@@ -318,11 +322,11 @@ export function PremiumHome({
 
       {/* CTA Band */}
       <FadeIn className="mx-auto max-w-[1100px] px-6 pb-16">
-        <div className="relative overflow-hidden rounded-[36px] bg-[#051A24] p-10 md:p-16">
+        <div className="relative overflow-hidden rounded-[36px] bg-[#1B2A5E] p-10 md:p-16">
           <div className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-[radial-gradient(circle_at_80%_50%,rgba(255,255,255,0.08),transparent_60%)]" />
           <div className="relative flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="text-[clamp(28px,4vw,44px)] font-extrabold leading-tight text-white" style={{ fontWeight: 800 }}>
+              <h2 className="text-[clamp(28px,4vw,44px)] font-bold leading-tight text-white">
                 ลงทะเบียนธุรกิจ
                 <br />
                 <span className="font-playfair italic font-bold">ของคุณวันนี้</span>
@@ -334,13 +338,13 @@ export function PremiumHome({
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/register"
-                className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#051A24]"
+                className="inline-flex items-center justify-center rounded-full bg-[#C9A84C] px-6 py-3 text-sm font-bold text-[#0D1B3E] hover:bg-[#D4A017]"
               >
                 ลงทะเบียนฟรี
               </Link>
               <Link
                 href="/pricing"
-                className="inline-flex items-center justify-center rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white hover:bg-white/20"
               >
                 ดูแผน Premium
               </Link>
@@ -350,25 +354,28 @@ export function PremiumHome({
       </FadeIn>
 
       {/* Homepage Footer */}
-      <footer className="mx-auto flex max-w-[1100px] flex-col items-center justify-between gap-4 border-t border-[rgba(5,26,36,0.08)] px-6 py-8 sm:flex-row">
-        <span className="font-playfair text-[18px] font-bold text-[#051A24]">Thai-Aus Verified</span>
-        <nav className="flex flex-wrap justify-center gap-4 text-xs text-[rgba(5,26,36,0.45)]">
-          <Link href="/directory" className="hover:text-[#051A24]">
+      <footer className="bg-[#0D1B3E] px-6 py-8 text-white/60">
+        <div className="mx-auto flex max-w-[1100px] flex-col items-center justify-between gap-4 sm:flex-row">
+        <span className="font-playfair text-xl font-bold text-[#C9A84C]">Thai-Aus Verified</span>
+        <nav className="flex flex-wrap justify-center gap-4 text-sm text-white/60">
+          <Link href="/directory" className="hover:text-[#C9A84C]">
             ค้นหา
           </Link>
-          <Link href="/pricing" className="hover:text-[#051A24]">
+          <Link href="/pricing" className="hover:text-[#C9A84C]">
             ราคา
           </Link>
-          <Link href="/alerts" className="hover:text-[#051A24]">
+          <Link href="/alerts" className="hover:text-[#C9A84C]">
             แจ้งเตือนภัย
           </Link>
-          <Link href="/terms" className="hover:text-[#051A24]">
+          <Link href="/terms" className="hover:text-[#C9A84C]">
             เงื่อนไข
           </Link>
         </nav>
-        <p className="text-xs text-[rgba(5,26,36,0.45)]">
-          © 2026 Thai-Aus Verified · Powered by Chapter99 Solutions
+        <p className="text-xs text-white/60">
+          © 2026 Thai-Aus Verified ·{' '}
+          <span className="text-[#C9A84C]">Powered by Chapter99 Solutions</span>
         </p>
+        </div>
       </footer>
 
       {/* Floating Bottom Nav */}
@@ -416,10 +423,14 @@ function BentoCard({
   tagClass?: string
 }) {
   return (
-    <div className="rounded-[28px] border border-[rgba(5,26,36,0.09)] bg-white p-7 transition-all hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(5,26,36,0.08)]">
-      {icon && <img src={icon} alt="" width={32} height={32} className="mb-3 h-8 w-8" />}
-      <h3 className="text-base font-bold text-[#051A24]">{title}</h3>
-      {desc && <p className="mt-1 text-sm text-[rgba(5,26,36,0.5)]">{desc}</p>}
+    <div className="rounded-[28px] border border-gray-100 bg-white p-7 transition-all hover:-translate-y-1 hover:border-[#C9A84C] hover:shadow-[0_12px_32px_rgba(201,168,76,0.1)]">
+      {icon && (
+        <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#0D1B3E]">
+          <img src={icon} alt="" width={24} height={24} className="h-6 w-6" />
+        </div>
+      )}
+      <h3 className="text-base font-bold text-[#0D1B3E]">{title}</h3>
+      {desc && <p className="mt-1 text-sm text-[#243B6E]/70">{desc}</p>}
       <span className={`mt-4 inline-block rounded-full px-3 py-1 text-xs ${tagClass}`}>{tag}</span>
     </div>
   )

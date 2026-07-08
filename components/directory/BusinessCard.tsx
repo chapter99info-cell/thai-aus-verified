@@ -22,42 +22,42 @@ export function BusinessCard({ business }: BusinessCardProps) {
   const whatsappNumber = business.whatsapp?.trim() || business.phone?.trim()
 
   return (
-    <div className="rounded-2xl border border-[#1e3a5f]/8 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:border-[#C9A84C]/50 hover:shadow-md">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
           <Link href={`/business/${business.id}`}>
-            <h3 className="text-base font-bold leading-tight text-[#1e3a5f] hover:underline">
+            <h3 className="text-base font-bold leading-tight text-[#0D1B3E] hover:underline">
               {business.business_name}
             </h3>
           </Link>
           <div className="mt-1 flex flex-wrap gap-2">
-            <span className="rounded-full bg-[#1e3a5f]/6 px-2 py-0.5 text-xs text-[#1e3a5f]/60">
+            <span className="rounded-full bg-[#0D1B3E]/10 px-2 py-0.5 text-xs text-[#1B2A5E]">
               {categoryLabel}
             </span>
-            <span className="rounded-full bg-[#1e3a5f]/6 px-2 py-0.5 text-xs text-[#1e3a5f]/60">
+            <span className="rounded-full bg-[#0D1B3E]/10 px-2 py-0.5 text-xs text-[#1B2A5E]">
               📍 {business.state}
             </span>
             {business.is_verified && (
-              <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
+              <span className="rounded-full border border-[#C9A84C]/30 bg-[#C9A84C]/10 px-2 py-0.5 text-xs font-semibold text-[#8B6914]">
                 ✓ Verified ABN
               </span>
             )}
           </div>
         </div>
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#1e3a5f] text-lg font-bold text-white">
+        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#0D1B3E] text-lg font-bold text-[#C9A84C]">
           {business.business_name?.[0]?.toUpperCase() || '?'}
         </div>
       </div>
 
       {business.abn_number && (
-        <p className="mb-3 text-xs text-[#1e3a5f]/40">ABN: {business.abn_number}</p>
+        <p className="mb-3 text-xs text-[#243B6E]/50">ABN: {business.abn_number}</p>
       )}
 
       <div className="mt-4 grid grid-cols-2 gap-2">
         {business.phone?.trim() && (
           <a
             href={telHref(business.phone)}
-            className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-[#1e3a5f] py-3 text-sm font-bold text-white transition-all active:scale-95"
+            className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-[#0D1B3E] py-3 text-sm font-bold text-white transition-all active:scale-95"
           >
             📞 โทรเลย {business.phone}
           </a>
@@ -113,9 +113,9 @@ export function BusinessCard({ business }: BusinessCardProps) {
             href={ensureHttpUrl(websiteUrl)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-[#1e3a5f]/50 transition-colors hover:text-[#1e3a5f]"
+            className="flex items-center gap-1 rounded-xl border border-[#C9A84C] px-3 py-2 text-xs font-semibold text-[#8B6914] transition-colors hover:bg-[#C9A84C] hover:text-white"
           >
-            🌐 เว็บไซต์
+            🎨 ดูผลงาน
           </a>
         )}
 

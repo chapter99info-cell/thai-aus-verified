@@ -167,7 +167,7 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
 
   return (
     <>
-      <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
+      <div className="mt-8 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
         <SearchFilter
           suburbs={suburbs}
           searchText={searchText}
@@ -190,7 +190,7 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
       {loading ? (
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-48 animate-pulse rounded-2xl bg-[#1e3a5f]/4" />
+            <div key={i} className="h-48 animate-pulse rounded-2xl bg-[#0D1B3E]/4" />
           ))}
         </div>
       ) : hasSearched ? (
@@ -198,7 +198,7 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
           {activeCategoryLabel && (
             <div className="mb-4 mt-4 flex items-center gap-2">
               <span className="text-sm text-gray-500">หมวดหมู่:</span>
-              <span className="rounded-full bg-[#1e3a5f] px-3 py-1 text-sm text-white">
+              <span className="rounded-full bg-[#0D1B3E] px-3 py-1 text-sm text-white">
                 {activeCategoryLabel}
               </span>
               <Link href="/directory" className="text-xs text-gray-400 underline">
@@ -207,9 +207,9 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
             </div>
           )}
 
-          <p className={`text-sm text-[#1e3a5f]/50 ${activeCategoryLabel ? '' : 'mt-4'}`}>
+          <p className={`text-sm text-[#0D1B3E]/50 ${activeCategoryLabel ? '' : 'mt-4'}`}>
             {results.length === 0 ? (
-              <span className="text-xs italic text-[#1e3a5f]/50">เปิดรับลงทะเบียน</span>
+              <span className="text-xs italic text-[#0D1B3E]/50">เปิดรับลงทะเบียน</span>
             ) : (
               <>
                 พบ {results.length} ธุรกิจ
@@ -221,11 +221,11 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
           {results.length === 0 ? (
             <div className="py-16 text-center">
               <div className="mb-4 text-4xl">🔍</div>
-              <h3 className="mb-2 text-lg font-bold text-[#1e3a5f]">ไม่พบธุรกิจในหมวดนี้</h3>
-              <p className="mb-6 text-sm text-[#1e3a5f]/50">เป็นคนแรกที่ลงทะเบียนในหมวดนี้!</p>
+              <h3 className="mb-2 text-lg font-bold text-[#0D1B3E]">ไม่พบธุรกิจในหมวดนี้</h3>
+              <p className="mb-6 text-sm text-[#0D1B3E]/50">เป็นคนแรกที่ลงทะเบียนในหมวดนี้!</p>
               <Link
                 href="/register"
-                className="inline-block rounded-full bg-[#1e3a5f] px-6 py-3 text-sm font-bold text-white"
+                className="inline-block rounded-full bg-[#C9A84C] px-6 py-3 text-sm font-bold text-[#0D1B3E]"
               >
                 ลงทะเบียนธุรกิจฟรี →
               </Link>

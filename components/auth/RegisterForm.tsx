@@ -65,7 +65,7 @@ export function RegisterForm() {
   const [verifying, setVerifying] = useState(false)
 
   const selectClass =
-    'w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:border-[#1e3a5f] focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]'
+    'w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B3E] focus:border-[#C9A84C] focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/20'
 
   async function handleVerifyAbn() {
     setError('')
@@ -256,13 +256,13 @@ export function RegisterForm() {
                   done
                     ? 'bg-green-600 text-white'
                     : active
-                      ? 'bg-[#1e3a5f] text-white'
+                      ? 'bg-[#C9A84C] text-[#0D1B3E]'
                       : 'bg-slate-200 text-slate-500'
                 }`}
               >
                 {done ? <CheckCircle2 size={16} /> : num}
               </div>
-              <span className={`text-center text-xs ${active ? 'font-medium text-[#1e3a5f]' : 'text-slate-500'}`}>
+              <span className={`text-center text-xs ${active ? 'font-medium text-[#0D1B3E]' : 'text-slate-500'}`}>
                 {label}
               </span>
             </div>
@@ -272,7 +272,7 @@ export function RegisterForm() {
 
       <div className="h-1.5 overflow-hidden rounded-full bg-slate-200">
         <div
-          className="h-full rounded-full bg-[#1e3a5f] transition-all duration-300"
+          className="h-full rounded-full bg-[#C9A84C] transition-all duration-300"
           style={{ width: `${(step / 3) * 100}%` }}
         />
       </div>
@@ -283,7 +283,7 @@ export function RegisterForm() {
           {showLoginPrompt && (
             <Link
               href="/login"
-              className="mt-3 inline-flex min-h-10 items-center justify-center rounded-lg bg-[#1e3a5f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2d5282]"
+              className="mt-3 inline-flex min-h-10 items-center justify-center rounded-lg bg-[#0D1B3E] px-4 py-2 text-sm font-semibold text-white hover:bg-[#243B6E]"
             >
               เข้าสู่ระบบ
             </Link>
@@ -306,7 +306,7 @@ export function RegisterForm() {
             type="button"
             onClick={handleVerifyAbn}
             disabled={verifying || !abnInput.trim()}
-            className="w-full rounded-lg bg-[#1e3a5f] py-3 text-sm font-semibold text-white hover:bg-[#2d5282] disabled:opacity-50"
+            className="w-full rounded-lg bg-[#0D1B3E] py-3 text-sm font-semibold text-white hover:bg-[#243B6E] disabled:opacity-50"
           >
             {verifying ? 'กำลังตรวจสอบ...' : 'ตรวจสอบ ABN'}
           </button>
@@ -321,7 +321,7 @@ export function RegisterForm() {
                   type="checkbox"
                   checked={abnConfirmed}
                   onChange={(e) => setAbnConfirmed(e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-slate-300 text-[#1e3a5f]"
+                  className="mt-1 h-4 w-4 rounded border-slate-300 text-[#0D1B3E]"
                 />
                 <span className="text-sm text-green-800">
                   ยืนยันว่านี่คือธุรกิจของฉันและข้อมูลถูกต้อง
@@ -413,7 +413,7 @@ export function RegisterForm() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="อธิบายบริการของคุณสั้นๆ เช่น นวดแผนไทย remedial massage รับ HICAPS"
-              className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#1e3a5f] focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]"
+              className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#0D1B3E] focus:outline-none focus:ring-1 focus:ring-[#0D1B3E]"
             />
           </div>
 
@@ -422,7 +422,7 @@ export function RegisterForm() {
               ช่องทางติดต่อ (ไม่บังคับ — กรอกอย่างน้อย 1 ช่อง เพื่อให้ลูกค้าติดต่อคุณได้)
             </p>
 
-            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+            <div className="flex items-center gap-3 rounded-xl border border-[#0D1B3E]/10 p-3">
               <span className="text-xl" aria-hidden>
                 📞
               </span>
@@ -436,7 +436,7 @@ export function RegisterForm() {
               />
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+            <div className="flex items-center gap-3 rounded-xl border border-[#0D1B3E]/10 p-3">
               <span className="text-xl" aria-hidden>
                 💬
               </span>
@@ -449,7 +449,7 @@ export function RegisterForm() {
               />
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+            <div className="flex items-center gap-3 rounded-xl border border-[#0D1B3E]/10 p-3">
               <span className="text-xl" aria-hidden>
                 👥
               </span>
@@ -462,7 +462,7 @@ export function RegisterForm() {
               />
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+            <div className="flex items-center gap-3 rounded-xl border border-[#0D1B3E]/10 p-3">
               <span className="text-xl" aria-hidden>
                 📸
               </span>
@@ -475,7 +475,7 @@ export function RegisterForm() {
               />
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+            <div className="flex items-center gap-3 rounded-xl border border-[#0D1B3E]/10 p-3">
               <span className="text-xl" aria-hidden>
                 🎵
               </span>
@@ -488,7 +488,7 @@ export function RegisterForm() {
               />
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+            <div className="flex items-center gap-3 rounded-xl border border-[#0D1B3E]/10 p-3">
               <span className="text-xl" aria-hidden>
                 💚
               </span>
@@ -502,7 +502,7 @@ export function RegisterForm() {
               />
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+            <div className="flex items-center gap-3 rounded-xl border border-[#0D1B3E]/10 p-3">
               <span className="text-xl" aria-hidden>
                 🌐
               </span>
@@ -515,7 +515,7 @@ export function RegisterForm() {
               />
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-[#1e3a5f]/10 p-3">
+            <div className="flex items-center gap-3 rounded-xl border border-[#0D1B3E]/10 p-3">
               <span className="text-xl" aria-hidden>
                 🎨
               </span>
@@ -540,7 +540,7 @@ export function RegisterForm() {
             <button
               type="button"
               onClick={goToStep3}
-              className="flex-1 rounded-lg bg-[#1e3a5f] py-2.5 text-sm font-semibold text-white hover:bg-[#2d5282]"
+              className="flex-1 rounded-lg bg-[#0D1B3E] py-2.5 text-sm font-semibold text-white hover:bg-[#243B6E]"
             >
               ดำเนินการต่อ
             </button>
@@ -582,18 +582,18 @@ export function RegisterForm() {
               type="checkbox"
               checked={termsAccepted}
               onChange={(e) => setTermsAccepted(e.target.checked)}
-              className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-[#1e3a5f]"
+              className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-[#0D1B3E]"
               required
             />
             <span className="text-sm text-slate-700">
               ฉันยอมรับ{' '}
-              <Link href="/terms" className="font-medium text-[#1e3a5f] hover:underline" target="_blank">
+              <Link href="/terms" className="font-medium text-[#0D1B3E] hover:underline" target="_blank">
                 ข้อกำหนดและเงื่อนไข
               </Link>{' '}
               และ{' '}
               <Link
                 href="/privacy-policy"
-                className="font-medium text-[#1e3a5f] hover:underline"
+                className="font-medium text-[#0D1B3E] hover:underline"
                 target="_blank"
               >
                 นโยบายความเป็นส่วนตัว
@@ -614,7 +614,7 @@ export function RegisterForm() {
             <button
               type="submit"
               disabled={loading || !termsAccepted}
-              className="flex-1 rounded-lg bg-[#1e3a5f] py-2.5 text-sm font-semibold text-white hover:bg-[#2d5282] disabled:opacity-50"
+              className="flex-1 rounded-lg bg-[#C9A84C] py-2.5 text-sm font-bold text-[#0D1B3E] hover:bg-[#D4A017] disabled:opacity-50"
             >
               {loading ? 'กำลังลงทะเบียน...' : 'ลงทะเบียนธุรกิจ'}
             </button>
@@ -624,7 +624,7 @@ export function RegisterForm() {
 
       <p className="text-center text-sm text-slate-600">
         มีบัญชีแล้ว?{' '}
-        <Link href="/login" className="font-medium text-[#1e3a5f] hover:underline">
+        <Link href="/login" className="font-medium text-[#0D1B3E] hover:underline">
           เข้าสู่ระบบ
         </Link>
       </p>

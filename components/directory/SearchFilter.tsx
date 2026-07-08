@@ -39,7 +39,7 @@ export function SearchFilter({
   loading = false,
 }: SearchFilterProps) {
   const selectClass =
-    'w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-[#1e3a5f] focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]'
+    'w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#0D1B3E] focus:border-[#C9A84C] focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/20'
 
   return (
     <div className="space-y-4">
@@ -134,7 +134,7 @@ export function SearchFilter({
           type="checkbox"
           checked={verifiedOnly}
           onChange={(e) => onVerifiedOnlyChange(e.target.checked)}
-          className="h-4 w-4 rounded border-slate-300 text-[#1e3a5f]"
+          className="h-4 w-4 rounded border-slate-300 text-[#C9A84C]"
         />
         <span className="text-sm font-medium text-slate-700">เฉพาะ Verified</span>
       </label>
@@ -143,7 +143,7 @@ export function SearchFilter({
         type="button"
         onClick={onSearch}
         disabled={loading}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1e3a5f] py-4 text-base font-bold text-white transition-all active:scale-95 disabled:opacity-60"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0D1B3E] py-4 text-base font-bold text-white transition-all hover:bg-[#243B6E] active:scale-95 disabled:opacity-60"
       >
         🔍 {loading ? 'กำลังค้นหา...' : 'ค้นหาธุรกิจ'}
       </button>
