@@ -1,45 +1,33 @@
 export const runtime = 'nodejs'
 
+import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { ADMIN_COOKIE, verifyAdminCookie } from '@/lib/admin-auth'
 import { createServiceClient } from '@/lib/supabase/admin'
 
 export async function POST(request: Request) {
+  const cookieStore = await cookies()
+
+  if (!verifyAdminCookie(cookieStore.get(ADMIN_COOKIE)?.value)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const body = await request.json()
+  const { provider_id, action } = body as {
+    provider_id: string
+    action: 'approve' | 'reject'
+  }
+
+  if (!provider_id || !action) {
+    return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
+  }
+
+  const service = createServiceClient()
+  if (!service) {
+    return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 })
+  }
+
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    }
-
-    const body = await request.json()
-    const { provider_id, action } = body as {
-      provider_id: string
-      action: 'approve' | 'reject'
-    }
-
-    if (!provider_id || !action) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
-    }
-
-    const service = createServiceClient()
-    if (!service) {
-      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 })
-    }
-
     if (action === 'approve') {
       const { error } = await service
         .from('service_providers')

@@ -2,73 +2,67 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [pin, setPin] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  const handleLogin = async () => {
+  async function handleLogin() {
     setLoading(true)
     setError('')
-    const supabase = createClient()
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
-    if (error) {
-      setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง')
+    const res = await fetch('/api/admin/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin }),
+    })
+
+    if (!res.ok) {
+      setError('รหัส PIN ไม่ถูกต้อง')
       setLoading(false)
       return
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', data.user.id)
-      .single()
-
-    if (profile?.role !== 'admin') {
-      await supabase.auth.signOut()
-      setError('ไม่มีสิทธิ์เข้าถึง')
-      setLoading(false)
-      return
-    }
-
-    router.push('/chapter99info')
+    router.push('/admin')
+    router.refresh()
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-950">
-      <div className="w-full max-w-sm rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center bg-[#0D1B3E] px-4">
+      <div className="w-full max-w-sm rounded-2xl border border-[#C9A84C]/30 bg-[#1B2A5E] p-8 shadow-2xl">
         <div className="mb-6 text-center">
-          <span className="text-4xl">🔒</span>
-          <p className="mt-2 text-xs text-gray-500">Admin Access Only</p>
+          <span className="text-4xl" aria-hidden>
+            🔒
+          </span>
+          <h1 className="mt-3 text-xl font-bold text-[#C9A84C]">Admin Access</h1>
+          <p className="mt-1 text-sm text-white/60">Thai-Aus Verified Community</p>
         </div>
+
         <div className="space-y-3">
+          <label htmlFor="admin-pin" className="block text-sm font-medium text-white/80">
+            รหัส PIN
+          </label>
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Admin Email"
-            className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white focus:border-gray-500 focus:outline-none"
-          />
-          <input
+            id="admin-pin"
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            inputMode="numeric"
+            autoComplete="off"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            placeholder="••••••"
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-            className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white focus:border-gray-500 focus:outline-none"
+            className="w-full rounded-lg border border-[#C9A84C]/30 bg-[#0D1B3E] px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-[#C9A84C] focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/20"
           />
-          {error && <p className="text-xs text-red-400">{error}</p>}
+          {error && <p className="text-sm text-red-400">{error}</p>}
           <button
+            type="button"
             onClick={handleLogin}
-            disabled={loading}
-            className="w-full rounded-lg bg-gray-700 py-2.5 text-sm text-white transition-colors hover:bg-gray-600 disabled:opacity-50"
+            disabled={loading || !pin.trim()}
+            className="w-full rounded-lg bg-[#C9A84C] py-3 text-base font-bold text-[#0D1B3E] transition-colors hover:bg-[#D4A017] disabled:opacity-50"
           >
-            {loading ? '...' : 'เข้าสู่ระบบ'}
+            {loading ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบ'}
           </button>
         </div>
       </div>

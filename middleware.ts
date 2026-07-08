@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { ADMIN_COOKIE, hasAdminCookieValue } from '@/lib/admin-cookie'
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -32,13 +33,18 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse
   }
 
-  const protectedPaths = ['/dashboard', '/verify', '/admin', '/chapter99info']
-  const isProtected = protectedPaths.some(
-    (p) => pathname.startsWith(p) && pathname !== '/admin/login'
-  )
+  if (pathname.startsWith('/admin')) {
+    if (!hasAdminCookieValue(request.cookies.get(ADMIN_COOKIE)?.value)) {
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+    return supabaseResponse
+  }
+
+  const protectedPaths = ['/dashboard', '/verify', '/chapter99info']
+  const isProtected = protectedPaths.some((p) => pathname.startsWith(p))
 
   if (isProtected && !user) {
-    const loginUrl = pathname.startsWith('/chapter99info') || pathname.startsWith('/admin')
+    const loginUrl = pathname.startsWith('/chapter99info')
       ? new URL('/admin/login', request.url)
       : new URL('/login', request.url)
     return NextResponse.redirect(loginUrl)
