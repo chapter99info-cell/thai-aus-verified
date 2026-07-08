@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import OccupationCategories from '@/components/OccupationCategories'
@@ -145,8 +146,7 @@ function MarqueeCard({ business }: { business: MarqueeBusiness }) {
       className="inline-flex h-[68px] min-w-[180px] shrink-0 items-center gap-2.5 rounded-full border border-[rgba(5,26,36,0.1)] bg-white px-4 shadow-[0_2px_8px_rgba(5,26,36,0.04)] transition-shadow hover:border-[rgba(5,26,36,0.2)] hover:shadow-[0_6px_16px_rgba(5,26,36,0.08)]"
     >
       {business.logo_url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           src={business.logo_url}
           alt=""
           width={28}
@@ -364,11 +364,12 @@ export function PremiumHome({
       <FadeIn className="mx-auto max-w-[1100px] px-6 pb-16">
         <div className="grid auto-rows-auto grid-cols-1 gap-3 md:grid-cols-3">
           <div className="rounded-[28px] bg-[#1B2A5E] p-7 md:col-span-2">
-            <img
+            <Image
               src={`${CATEGORY_ICON_BASE}/icons8-visa-stamp-64.png`}
               alt=""
               width={40}
               height={40}
+              priority
               className="h-10 w-10 invert"
             />
             <h3 className="mt-4 text-xl font-bold text-white">ยืนยัน ABN อัตโนมัติใน 30 วินาที</h3>
@@ -619,7 +620,7 @@ function BentoCard({
     <div className="rounded-[28px] border border-gray-100 bg-white p-7 transition-all hover:-translate-y-1 hover:border-[#C9A84C] hover:shadow-[0_12px_32px_rgba(201,168,76,0.1)]">
       {icon && (
         <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#0D1B3E]">
-          <img src={icon} alt="" width={24} height={24} className="h-6 w-6" />
+          <Image src={icon} alt="" width={24} height={24} className="h-6 w-6" />
         </div>
       )}
       <h3 className="text-base font-bold text-[#0D1B3E]">{title}</h3>

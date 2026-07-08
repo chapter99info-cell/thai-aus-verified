@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CheckCircle2 } from 'lucide-react'
+import { RegisterProgress } from '@/components/auth/RegisterProgress'
 import { Input } from '@/components/ui/Input'
 import { PasswordInput } from '@/components/ui/PasswordInput'
 import { AU_STATES, CATEGORY_LABELS } from '@/lib/constants'
@@ -21,6 +22,28 @@ type AbnResult = {
 
 const STEPS = ['ตรวจสอบ ABN', 'ข้อมูลธุรกิจ', 'สร้างบัญชี']
 
+const SUCCESS_STORAGE_KEY = 'thai_aus_register_success'
+
+function saveSuccessAndRedirect(
+  router: ReturnType<typeof useRouter>,
+  payload: {
+    businessName: string
+    category: string
+    state: string
+    suburb: string
+    abn: string
+    email: string
+  }
+) {
+  try {
+    sessionStorage.setItem(SUCCESS_STORAGE_KEY, JSON.stringify(payload))
+  } catch {
+    // ignore storage errors
+  }
+  router.push('/register/success')
+  router.refresh()
+}
+
 function isDuplicateEmailError(error: { message?: string; status?: number | undefined }): boolean {
   const msg = (error.message ?? '').toLowerCase()
   return (
@@ -37,7 +60,7 @@ function mapState(code?: string): AustralianState {
   return 'NSW'
 }
 
-export function RegisterForm() {
+export function RegisterForm({ showProgress = false }: { showProgress?: boolean }) {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [abnInput, setAbnInput] = useState('')
@@ -136,7 +159,6 @@ export function RegisterForm() {
           line_id: lineId || null,
           whatsapp: whatsapp || null,
           tiktok_url: tiktokUrl || null,
-          role: 'verified_business',
           full_name: businessName,
         })
         .eq('id', userId)
@@ -148,8 +170,14 @@ export function RegisterForm() {
         .maybeSingle()
 
       if (existingProvider) {
-        router.push('/dashboard?registered=1')
-        router.refresh()
+        saveSuccessAndRedirect(router, {
+          businessName,
+          category: CATEGORY_LABELS[category].th,
+          state,
+          suburb,
+          abn: cleanAbn,
+          email: email.trim(),
+        })
         return
       }
 
@@ -169,9 +197,8 @@ export function RegisterForm() {
         whatsapp: whatsapp || null,
         website: websiteUrl || null,
         portfolio_url: portfolioUrl || null,
-        is_verified: true,
-        verification_status: 'approved',
-        verified_at: new Date().toISOString(),
+        is_verified: false,
+        verification_status: 'pending',
         subscription_status: 'free',
         terms_accepted: true,
         terms_accepted_at: new Date().toISOString(),
@@ -183,8 +210,14 @@ export function RegisterForm() {
         return
       }
 
-      router.push('/dashboard?registered=1')
-      router.refresh()
+      saveSuccessAndRedirect(router, {
+        businessName,
+        category: CATEGORY_LABELS[category].th,
+        state,
+        suburb,
+        abn: cleanAbn,
+        email: email.trim(),
+      })
     }
 
     const {
@@ -244,38 +277,44 @@ export function RegisterForm() {
         ⚠️ กรุณากรอกเฉพาะ ABN เท่านั้น ห้ามกรอก TFN (Tax File Number) โดยเด็ดขาด
       </div>
 
-      <div className="flex items-center gap-2">
-        {STEPS.map((label, i) => {
-          const num = i + 1
-          const active = step === num
-          const done = step > num
-          return (
-            <div key={label} className="flex flex-1 flex-col items-center gap-1">
-              <div
-                className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold ${
-                  done
-                    ? 'bg-green-600 text-white'
-                    : active
-                      ? 'bg-[#C9A84C] text-[#0D1B3E]'
-                      : 'bg-slate-200 text-slate-500'
-                }`}
-              >
-                {done ? <CheckCircle2 size={16} /> : num}
+      {showProgress ? (
+        <RegisterProgress step={step} />
+      ) : (
+        <div className="flex items-center gap-2">
+          {STEPS.map((label, i) => {
+            const num = i + 1
+            const active = step === num
+            const done = step > num
+            return (
+              <div key={label} className="flex flex-1 flex-col items-center gap-1">
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold ${
+                    done
+                      ? 'bg-[#0D1B3E] text-white'
+                      : active
+                        ? 'bg-[#C9A84C] text-[#0D1B3E]'
+                        : 'bg-slate-200 text-slate-500'
+                  }`}
+                >
+                  {done ? <CheckCircle2 size={16} /> : num}
+                </div>
+                <span className={`text-center text-xs ${active ? 'font-medium text-[#0D1B3E]' : 'text-slate-500'}`}>
+                  {label}
+                </span>
               </div>
-              <span className={`text-center text-xs ${active ? 'font-medium text-[#0D1B3E]' : 'text-slate-500'}`}>
-                {label}
-              </span>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      )}
 
-      <div className="h-1.5 overflow-hidden rounded-full bg-slate-200">
-        <div
-          className="h-full rounded-full bg-[#C9A84C] transition-all duration-300"
-          style={{ width: `${(step / 3) * 100}%` }}
-        />
-      </div>
+      {!showProgress && (
+        <div className="h-1.5 overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="h-full rounded-full bg-[#C9A84C] transition-all duration-300"
+            style={{ width: `${(step / 3) * 100}%` }}
+          />
+        </div>
+      )}
 
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
