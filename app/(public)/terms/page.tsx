@@ -5,11 +5,24 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold text-[#0f172a]">ข้อกำหนดและเงื่อนไข</h1>
-      <p className="mt-2 text-sm text-slate-500">อัปเดตล่าสุด: มิถุนายน 2026</p>
+    <>
+      <div className="relative h-[300px] w-full overflow-hidden md:h-[400px]">
+        <img
+          src="https://jjbwiriphyxsnrnpoqnn.supabase.co/storage/v1/object/public/Thai-%20Aus%20Verified/photos/cover/468227018_10234778857722685_8922446049967068394_n.jpg"
+          alt="Thai-Aus Verified Community"
+          className="h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0D1B3E]/60" />
+        <div className="absolute bottom-6 left-8">
+          <h1 className="text-3xl font-bold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]">
+            ข้อกำหนดและเงื่อนไข
+          </h1>
+          <p className="mt-1 text-sm text-white/70">อัปเดตล่าสุด: มิถุนายน 2026</p>
+        </div>
+      </div>
 
-      <div className="prose prose-slate mt-8 max-w-none space-y-6 text-base text-slate-700">
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <div className="prose prose-slate max-w-none space-y-6 text-base text-slate-700">
         <section>
           <h2 className="text-xl font-bold text-[#1e3a5f]">1. บทนำ</h2>
           <p>
@@ -71,5 +84,6 @@ export default function TermsPage() {
         </section>
       </div>
     </div>
+    </>
   )
 }
