@@ -27,18 +27,23 @@ const LOGO_URL =
   'https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png'
 
 export const metadata: Metadata = {
-  title: 'Thai-Aus Verified Community | ชุมชนบริการสีขาว คนไทยในออสเตรเลีย',
+  title: 'Thai-Aus Verified Community | ชุมชนคนไทยในออสเตรเลีย',
   description:
-    'ค้นหาธุรกิจไทยที่ผ่านการยืนยัน ABN ในออสเตรเลีย ปลอดภัย ไม่มีโกง',
-  keywords: ['Thai business Australia', 'ABN verified', 'Thai community Sydney'],
+    'Digital Yellow Pages สำหรับธุรกิจไทยในออสเตรเลีย ทุกธุรกิจต้องยืนยัน ABN ก่อนแสดงผล ปลอดภัย โปร่งใส ไม่มีสแกมเมอร์',
+  keywords:
+    'Thai Australia, ABN verified, ช่างไทย, Thai business Australia, คนไทยออสเตรเลีย',
   manifest: '/manifest.json',
   openGraph: {
     title: 'Thai-Aus Verified Community',
     description: 'ชุมชนบริการสีขาว คนไทยในออสเตรเลีย',
-    url: 'https://thai-aus-verified.vercel.app',
-    siteName: 'Thai-Aus Verified',
+    url: 'https://thai-ausverified.com.au',
+    siteName: 'Thai-Aus Verified Community',
     locale: 'th_TH',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Thai-Aus Verified Community',
   },
 }
 

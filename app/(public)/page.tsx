@@ -7,8 +7,19 @@ import {
 } from '@/lib/marquee-businesses'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
 import type { ScamAlert } from '@/types'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+const SITE_URL = 'https://thai-ausverified.com.au'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    alternates: {
+      canonical: SITE_URL,
+    },
+  }
+}
 
 async function getCategoryCounts(): Promise<Record<string, number>> {
   if (!isSupabaseConfigured()) return {}
