@@ -67,7 +67,7 @@ export async function POST(request: Request) {
           : '0'
 
       await service
-        .from('service_providers')
+        .from('providers')
         .update({ rating: avg, review_count: count })
         .eq('id', provider_id)
     }

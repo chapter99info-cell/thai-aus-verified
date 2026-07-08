@@ -152,45 +152,12 @@ export function RegisterForm({ showProgress = false }: { showProgress?: boolean 
     const cleanAbn = abnResult?.abn ?? abnInput.replace(/\s/g, '')
 
     async function completeRegistration(userId: string) {
-      await supabase
-        .from('providers')
-        .update({
-          phone: phone || null,
-          line_id: lineId || null,
-          whatsapp: whatsapp || null,
-          tiktok_url: tiktokUrl || null,
-          business_name: businessName,
-          facebook_url: facebookUrl || null,
-          instagram_url: instagramUrl || null,
-          portfolio_url: portfolioUrl || null,
-          abn_number: cleanAbn,
-          state,
-          suburb,
-          job_category: category,
-        })
-        .eq('id', userId)
-
-      const { data: existingProvider } = await supabase
-        .from('service_providers')
-        .select('id')
-        .eq('profile_id', userId)
-        .maybeSingle()
-
-      if (existingProvider) {
-        saveSuccessAndRedirect(router, {
-          businessName,
-          category: CATEGORY_LABELS[category].th,
-          state,
-          suburb,
-          abn: cleanAbn,
-          email: email.trim(),
-        })
-        return
-      }
-
-      const { error: bizError } = await supabase.from('service_providers').insert({
-        profile_id: userId,
+      const payload = {
+        id: userId,
+        email: email.trim(),
         business_name: businessName,
+        facebook_name: businessName,
+        job_category: category,
         category,
         abn_number: cleanAbn,
         state,
@@ -205,10 +172,15 @@ export function RegisterForm({ showProgress = false }: { showProgress?: boolean 
         website: websiteUrl || null,
         portfolio_url: portfolioUrl || null,
         is_verified: false,
+        is_blacklisted: false,
         verification_status: 'pending',
         subscription_status: 'free',
         terms_accepted: true,
         terms_accepted_at: new Date().toISOString(),
+      }
+
+      const { error: bizError } = await supabase.from('providers').upsert(payload, {
+        onConflict: 'id',
       })
 
       if (bizError) {

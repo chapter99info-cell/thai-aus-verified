@@ -25,8 +25,12 @@ async function getCategoryCounts(): Promise<Record<string, number>> {
   if (!isSupabaseConfigured()) return {}
 
   const supabase = await createClient()
-  const { data } = await supabase.from('service_providers').select('category')
-  return buildCategoryCounts(data)
+  const { data } = await supabase.from('providers').select('job_category, category')
+  return buildCategoryCounts(
+    (data ?? []).map((row) => ({
+      category: row.job_category ?? row.category ?? null,
+    }))
+  )
 }
 
 async function getMarqueeBusinesses(): Promise<MarqueeBusiness[]> {
@@ -36,12 +40,17 @@ async function getMarqueeBusinesses(): Promise<MarqueeBusiness[]> {
 
   const supabase = await createClient()
   const { data } = await supabase
-    .from('service_providers')
-    .select('id, business_name, category, profile_image_url')
+    .from('providers')
+    .select('id, business_name, job_category, category, profile_image_url')
     .eq('is_verified', true)
     .limit(20)
 
-  const mapped = (data ?? []).map(mapProviderToMarquee)
+  const mapped = (data ?? []).map((row) =>
+    mapProviderToMarquee({
+      ...row,
+      category: row.job_category ?? row.category,
+    })
+  )
   return buildMarqueeTrack(mapped)
 }
 
@@ -53,7 +62,7 @@ async function getHomeStats() {
   const supabase = await createClient()
 
   const [providersRes, alertRes] = await Promise.all([
-    supabase.from('service_providers').select('state').eq('is_verified', true),
+    supabase.from('providers').select('state').eq('is_verified', true),
     supabase
       .from('scam_alerts')
       .select('title')

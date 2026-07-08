@@ -74,7 +74,7 @@ export function GalleryUpload({ providerId, initialGallery }: Props) {
       const updated = [...images, ...newUrls]
       const supabase = getDbClient()
       const { error: updateError } = await supabase
-        .from('service_providers')
+        .from('providers')
         .update({ gallery_images: updated })
         .eq('id', providerId)
 
@@ -103,7 +103,7 @@ export function GalleryUpload({ providerId, initialGallery }: Props) {
       const updated = images.filter((img) => img !== url)
       const supabase = getDbClient()
       const { error: updateError } = await supabase
-        .from('service_providers')
+        .from('providers')
         .update({ gallery_images: updated })
         .eq('id', providerId)
 

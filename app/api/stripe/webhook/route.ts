@@ -44,7 +44,7 @@ async function setProfileMembership(
     providerUpdate.subscription_grace_until = null
   }
 
-  await admin.from('service_providers').update(providerUpdate).eq('profile_id', userId)
+  await admin.from('providers').update(providerUpdate).eq('id', userId)
 }
 
 async function setMembershipByCustomerId(

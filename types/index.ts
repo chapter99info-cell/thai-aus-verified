@@ -3,11 +3,12 @@ export type UserRole = 'guest' | 'member' | 'verified_business' | 'admin'
 export interface Profile {
   id: string
   email: string
-  full_name: string
+  full_name?: string
   business_name?: string
+  facebook_name?: string
   phone?: string
   line_id?: string
-  role: UserRole
+  role?: UserRole
   membership_tier?: 'free' | 'premium'
   stripe_customer_id?: string
   stripe_subscription_id?: string
@@ -30,8 +31,9 @@ export type AustralianState = 'NSW' | 'VIC' | 'QLD' | 'WA' | 'SA' | 'TAS' | 'ACT
 
 export interface ServiceProvider {
   id: string
-  profile_id: string
+  profile_id?: string
   business_name: string
+  facebook_name?: string
   job_category?: ServiceCategory
   category: ServiceCategory
   description: string

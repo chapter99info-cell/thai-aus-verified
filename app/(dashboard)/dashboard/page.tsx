@@ -29,22 +29,15 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/login')
 
-  const { data: profileData } = await supabase
+  const { data: providerData } = await supabase
     .from('providers')
     .select('*')
     .eq('id', user.id)
-    .single()
-
-  const profile = profileData as Profile | null
-
-  const { data: providerData } = await supabase
-    .from('service_providers')
-    .select('*')
-    .eq('profile_id', user.id)
     .maybeSingle()
 
   const provider = providerData as ServiceProvider | null
-  const displayName = provider?.business_name ?? profile?.business_name ?? user.email ?? 'ผู้ใช้'
+  const profile = providerData as Profile | null
+  const displayName = provider?.business_name ?? user.email ?? 'ผู้ใช้'
   const isPremium = provider ? isPremiumProvider(provider) : false
   const inGrace = provider ? isInPaymentGrace(provider) : false
   const graceDays = provider ? graceDaysRemaining(provider) : null

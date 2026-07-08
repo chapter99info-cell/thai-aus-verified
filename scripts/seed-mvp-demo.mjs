@@ -133,7 +133,7 @@ async function resolveOwnerId() {
 
   if (seedEmail) {
     const { data, error } = await supabase
-      .from('profiles')
+      .from('providers')
       .select('id, role')
       .eq('email', seedEmail)
       .maybeSingle()
@@ -145,7 +145,7 @@ async function resolveOwnerId() {
 
     if (data.role !== 'verified_owner') {
       const { error: updateError } = await supabase
-        .from('profiles')
+        .from('providers')
         .update({ role: 'verified_owner' })
         .eq('id', data.id)
 
@@ -157,7 +157,7 @@ async function resolveOwnerId() {
   }
 
   const { data: admin, error: adminError } = await supabase
-    .from('profiles')
+    .from('providers')
     .select('id')
     .eq('role', 'admin')
     .limit(1)
@@ -170,7 +170,7 @@ async function resolveOwnerId() {
   }
 
   const { data: anyProfile, error: anyError } = await supabase
-    .from('profiles')
+    .from('providers')
     .select('id')
     .limit(1)
     .maybeSingle()

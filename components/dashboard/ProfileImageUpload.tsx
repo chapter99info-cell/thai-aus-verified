@@ -52,7 +52,7 @@ export function ProfileImageUpload({ providerId, businessName, initialProfileUrl
 
       const supabase = getDbClient()
       const { error: updateError } = await supabase
-        .from('service_providers')
+        .from('providers')
         .update({ profile_image_url: cacheBustedUrl })
         .eq('id', providerId)
 

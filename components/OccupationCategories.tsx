@@ -26,14 +26,15 @@ export default function OccupationCategories({
 
     async function loadCounts() {
       const supabase = createClient()
-      const { data } = await supabase.from('service_providers').select('category')
+      const { data } = await supabase.from('providers').select('job_category, category')
 
       if (!data) return
 
       const next: Record<string, number> = {}
       for (const row of data) {
-        if (row.category) {
-          next[row.category] = (next[row.category] ?? 0) + 1
+        const cat = row.job_category ?? row.category
+        if (cat) {
+          next[cat] = (next[cat] ?? 0) + 1
         }
       }
       setCounts(next)

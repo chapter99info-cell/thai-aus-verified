@@ -12,7 +12,7 @@ async function fetchSuburbs() {
 
   try {
     const supabase = await createClient()
-    const { data, error } = await supabase.from('service_providers').select('suburb')
+    const { data, error } = await supabase.from('providers').select('suburb')
 
     if (error) throw error
 
@@ -30,8 +30,12 @@ export default async function DirectoryPage() {
 
   if (isSupabaseConfigured()) {
     const supabase = await createClient()
-    const { data } = await supabase.from('service_providers').select('category')
-    categoryCounts = buildCategoryCounts(data)
+    const { data } = await supabase.from('providers').select('job_category, category')
+    categoryCounts = buildCategoryCounts(
+      (data ?? []).map((row) => ({
+        category: row.job_category ?? row.category ?? null,
+      }))
+    )
   }
 
   return (

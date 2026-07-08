@@ -40,9 +40,9 @@ export function KycUploadForm() {
       }
 
       const { data: provider } = await supabase
-        .from('service_providers')
+        .from('providers')
         .select('id')
-        .eq('profile_id', user.id)
+        .eq('id', user.id)
         .maybeSingle()
 
       if (!provider) {

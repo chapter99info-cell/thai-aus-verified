@@ -50,7 +50,7 @@ export function CoverImageUpload({ providerId, initialCoverUrl }: Props) {
 
       const supabase = getDbClient()
       const { error: updateError } = await supabase
-        .from('service_providers')
+        .from('providers')
         .update({ cover_image_url: cacheBustedUrl })
         .eq('id', providerId)
 

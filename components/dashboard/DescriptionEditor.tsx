@@ -19,7 +19,7 @@ export function DescriptionEditor({ providerId, initialDescription }: Props) {
     setSaving(true)
     const supabase = createClient()
     const { error } = await supabase
-      .from('service_providers')
+      .from('providers')
       .update({ description })
       .eq('id', providerId)
 

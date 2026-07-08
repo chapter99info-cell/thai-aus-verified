@@ -15,7 +15,12 @@ export const metadata = {
 }
 
 type ProviderRow = ServiceProvider & {
-  providers: Pick<Profile, 'email' | 'business_name' | 'phone'> | null
+  email?: string | null
+  providers?: {
+    email?: string | null
+    business_name?: string | null
+    phone?: string | null
+  } | null
 }
 
 async function loadAdminData(): Promise<AdminDashboardData> {
@@ -43,13 +48,13 @@ async function loadAdminData(): Promise<AdminDashboardData> {
   ] = await Promise.all([
     service.from('providers').select('id', { count: 'exact', head: true }),
     service
-      .from('service_providers')
-      .select('*, providers:profile_id(email, business_name, phone)')
+      .from('providers')
+      .select('*')
       .eq('verification_status', 'pending')
       .order('created_at', { ascending: false }),
     service
-      .from('service_providers')
-      .select('*, providers:profile_id(email, business_name, phone)')
+      .from('providers')
+      .select('*')
       .eq('subscription_status', 'premium')
       .order('created_at', { ascending: false }),
     service
@@ -61,17 +66,35 @@ async function loadAdminData(): Promise<AdminDashboardData> {
   ])
 
   const reports = (reportsRes.data ?? []) as AdminDashboardData['reports']
+  const pending = ((pendingRes.data ?? []) as ProviderRow[]).map((row) => ({
+    ...row,
+    category: (row.job_category ?? row.category) as ServiceProvider['category'],
+    providers: {
+      email: row.email ?? null,
+      business_name: row.business_name,
+      phone: row.phone ?? null,
+    },
+  }))
+  const subscribers = ((subscribersRes.data ?? []) as ProviderRow[]).map((row) => ({
+    ...row,
+    category: (row.job_category ?? row.category) as ServiceProvider['category'],
+    providers: {
+      email: row.email ?? null,
+      business_name: row.business_name,
+      phone: row.phone ?? null,
+    },
+  }))
 
   return {
     stats: {
       totalProfiles: profilesRes.count ?? 0,
-      pendingVerification: pendingRes.data?.length ?? 0,
-      activeSubscribers: subscribersRes.data?.length ?? 0,
+      pendingVerification: pending.length,
+      activeSubscribers: subscribers.length,
       openReports: reports.length,
     },
-    pending: (pendingRes.data ?? []) as ProviderRow[],
+    pending,
     reports,
-    subscribers: (subscribersRes.data ?? []) as ProviderRow[],
+    subscribers,
   }
 }
 

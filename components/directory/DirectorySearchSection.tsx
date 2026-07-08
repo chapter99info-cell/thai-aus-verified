@@ -69,16 +69,17 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
     try {
       const supabase = createClient()
       let query = supabase
-        .from('service_providers')
+        .from('providers')
         .select(
-          'id, business_name, category, state, suburb, abn_number, verification_status, is_verified, phone, whatsapp, line_id, facebook_url, instagram_url, youtube_url, tiktok_url, google_maps_url, profile_image_url, portfolio_url, website, rating, review_count, created_at, subscription_status, subscription_grace_until'
+          'id, business_name, category, job_category, state, suburb, abn_number, verification_status, is_verified, is_blacklisted, phone, whatsapp, line_id, facebook_url, instagram_url, youtube_url, tiktok_url, google_maps_url, profile_image_url, portfolio_url, website, rating, review_count, created_at, subscription_status, subscription_grace_until'
         )
+        .or('is_blacklisted.is.null,is_blacklisted.eq.false')
 
       if (filters.searchText.trim()) {
         query = query.ilike('business_name', `%${filters.searchText.trim()}%`)
       }
       if (filters.category && filters.category !== 'ทุกประเภท') {
-        query = query.eq('category', filters.category)
+        query = query.or(`job_category.eq.${filters.category},category.eq.${filters.category}`)
       }
       if (filters.state && filters.state !== 'ทุกรัฐ') {
         query = query.eq('state', filters.state)
@@ -94,7 +95,15 @@ export function DirectorySearchSection({ suburbs }: DirectorySearchSectionProps)
 
       if (error) throw error
 
-      setResults(sortResults((data ?? []) as ServiceProvider[], filters.sort))
+      setResults(
+        sortResults(
+          ((data ?? []) as Array<ServiceProvider & { job_category?: string }>).map((row) => ({
+            ...row,
+            category: (row.job_category ?? row.category) as ServiceProvider['category'],
+          })),
+          filters.sort
+        )
+      )
     } catch {
       setResults([])
     } finally {

@@ -29,7 +29,12 @@ import type { Profile, ScamAlert, ServiceProvider } from '@/types'
 type AdminTab = 'pending' | 'verified' | 'alerts' | 'members' | 'premium' | 'articles' | 'sales' | 'interviews'
 
 type ProviderRow = ServiceProvider & {
-  providers: Pick<Profile, 'email' | 'business_name' | 'phone'> | null
+  email?: string | null
+  providers?: {
+    email?: string | null
+    business_name?: string | null
+    phone?: string | null
+  } | null
 }
 
 const CATEGORY_FILTERS = [
@@ -109,38 +114,49 @@ export function AdminPanel() {
     const [pendingRes, verifiedRes, articlesRes, membersRes, premiumRes, salesRes, alertsApiRes, interviewsRes] =
       await Promise.all([
         supabase
-          .from('service_providers')
-          .select('*, providers:profile_id(email, business_name, phone)')
+          .from('providers')
+          .select('*')
           .eq('verification_status', 'pending')
           .order('created_at', { ascending: false }),
         supabase
-          .from('service_providers')
-          .select('*, providers:profile_id(email, business_name, phone)')
+          .from('providers')
+          .select('*')
           .eq('is_verified', true)
           .order('created_at', { ascending: false }),
         supabase.from('articles').select('*').order('created_at', { ascending: false }),
         supabase.from('providers').select('*').order('created_at', { ascending: false }),
         supabase
-          .from('service_providers')
-          .select('*, providers:profile_id(email, business_name, phone)')
+          .from('providers')
+          .select('*')
           .eq('subscription_status', 'premium')
           .order('created_at', { ascending: false }),
         supabase
-          .from('service_providers')
-          .select('*, providers:profile_id(email, business_name, phone)')
+          .from('providers')
+          .select('*')
           .order('created_at', { ascending: false }),
         fetch('/api/admin/alerts'),
         supabase.from('interview_sessions').select('id', { count: 'exact', head: true }),
       ])
 
-    const allProviders = (salesRes.data ?? []) as ProviderRow[]
+    const decorate = (rows: ProviderRow[]) =>
+      rows.map((row) => ({
+        ...row,
+        category: (row.job_category ?? row.category) as ServiceProvider['category'],
+        providers: {
+          email: (row as ProviderRow & { email?: string }).email ?? null,
+          business_name: row.business_name,
+          phone: row.phone ?? null,
+        },
+      }))
+
+    const allProviders = decorate((salesRes.data ?? []) as ProviderRow[])
     setSalesLeads(allProviders.filter(isSalesLead))
 
-    setPending((pendingRes.data ?? []) as ProviderRow[])
-    setVerified((verifiedRes.data ?? []) as ProviderRow[])
+    setPending(decorate((pendingRes.data ?? []) as ProviderRow[]))
+    setVerified(decorate((verifiedRes.data ?? []) as ProviderRow[]))
     setArticles((articlesRes.data ?? []) as Article[])
     setMembers((membersRes.data ?? []) as Profile[])
-    setPremium((premiumRes.data ?? []) as ProviderRow[])
+    setPremium(decorate((premiumRes.data ?? []) as ProviderRow[]))
 
     if (alertsApiRes.ok) {
       const alertsData = (await alertsApiRes.json()) as ScamAlert[]

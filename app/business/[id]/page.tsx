@@ -33,20 +33,24 @@ export default async function BusinessDetailPage({ params }: Props) {
   } = await supabase.auth.getUser()
 
   const { data, error } = await supabase
-    .from('service_providers')
+    .from('providers')
     .select(
-      'id, profile_id, business_name, category, description, state, suburb, address, abn_number, verification_status, is_verified, phone, line_id, whatsapp, facebook_url, instagram_url, youtube_url, tiktok_url, google_maps_url, profile_image_url, cover_image_url, gallery_images, portfolio_url, website, rating, review_count, subscription_status, subscription_grace_until, created_at'
+      'id, business_name, category, job_category, description, state, suburb, address, abn_number, verification_status, is_verified, phone, line_id, whatsapp, facebook_url, instagram_url, youtube_url, tiktok_url, google_maps_url, profile_image_url, cover_image_url, gallery_images, portfolio_url, website, rating, review_count, subscription_status, subscription_grace_until, created_at'
     )
     .eq('id', id)
     .maybeSingle()
 
   if (error || !data) notFound()
 
-  const business = data as ServiceProvider
+  const business = {
+    ...data,
+    category: (data.job_category ?? data.category) as ServiceProvider['category'],
+    profile_id: data.id,
+  } as ServiceProvider
   const isPremium = isPremiumProvider(business)
   const galleryImages = (business.gallery_images ?? []).filter(Boolean)
 
-  const isOwner = user?.id === business.profile_id
+  const isOwner = user?.id === business.id
 
   const { data: reviewsData } = await supabase
     .from('reviews')

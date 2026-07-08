@@ -30,31 +30,19 @@ export async function POST(request: Request) {
   try {
     if (action === 'approve') {
       const { error } = await service
-        .from('service_providers')
+        .from('providers')
         .update({
           is_verified: true,
+          is_blacklisted: false,
           verification_status: 'approved',
           verified_at: new Date().toISOString(),
         })
         .eq('id', provider_id)
 
       if (error) throw error
-
-      const { data: provider } = await service
-        .from('service_providers')
-        .select('profile_id')
-        .eq('id', provider_id)
-        .single()
-
-      if (provider) {
-        await service
-          .from('providers')
-          .update({ is_verified: true })
-          .eq('id', provider.profile_id)
-      }
     } else {
       const { error } = await service
-        .from('service_providers')
+        .from('providers')
         .update({
           is_verified: false,
           verification_status: 'rejected',
@@ -63,19 +51,6 @@ export async function POST(request: Request) {
         .eq('id', provider_id)
 
       if (error) throw error
-
-      const { data: provider } = await service
-        .from('service_providers')
-        .select('profile_id')
-        .eq('id', provider_id)
-        .single()
-
-      if (provider) {
-        await service
-          .from('providers')
-          .update({ is_blacklisted: true, is_verified: false })
-          .eq('id', provider.profile_id)
-      }
     }
 
     return NextResponse.json({ success: true })

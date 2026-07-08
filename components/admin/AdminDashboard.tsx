@@ -7,7 +7,11 @@ import { formatDateDDMMYYYY } from '@/lib/utils'
 import type { Profile, Review, ServiceProvider } from '@/types'
 
 type ProviderRow = ServiceProvider & {
-  providers: Pick<Profile, 'email' | 'business_name' | 'phone'> | null
+  providers?: {
+    email?: string | null
+    business_name?: string | null
+    phone?: string | null
+  } | null
 }
 
 type ReportRow = Review & {
