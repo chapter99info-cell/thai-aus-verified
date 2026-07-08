@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import OccupationCategories from '@/components/OccupationCategories'
 import { CATEGORY_ICON_BASE } from '@/lib/constants'
@@ -9,8 +10,62 @@ import type { MarqueeBusiness } from '@/lib/marquee-businesses'
 const HERO_VIDEO =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260324_024928_1efd0b0d-6c02-45a8-8847-1030900c4f63.mp4'
 
-const LOGO_PLACEHOLDER =
-  'https://cxcdzxauqcklajmvaxii.supabase.co/storage/v1/object/public/business-photos/logo/Thai-AUS%20verified%20(1).png'
+const HOW_IT_WORKS = [
+  {
+    step: 1,
+    icon: '📝',
+    title: 'ลงทะเบียน',
+    desc: 'กรอกข้อมูลและ ABN ของคุณ',
+  },
+  {
+    step: 2,
+    icon: '✅',
+    title: 'ยืนยัน ABN',
+    desc: 'ทีมงานตรวจสอบกับรัฐบาลออสฯ ภายใน 48 ชม.',
+  },
+  {
+    step: 3,
+    icon: '🏆',
+    title: 'รับป้าย Verified',
+    desc: 'โปรไฟล์ขึ้น directory ทันที',
+  },
+]
+
+const JOB_CATEGORIES = [
+  { emoji: '📸', label: 'Photography/Video' },
+  { emoji: '🧹', label: 'Cleaning/Housekeeping' },
+  { emoji: '💆', label: 'Thai Massage/Spa' },
+  { emoji: '🔨', label: 'Tradie/Handyman' },
+  { emoji: '🍜', label: 'Food/Catering' },
+  { emoji: '🚗', label: 'Transport/Delivery' },
+  { emoji: '💄', label: 'Tattoo/Beauty' },
+  { emoji: '🏠', label: 'Real Estate Agent' },
+  { emoji: '📚', label: 'Tutoring/Translation' },
+  { emoji: '➕', label: 'Other' },
+]
+
+const FAQ_ITEMS = [
+  {
+    q: 'ABN คืออะไร ต่างจาก TFN ยังไง?',
+    a: 'ABN (Australian Business Number) คือเลข 11 หลัก สำหรับธุรกิจ ส่วน TFN เป็นเลขส่วนตัวห้ามแชร์',
+  },
+  {
+    q: 'ใช้เวลานานแค่ไหนในการได้ป้าย Verified?',
+    a: 'ทีมงานตรวจสอบภายใน 48 ชั่วโมง วันทำการ',
+  },
+  {
+    q: 'ฟรีจริงไหม?',
+    a: 'ฟรี 100% สำหรับช่างและสายอาชีพทั่วไป มีค่าบริการเฉพาะแพ็กเกจโฆษณาธุรกิจ $10/เดือน',
+  },
+  {
+    q: 'ถ้าโดนรีพอร์ตจะเกิดอะไรขึ้น?',
+    a: 'ทีมงานจะตรวจสอบ ถ้าผิดจริงจะได้รับ Strike ครบ 3 ครั้งจะถูก Blacklist ถาวร',
+  },
+  {
+    q: 'ลงทะเบียนแล้วโปรไฟล์จะขึ้นที่ไหน?',
+    a: 'ขึ้นในหน้า directory ของรัฐที่เลือก เช่น thai-ausverified.com.au/nsw',
+  },
+]
 
 const TESTIMONIALS = [
   {
@@ -113,6 +168,8 @@ export function PremiumHome({
   marqueeBusinesses,
   categoryCounts,
 }: PremiumHomeProps) {
+  const router = useRouter()
+  const [openFaq, setOpenFaq] = useState<number | null>(0)
   const statVerified = verifiedCount > 0 ? String(verifiedCount) : '30'
   const statStates = stateCount > 0 ? String(stateCount) : '8'
 
@@ -203,6 +260,61 @@ export function PremiumHome({
         </div>
       </section>
 
+      {/* How It Works */}
+      <FadeIn className="mx-auto max-w-[1100px] px-6 py-16">
+        <div className="mb-10 text-center">
+          <h2 className="text-2xl font-bold text-[#0D1B3E]">How It Works</h2>
+          <p className="mt-2 text-sm text-[#243B6E]/70">ลงทะเบียน ยืนยัน ABN รับป้าย Verified — ง่ายๆ 3 ขั้นตอน</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {HOW_IT_WORKS.map((item, index) => (
+            <div
+              key={item.step}
+              className="rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm"
+            >
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#C9A84C] text-lg font-bold text-[#0D1B3E]">
+                {item.step}
+              </div>
+              <p className="mt-4 text-3xl" aria-hidden>
+                {item.icon}
+              </p>
+              <h3 className="mt-3 text-lg font-bold text-[#0D1B3E]">{item.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#243B6E]/80">{item.desc}</p>
+              {index < HOW_IT_WORKS.length - 1 && (
+                <span className="mt-4 hidden text-[#C9A84C] md:inline" aria-hidden>
+                  →
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </FadeIn>
+
+      {/* Job Categories */}
+      <FadeIn className="mx-auto max-w-[1100px] px-6 pb-16">
+        <div className="mb-10 text-center">
+          <h2 className="text-2xl font-bold text-[#0D1B3E]">Job Categories</h2>
+          <p className="mt-2 text-sm text-[#243B6E]/70">เลือกสายอาชีพของคุณแล้วเริ่มลงทะเบียน</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-5">
+          {JOB_CATEGORIES.map((cat) => (
+            <button
+              key={cat.label}
+              type="button"
+              onClick={() => router.push('/register/professional')}
+              className="flex flex-col items-center rounded-2xl border border-gray-100 bg-white p-4 text-center transition-colors hover:border-[#C9A84C] hover:shadow-[0_8px_24px_rgba(201,168,76,0.12)] sm:p-5"
+            >
+              <span className="text-3xl sm:text-4xl" aria-hidden>
+                {cat.emoji}
+              </span>
+              <span className="mt-3 text-xs font-semibold leading-snug text-[#0D1B3E] sm:text-sm">
+                {cat.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </FadeIn>
+
       {/* Marquee */}
       <section className="pt-12">
         <p className="mb-4 text-center text-[10px] uppercase tracking-[2px] text-[rgba(5,26,36,0.25)]">
@@ -287,6 +399,48 @@ export function PremiumHome({
         </div>
       </FadeIn>
 
+      {/* Why Verified Matters */}
+      <FadeIn className="mx-auto max-w-[1100px] px-6 pb-16">
+        <div className="mb-10 text-center">
+          <h2 className="text-2xl font-bold text-[#0D1B3E]">Why Verified Matters</h2>
+          <p className="mt-2 text-sm text-[#243B6E]/70">ทำไมชุมชนไทยในออสต้องการระบบที่ตรวจสอบได้</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-red-100 bg-red-50/60 p-6 sm:p-8">
+            <h3 className="text-lg font-bold text-red-700">ปัญหาที่พบบ่อย</h3>
+            <ul className="mt-5 space-y-4">
+              {[
+                'ไม่รู้ว่าช่างมีตัวตนจริงไหม',
+                'ABN ปลอม หนีหายหลังรับเงิน',
+                'ไม่มีการการันตีคุณภาพ',
+                'โดนโกงแล้วไม่มีทางติดตาม',
+              ].map((item) => (
+                <li key={item} className="flex gap-3 text-sm leading-relaxed text-red-800/90">
+                  <span aria-hidden>❌</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-[#C9A84C]/30 bg-[#0D1B3E] p-6 sm:p-8">
+            <h3 className="text-lg font-bold text-[#C9A84C]">ทางออกของ Thai-Aus Verified</h3>
+            <ul className="mt-5 space-y-4">
+              {[
+                'ทุกคนยืนยัน ABN กับรัฐบาลออสฯ',
+                'มีโปรไฟล์ถาวรพร้อมประวัติ',
+                'ระบบ Report + 3 Strikes',
+                'ชุมชนช่วยกันดูแล',
+              ].map((item) => (
+                <li key={item} className="flex gap-3 text-sm leading-relaxed text-white/90">
+                  <span aria-hidden>✅</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </FadeIn>
+
       {/* Testimonials */}
       <section className="border-t border-gray-200 bg-[#F5F5F0] py-16">
         <FadeIn className="mx-auto max-w-[1100px] px-6">
@@ -350,6 +504,45 @@ export function PremiumHome({
               </Link>
             </div>
           </div>
+        </div>
+      </FadeIn>
+
+      {/* FAQ */}
+      <FadeIn className="mx-auto max-w-[760px] px-6 pb-16">
+        <div className="mb-10 text-center">
+          <h2 className="text-2xl font-bold text-[#0D1B3E]">คำถามที่พบบ่อย</h2>
+          <p className="mt-2 text-sm text-[#243B6E]/70">FAQ — Thai-Aus Verified Community</p>
+        </div>
+        <div className="space-y-3">
+          {FAQ_ITEMS.map((item, index) => {
+            const isOpen = openFaq === index
+            return (
+              <div
+                key={item.q}
+                className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenFaq(isOpen ? null : index)}
+                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                  aria-expanded={isOpen}
+                >
+                  <span className="text-sm font-semibold text-[#0D1B3E] sm:text-base">{item.q}</span>
+                  <span
+                    className={`shrink-0 text-lg font-bold text-[#C9A84C] transition-transform ${isOpen ? 'rotate-45' : ''}`}
+                    aria-hidden
+                  >
+                    +
+                  </span>
+                </button>
+                {isOpen && (
+                  <div className="border-t border-gray-100 px-5 py-4">
+                    <p className="text-sm leading-relaxed text-[#243B6E]/80">{item.a}</p>
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       </FadeIn>
 
