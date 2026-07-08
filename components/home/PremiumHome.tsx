@@ -194,7 +194,7 @@ export function PremiumHome({
           className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
           src={HERO_VIDEO}
         />
-        <div className="absolute inset-0 bg-[#0D1B3E]/75" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0D1B3E]/50 via-[#0D1B3E]/30 to-[#0D1B3E]/60" />
 
         <div className="relative mx-auto max-w-[600px] px-4 pb-16 pt-20 text-center sm:px-6">
           <FadeIn delay={0.1}>
@@ -204,7 +204,7 @@ export function PremiumHome({
           </FadeIn>
 
           <FadeIn delay={0.2}>
-            <h1 className="mt-6 text-[clamp(40px,5.5vw,66px)] font-bold leading-none tracking-[-2px] text-white">
+            <h1 className="mt-6 text-[clamp(40px,5.5vw,66px)] font-bold leading-none tracking-[-2px] text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]">
               ค้นหาธุรกิจไทย
               <br />
               <span className="font-playfair italic font-bold text-[#F0D060]">ที่เชื่อถือได้</span>
@@ -212,7 +212,7 @@ export function PremiumHome({
           </FadeIn>
 
           <FadeIn delay={0.3}>
-            <p className="mx-auto mt-6 max-w-[420px] text-base leading-relaxed text-white/70">
+            <p className="mx-auto mt-6 max-w-[420px] text-base leading-relaxed text-white/70 [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]">
               ไดเรกทอรีธุรกิจไทยที่ผ่านการยืนยัน ABN จากรัฐบาลออสเตรเลีย ปลอดภัย โปร่งใส
               เชื่อถือได้ในทุกรัฐ
             </p>
