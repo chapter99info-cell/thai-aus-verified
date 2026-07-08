@@ -15,7 +15,7 @@ async function requireAdmin() {
   }
 
   const { data: profile } = await supabase
-    .from('profiles')
+    .from('providers')
     .select('role')
     .eq('id', user.id)
     .single()

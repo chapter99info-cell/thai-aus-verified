@@ -30,7 +30,7 @@ export default async function DashboardPage() {
   if (!user) redirect('/login')
 
   const { data: profileData } = await supabase
-    .from('profiles')
+    .from('providers')
     .select('*')
     .eq('id', user.id)
     .single()
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
     .maybeSingle()
 
   const provider = providerData as ServiceProvider | null
-  const displayName = provider?.business_name ?? profile?.full_name ?? user.email ?? 'ผู้ใช้'
+  const displayName = provider?.business_name ?? profile?.business_name ?? user.email ?? 'ผู้ใช้'
   const isPremium = provider ? isPremiumProvider(provider) : false
   const inGrace = provider ? isInPaymentGrace(provider) : false
   const graceDays = provider ? graceDaysRemaining(provider) : null

@@ -4,6 +4,7 @@ export interface Profile {
   id: string
   email: string
   full_name: string
+  business_name?: string
   phone?: string
   line_id?: string
   role: UserRole
@@ -31,6 +32,7 @@ export interface ServiceProvider {
   id: string
   profile_id: string
   business_name: string
+  job_category?: ServiceCategory
   category: ServiceCategory
   description: string
   address: string
@@ -51,6 +53,7 @@ export interface ServiceProvider {
   gallery_images?: string[]
   abn_number: string
   is_verified: boolean
+  is_blacklisted?: boolean
   verified_at?: string
   verification_status: 'pending' | 'approved' | 'rejected'
   subscription_status: 'free' | 'premium'

@@ -21,7 +21,7 @@ export async function POST() {
   }
 
   const { data: profile } = await supabase
-    .from('profiles')
+    .from('providers')
     .select('id, stripe_customer_id, email')
     .eq('id', user.id)
     .maybeSingle()
@@ -44,7 +44,7 @@ export async function POST() {
     })
     customerId = customer.id
 
-    await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', user.id)
+    await supabase.from('providers').update({ stripe_customer_id: customerId }).eq('id', user.id)
   }
 
   const session = await stripe.checkout.sessions.create({

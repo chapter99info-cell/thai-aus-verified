@@ -29,7 +29,7 @@ async function setProfileMembership(
     profileUpdate.stripe_subscription_id = updates.stripe_subscription_id
   }
 
-  await admin.from('profiles').update(profileUpdate).eq('id', userId)
+  await admin.from('providers').update(profileUpdate).eq('id', userId)
 
   const providerUpdate: Record<string, unknown> = {
     subscription_status: updates.membership_tier,
@@ -53,7 +53,7 @@ async function setMembershipByCustomerId(
   membership_tier: 'free' | 'premium'
 ) {
   const { data: profile } = await admin
-    .from('profiles')
+    .from('providers')
     .select('id')
     .eq('stripe_customer_id', customerId)
     .maybeSingle()

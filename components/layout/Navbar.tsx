@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Menu, UserCircle, X } from 'lucide-react'
-import { isVerifiedOwnerRole } from '@/lib/job-board'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -191,14 +190,14 @@ export function Navbar() {
         return
       }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
+      const { data: provider } = await supabase
+        .from('providers')
+        .select('is_verified')
         .eq('id', authUser.id)
         .single()
 
       if (mounted) {
-        setIsVerifiedOwner(isVerifiedOwnerRole(profile?.role))
+        setIsVerifiedOwner(provider?.is_verified === true)
       }
     }
 
@@ -244,12 +243,12 @@ export function Navbar() {
       }
 
       void supabase
-        .from('profiles')
-        .select('role')
+        .from('providers')
+        .select('is_verified')
         .eq('id', session.user.id)
         .single()
-        .then(({ data: profile }) => {
-          setIsVerifiedOwner(isVerifiedOwnerRole(profile?.role))
+        .then(({ data: provider }) => {
+          setIsVerifiedOwner(provider?.is_verified === true)
         })
     })
   }, [pathname])

@@ -7,7 +7,7 @@ import { formatDateDDMMYYYY } from '@/lib/utils'
 import type { Profile, Review, ServiceProvider } from '@/types'
 
 type ProviderRow = ServiceProvider & {
-  profiles: Pick<Profile, 'email' | 'full_name' | 'phone'> | null
+  providers: Pick<Profile, 'email' | 'business_name' | 'phone'> | null
 }
 
 type ReportRow = Review & {
@@ -150,7 +150,7 @@ export function AdminDashboard({ initialData }: { initialData: AdminDashboardDat
                         {CATEGORY_LABELS[row.category]?.th ?? row.category}
                       </td>
                       <td className="px-3 py-3 text-[#243B6E]">
-                        {row.profiles?.email ?? '—'}
+                        {row.providers?.email ?? '—'}
                       </td>
                       <td className="px-3 py-3 text-[#243B6E]">
                         {formatDateDDMMYYYY(row.created_at)}
@@ -270,7 +270,7 @@ export function AdminDashboard({ initialData }: { initialData: AdminDashboardDat
                       <td className="px-3 py-3 font-medium text-[#0D1B3E]">
                         {row.business_name}
                       </td>
-                      <td className="px-3 py-3 text-[#243B6E]">{row.profiles?.email ?? '—'}</td>
+                      <td className="px-3 py-3 text-[#243B6E]">{row.providers?.email ?? '—'}</td>
                       <td className="px-3 py-3 text-[#243B6E]">{row.state ?? '—'}</td>
                       <td className="px-3 py-3">
                         <span className="rounded-full bg-[#C9A84C]/10 px-2 py-0.5 text-xs font-semibold text-[#8B6914]">

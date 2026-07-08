@@ -48,8 +48,8 @@ export async function POST(request: Request) {
 
       if (provider) {
         await service
-          .from('profiles')
-          .update({ role: 'verified_business' })
+          .from('providers')
+          .update({ is_verified: true })
           .eq('id', provider.profile_id)
       }
     } else {
@@ -58,10 +58,24 @@ export async function POST(request: Request) {
         .update({
           is_verified: false,
           verification_status: 'rejected',
+          is_blacklisted: true,
         })
         .eq('id', provider_id)
 
       if (error) throw error
+
+      const { data: provider } = await service
+        .from('service_providers')
+        .select('profile_id')
+        .eq('id', provider_id)
+        .single()
+
+      if (provider) {
+        await service
+          .from('providers')
+          .update({ is_blacklisted: true, is_verified: false })
+          .eq('id', provider.profile_id)
+      }
     }
 
     return NextResponse.json({ success: true })

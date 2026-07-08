@@ -17,7 +17,7 @@ export default async function Chapter99InfoPage() {
   if (!user) redirect('/admin/login')
 
   const { data: profile } = await supabase
-    .from('profiles')
+    .from('providers')
     .select('role')
     .eq('id', user.id)
     .single()

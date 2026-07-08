@@ -29,7 +29,7 @@ import type { Profile, ScamAlert, ServiceProvider } from '@/types'
 type AdminTab = 'pending' | 'verified' | 'alerts' | 'members' | 'premium' | 'articles' | 'sales' | 'interviews'
 
 type ProviderRow = ServiceProvider & {
-  profiles: Pick<Profile, 'email' | 'full_name' | 'phone'> | null
+  providers: Pick<Profile, 'email' | 'business_name' | 'phone'> | null
 }
 
 const CATEGORY_FILTERS = [
@@ -110,24 +110,24 @@ export function AdminPanel() {
       await Promise.all([
         supabase
           .from('service_providers')
-          .select('*, profiles:profile_id(email, full_name, phone)')
+          .select('*, providers:profile_id(email, business_name, phone)')
           .eq('verification_status', 'pending')
           .order('created_at', { ascending: false }),
         supabase
           .from('service_providers')
-          .select('*, profiles:profile_id(email, full_name, phone)')
+          .select('*, providers:profile_id(email, business_name, phone)')
           .eq('is_verified', true)
           .order('created_at', { ascending: false }),
         supabase.from('articles').select('*').order('created_at', { ascending: false }),
-        supabase.from('profiles').select('*').order('created_at', { ascending: false }),
+        supabase.from('providers').select('*').order('created_at', { ascending: false }),
         supabase
           .from('service_providers')
-          .select('*, profiles:profile_id(email, full_name, phone)')
+          .select('*, providers:profile_id(email, business_name, phone)')
           .eq('subscription_status', 'premium')
           .order('created_at', { ascending: false }),
         supabase
           .from('service_providers')
-          .select('*, profiles:profile_id(email, full_name, phone)')
+          .select('*, providers:profile_id(email, business_name, phone)')
           .order('created_at', { ascending: false }),
         fetch('/api/admin/alerts'),
         supabase.from('interview_sessions').select('id', { count: 'exact', head: true }),
@@ -199,8 +199,8 @@ export function AdminPanel() {
         !q ||
         p.business_name.toLowerCase().includes(q) ||
         p.abn_number.includes(q) ||
-        p.profiles?.full_name?.toLowerCase().includes(q) ||
-        p.profiles?.email?.toLowerCase().includes(q)
+        p.providers?.business_name?.toLowerCase().includes(q) ||
+        p.providers?.email?.toLowerCase().includes(q)
       const matchCat = !categoryFilter || p.category === categoryFilter
       return matchSearch && matchCat
     })
@@ -232,7 +232,8 @@ export function AdminPanel() {
     return members.filter(
       (m) =>
         !q ||
-        m.full_name.toLowerCase().includes(q) ||
+        m.business_name?.toLowerCase().includes(q) ||
+        m.full_name?.toLowerCase().includes(q) ||
         m.email.toLowerCase().includes(q)
     )
   }, [members, search])
@@ -245,7 +246,7 @@ export function AdminPanel() {
         p.business_name.toLowerCase().includes(q) ||
         p.abn_number.includes(q) ||
         p.suburb.toLowerCase().includes(q) ||
-        p.profiles?.email?.toLowerCase().includes(q) ||
+        p.providers?.email?.toLowerCase().includes(q) ||
         p.phone?.includes(q)
       const matchCat = !categoryFilter || p.category === categoryFilter
       return matchSearch && matchCat
@@ -488,8 +489,8 @@ export function AdminPanel() {
                 ) : (
                   filteredSalesLeads.map((lead) => {
                     const cat = CATEGORY_LABELS[lead.category]
-                    const contactEmail = lead.profiles?.email
-                    const contactPhone = lead.phone || lead.profiles?.phone
+                    const contactEmail = lead.providers?.email
+                    const contactPhone = lead.phone || lead.providers?.phone
                     const contactParts = [contactPhone, contactEmail].filter(Boolean)
 
                     return (
@@ -723,7 +724,7 @@ export function AdminPanel() {
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="truncate font-medium text-[#1e3a5f]">{member.full_name}</span>
+                  <span className="truncate font-medium text-[#1e3a5f]">{member.business_name ?? member.full_name}</span>
                   <span className="shrink-0 text-[11px] text-[rgba(30,58,95,0.4)]">
                     {formatTime(member.created_at)}
                   </span>
@@ -940,7 +941,7 @@ export function AdminPanel() {
         {/* Member reader */}
         {selectedMember && tab === 'members' && (
           <div className="p-5">
-            <h2 className="text-lg font-bold text-[#1e3a5f]">{selectedMember.full_name}</h2>
+            <h2 className="text-lg font-bold text-[#1e3a5f]">{selectedMember.business_name ?? selectedMember.full_name}</h2>
             <p className="mt-2 text-sm text-[rgba(30,58,95,0.6)]">{selectedMember.email}</p>
             <p className="mt-1 text-sm text-[rgba(30,58,95,0.6)]">
               บทบาท: {selectedMember.role}
@@ -1030,8 +1031,8 @@ function ProviderReader({
   onApprove: () => void
   onReject: () => void
 }) {
-  const profile = provider.profiles
-  const initial = (profile?.full_name || provider.business_name).charAt(0).toUpperCase()
+  const profile = provider.providers
+  const initial = (profile?.business_name || provider.business_name).charAt(0).toUpperCase()
   const cat = CATEGORY_LABELS[provider.category]
 
   return (
@@ -1054,7 +1055,7 @@ function ProviderReader({
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-semibold text-[#1e3a5f]">
-              {profile?.full_name ?? 'ไม่ระบุชื่อ'}
+              {profile?.business_name ?? 'ไม่ระบุชื่อ'}
             </span>
             {provider.is_verified && (
               <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">

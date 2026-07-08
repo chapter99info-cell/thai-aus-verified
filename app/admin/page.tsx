@@ -15,7 +15,7 @@ export const metadata = {
 }
 
 type ProviderRow = ServiceProvider & {
-  profiles: Pick<Profile, 'email' | 'full_name' | 'phone'> | null
+  providers: Pick<Profile, 'email' | 'business_name' | 'phone'> | null
 }
 
 async function loadAdminData(): Promise<AdminDashboardData> {
@@ -41,15 +41,15 @@ async function loadAdminData(): Promise<AdminDashboardData> {
     subscribersRes,
     reportsRes,
   ] = await Promise.all([
-    service.from('profiles').select('id', { count: 'exact', head: true }),
+    service.from('providers').select('id', { count: 'exact', head: true }),
     service
       .from('service_providers')
-      .select('*, profiles:profile_id(email, full_name, phone)')
+      .select('*, providers:profile_id(email, business_name, phone)')
       .eq('verification_status', 'pending')
       .order('created_at', { ascending: false }),
     service
       .from('service_providers')
-      .select('*, profiles:profile_id(email, full_name, phone)')
+      .select('*, providers:profile_id(email, business_name, phone)')
       .eq('subscription_status', 'premium')
       .order('created_at', { ascending: false }),
     service

@@ -28,13 +28,13 @@ export default function PostJobPageClient() {
         return
       }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
+      const { data: provider } = await supabase
+        .from('providers')
+        .select('is_verified')
         .eq('id', user.id)
         .single()
 
-      if (profile?.role !== 'verified_owner') {
+      if (provider?.is_verified !== true) {
         setView('not_verified')
         return
       }

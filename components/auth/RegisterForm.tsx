@@ -153,13 +153,20 @@ export function RegisterForm({ showProgress = false }: { showProgress?: boolean 
 
     async function completeRegistration(userId: string) {
       await supabase
-        .from('profiles')
+        .from('providers')
         .update({
           phone: phone || null,
           line_id: lineId || null,
           whatsapp: whatsapp || null,
           tiktok_url: tiktokUrl || null,
-          full_name: businessName,
+          business_name: businessName,
+          facebook_url: facebookUrl || null,
+          instagram_url: instagramUrl || null,
+          portfolio_url: portfolioUrl || null,
+          abn_number: cleanAbn,
+          state,
+          suburb,
+          job_category: category,
         })
         .eq('id', userId)
 
